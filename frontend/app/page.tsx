@@ -1,10 +1,11 @@
-import Navbar from "./components/Navbar";
-
+import { ModeToggle } from "@/components/ThemeMenuButton";
 
 export default function Home() {
   return (
-    <section className="bg-[#0e0e11] min-h-screen w-full font-roboto">
-      <Navbar />
-    </section>
-  );
+    <div className="min-h-screen w-full flex items-center justify-center">
+    
+    <ModeToggle />
+
+    </div>
+  )
 }
