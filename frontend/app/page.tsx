@@ -1,13 +1,14 @@
 import ThemeMenuButton from "@/components/ThemeMenuButton";
+import CreateRoomForm from "@/components/CreateRoomForm";
 
 import {
   Card,
   CardContent,
   CardDescription,
-  CardFooter,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { Separator } from "@/components/ui/separator";
 
 
 export default function Home() {
@@ -15,17 +16,23 @@ export default function Home() {
     <div className="flex h-screen flex-col items-center justify-between pb-5 pt-[13vh]">
       <ThemeMenuButton className="fixed right-[5vw] top-5 flex-1 md:right-5" />
 
-      <Card>
+      <Card className="w-[90vw] max-w-[400px]">
         <CardHeader>
-          <CardTitle>Card Title</CardTitle>
-          <CardDescription>Card Description</CardDescription>
+          <CardTitle>Collab Study</CardTitle>
+          <CardDescription>
+            Productive time with Friends and Colleagues
+          </CardDescription>
         </CardHeader>
-        <CardContent>
-          <p>Card Content</p>
+
+        <CardContent className="flex flex-col space-y-4">
+          <CreateRoomForm roomId={""} />
+
+          <div className="flex items-center space-x-2">
+            <Separator className="w-[45%]" />
+            <span className="text-xs text-muted-foreground">OR</span>
+            <Separator className="w-[45%]" />
+          </div>
         </CardContent>
-        <CardFooter>
-          <p>Card Footer</p>
-        </CardFooter>
       </Card>
     </div>
   );
