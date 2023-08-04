@@ -9,6 +9,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
+import JoinRoomButtoon from "@/components/JoinRoomButton";
 
 
 export default function Home() {
@@ -32,6 +33,8 @@ export default function Home() {
             <span className="text-xs text-muted-foreground">OR</span>
             <Separator className="w-[45%]" />
           </div>
+
+          <JoinRoomButtoon />
         </CardContent>
       </Card>
     </div>
