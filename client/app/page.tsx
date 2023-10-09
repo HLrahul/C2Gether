@@ -1,6 +1,8 @@
 import ThemeMenuButton from "@/components/ThemeMenuButton";
 import CreateRoomForm from "@/components/CreateRoomForm";
 
+import { nanoid } from "nanoid";
+
 import {
   Card,
   CardContent,
@@ -13,6 +15,9 @@ import JoinRoomButtoon from "@/components/JoinRoomButton";
 
 
 export default function Home() {
+
+  const roomId = nanoid();
+
   return (
     <div className="flex h-screen flex-col items-center justify-between pb-5 pt-[13vh]">
       <ThemeMenuButton className="fixed right-[5vw] top-5 flex-1 md:right-5" />
@@ -26,7 +31,7 @@ export default function Home() {
         </CardHeader>
 
         <CardContent className="flex flex-col space-y-4">
-          <CreateRoomForm roomId={""} />
+          <CreateRoomForm roomId={roomId} />
 
           <div className="flex items-center space-x-2">
             <Separator className="w-[45%]" />
