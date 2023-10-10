@@ -1,10 +1,11 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { useForm } from "react-hook-form";
-import { Loader2 } from "lucide-react";
-import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
+import { socket } from "@/lib/socket";
+import { Loader2 } from "lucide-react";
+import { useForm } from "react-hook-form";
+import { useEffect, useState } from "react";
+import { zodResolver } from "@hookform/resolvers/zod";
 
 import {
   Dialog,
@@ -38,6 +39,17 @@ export default function JoinRoomButtoon() {
     },
   });
 
+  function onSubmit({ roomId, username }: JoinRoomForm) {
+    setIsLoading(true);
+    socket.emit("join-room", { roomId, username });
+  }
+
+  useEffect(() => {
+    socket.on("room-not-found", () => {
+      setIsLoading(false);
+    });
+  }, []);
+
   return (
     <Dialog>
       <DialogTrigger asChild>
@@ -53,6 +65,7 @@ export default function JoinRoomButtoon() {
 
         <Form {...form}>
           <form
+            onSubmit={form.handleSubmit(onSubmit)}
             className="flex flex-col gap-4"
           >
             <FormField

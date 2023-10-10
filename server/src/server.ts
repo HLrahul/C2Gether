@@ -9,7 +9,13 @@ import { addUser, getRoomMembers, getUser, removeUser } from './data/users';
 
 const app = express();
 
-app.use(cors());
+app.use(
+  cors({
+    origin: "https://urban-space-robot-qg7ggg45vpqcxr9v-3000.app.github.dev/",
+    methods: ["GET", "POST"],
+    credentials: true,
+  })
+);
 
 const server = http.createServer(app);
 
@@ -92,6 +98,15 @@ io.on('connection', socket => {
       message:
         "Oops! The Room ID you entered doesn't exist or hasn't been created yet.",
     });
+  });
+
+  socket.on("leave-room", () => {
+    leaveRoom(socket);
+  });
+
+  socket.on("disconnect", () => {
+    socket.emit("disconnected");
+    leaveRoom(socket);
   });
 })
 
