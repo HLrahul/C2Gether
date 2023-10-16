@@ -1,3 +1,4 @@
+import BottomBar from "@/components/BottomBar"
 import DisconnectedDialog from "@/components/Disconnected"
 
 export default function RoomPage () {
@@ -5,7 +6,7 @@ export default function RoomPage () {
         <div>
             <DisconnectedDialog />
 
-            <h1>Room Page</h1>
+            <BottomBar />
         </div>
     )
 } 
