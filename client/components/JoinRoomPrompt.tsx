@@ -1,17 +1,21 @@
 "use client"
 
 import { z } from "zod";
-import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
+import { socket } from "@/lib/socket";
+import { Loader2 } from "lucide-react";
+import { toast } from "./ui/use-toast";
+import { RoomJoinedData } from "@/types";
 import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
+import { Separator } from "./ui/separator";
+import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
+import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useMembersStore } from "@/store/membersStore";
+import { useJoinPrompt, useUserStore } from "@/store/userStore";
+import { joinRoomSchema } from "@/lib/validations/JoinRoomSchema";
+import { AlertDialog, AlertDialogAction, AlertDialogContent, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
 import {
   Form,
   FormControl,
@@ -19,30 +23,22 @@ import {
   FormItem,
   FormMessage,
 } from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
-import { joinRoomSchema } from "@/lib/validations/JoinRoomSchema";
-import { useUserStore } from "@/store/userStore";
-import { useMembersStore } from "@/store/membersStore";
-import { RoomJoinedData } from "@/types";
-import { socket } from "@/lib/socket";
-import { toast } from "./ui/use-toast";
-import { Loader2 } from "lucide-react";
-import { Separator } from "./ui/separator";
 
 type JoinRoomForm = z.infer<typeof joinRoomSchema>;
 
 type propsType = {
   roomId: string;
-  showDialog: boolean;
-  setShowDialog: React.Dispatch<React.SetStateAction<boolean>>;
 };
 
 export default function JoinRoomPrompt(props: propsType) {
+  const { roomId} = props;
+
   const setUser = useUserStore((state) => state.setUser);
   const setMembers = useMembersStore((state) => state.setMembers);
+  const showDialog = useJoinPrompt((state) => state.showDialog);
+  const setShowDialog = useJoinPrompt((state) => state.setShowDialog);
 
   const router = useRouter();
-  const { roomId, showDialog, setShowDialog } = props;
 
   const [isLoading, setIsLoading] = useState(false);
   const [isHomeLoading, setIsHomeLoading] = useState(false);
@@ -93,11 +89,11 @@ export default function JoinRoomPrompt(props: propsType) {
 
   return (
     <>
-      <Dialog open={showDialog} onOpenChange={setShowDialog}>
-        <DialogContent className="w-[90vw] max-w-[400px]">
-          <DialogHeader className="pb-2">
-            <DialogTitle>Join the room now!</DialogTitle>
-          </DialogHeader>
+      <AlertDialog open={showDialog} onOpenChange={setShowDialog}>
+        <AlertDialogContent className="w-[90vw] max-w-[400px]">
+          <AlertDialogHeader className="pb-2">
+            <AlertDialogTitle>Join the room now!</AlertDialogTitle>
+          </AlertDialogHeader>
 
           <Form {...form}>
             <form
@@ -117,29 +113,53 @@ export default function JoinRoomPrompt(props: propsType) {
                 )}
               />
 
-              <Button type="submit" className="mt-2">
-                {isLoading ? (
-                  <Loader2 className="h-4 w-4 animate-spin" />
-                ) : (
-                  "Join"
+              <FormField
+                control={form.control}
+                name="roomId"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormControl>
+                      <Input
+                        placeholder="Room ID"
+                        defaultValue={roomId}
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage className="text-xs" />
+                  </FormItem>
                 )}
-              </Button>
+              />
+
+              
+                <Button type="submit" className="mt-2">
+                  {isLoading ? (
+                    <Loader2 className="h-4 w-4 animate-spin" />
+                  ) : (
+                    "Join"
+                  )}
+                </Button>
+              
             </form>
           </Form>
 
           <Separator />
-
-          <Button
-            onClick={(e) => {
-              setIsHomeLoading(true);
-              router.replace("/");
-              setIsHomeLoading(false);
-            }}
-          >
-            {isHomeLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : "Home"}
-          </Button>
-        </DialogContent>
-      </Dialog>
+          
+            <Button
+              onClick={(e) => {
+                setIsHomeLoading(true);
+                router.replace("/");
+                setIsHomeLoading(false);
+              }}
+            >
+              {isHomeLoading ? (
+                <Loader2 className="h-4 w-4 animate-spin" />
+              ) : (
+                "Home"
+              )}
+            </Button>
+          
+        </AlertDialogContent>
+      </AlertDialog>
     </>
   );
 }

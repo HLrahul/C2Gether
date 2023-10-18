@@ -1,19 +1,19 @@
 "use client"
 
-import { useEffect, useState } from "react"
-import { useRouter } from "next/navigation"
+import { useEffect } from "react"
+import { useRouter, useParams } from "next/navigation"
+import { useUserStore, useJoinPrompt } from "@/store/userStore"
+
 import BottomBar from "@/components/BottomBar"
-import { useUserStore } from "@/store/userStore"
 import JoinRoomPrompt from "@/components/JoinRoomPrompt"
 import DisconnectedDialog from "@/components/Disconnected"
 
 export default function RoomPage () {
     const user = useUserStore(state => state.user)
-
+    const setShowDialog = useJoinPrompt(state => state.setShowDialog)
+    
     const router = useRouter()
-
-    const roomId = window.location.pathname.substring(1) 
-    const [showDialog, setShowDialog] = useState(false)
+    const { roomId } = useParams()
 
     useEffect(() => {
         if(!user) {
@@ -29,7 +29,7 @@ export default function RoomPage () {
       <div>
         <DisconnectedDialog />
         
-        <JoinRoomPrompt roomId={roomId} showDialog={showDialog} setShowDialog={setShowDialog} />
+        <JoinRoomPrompt roomId={roomId && (typeof roomId === "string" ? roomId : roomId[0])} />
         
         <BottomBar />
       </div>
