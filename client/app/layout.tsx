@@ -1,30 +1,57 @@
-import './globals.css'
-import type { Metadata } from 'next'
-import { Inter } from 'next/font/google'
+import "@/styles/globals.css";
 
-import { Toaster } from '@/components/ui/toaster'
-import { ThemeProvider } from '@/components/ThemeProvider'
+import clsx from "clsx";
+import Navbar from "@/components/navbar";
 
-const inter = Inter({ subsets: ['latin'] })
+import { Metadata } from "next";
+import { Providers } from "./providers";
+import { fontSans } from "@/config/fonts";
+import { siteConfig } from "@/config/site";
 
 export const metadata: Metadata = {
-  title: 'Collab Study',
-  description: 'Productive time with Friends and Colleagues',
-}
+	title: {
+		default: siteConfig.name,
+		template: `%s - ${siteConfig.name}`,
+	},
+	description: siteConfig.description,
+	themeColor: [
+		{ media: "(prefers-color-scheme: light)", color: "white" },
+		{ media: "(prefers-color-scheme: dark)", color: "black" },
+	],
+	icons: {
+		icon: "/favicon.ico",
+		shortcut: "/favicon-16x16.png",
+		apple: "/apple-touch-icon.png",
+	},
+};
 
 export default function RootLayout({
-  children,
+	children,
 }: {
-  children: React.ReactNode
+	children: React.ReactNode;
 }) {
-  return (
-    <html lang="en">
-      <body className={inter.className}>
-        <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
-          {children}
-        </ThemeProvider>
+	return (
+    <html lang="en" suppressHydrationWarning>
+      <head />
+      <body
+        className={clsx(
+          "min-h-screen bg-background font-sans antialiased",
+          fontSans.variable
+        )}
+      >
+        <Providers
+          themeProps={{
+            attribute: "class",
+            defaultTheme: "dark",
+            themes: ["light", "dark", "teal-light", "teal-dark"],
+          }}
+        >
+          <div className="relative flex flex-col h-screen">
+            <Navbar />
 
-        <Toaster />
+            <main className="flex-grow">{children}</main>
+          </div>
+        </Providers>
       </body>
     </html>
   );

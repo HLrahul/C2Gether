@@ -3,7 +3,7 @@ import * as z from "zod";
 export const joinRoomSchema = z.object({
   username: z
     .string()
-    .min(2, "Username must contain at least 2 characters")
+    .min(3, "Username must contain at least 3 characters")
     .max(50, "Username must not contain more than 50 characters"),
   roomId: z
     .string()

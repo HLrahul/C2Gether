@@ -1,27 +1,64 @@
-import { z } from 'zod';
-import http from 'http';
-import cors from 'cors';
-import express from 'express';
-import { Server, type Socket } from 'socket.io';
-import { DrawOptions, JoinRoomData } from './types';
-import { joinRoomSchema } from './lib/validations/joinRoom';
-import { addUser, getRoomMembers, getUser, removeUser } from './data/users';
-import { addUndoPoint, deleteLastUndoPoint, getLastUndoPoint } from './data/undoPoints';
+import cors from "cors";
+import http from "http";
+import express from "express";
 
+import { z } from "zod";
+import { Server, type Socket } from "socket.io";
+
+import { JoinRoomData } from "./types";
+import { joinRoomSchema } from "./lib/validations/joinRoom";
+import { addUser, getUser, removeUser, getRoomMembers } from "./data/user";
+
+// Create app instance and add configuration
 const app = express();
-
 app.use(
   cors({
-    origin: "https://urban-space-robot-qg7ggg45vpqcxr9v-3000.app.github.dev/",
+    origin: "http://localhost:3000",
     methods: ["GET", "POST"],
     credentials: true,
   })
 );
-
 const server = http.createServer(app);
 
+// Create a socket.io server instance
 const io = new Server(server);
+io.on("connection", (socket) => {
+  socket.on("create-room", (joinRoomData: JoinRoomData) => {
+    const validatedData = validateJoinRoomData(socket, joinRoomData);
 
+    if (!validatedData) return;
+    const { roomId, username } = validatedData;
+
+    joinRoom(socket, roomId, username);
+  });
+
+  socket.on("join-room", (joinRoomData: JoinRoomData) => {
+    const validatedData = validateJoinRoomData(socket, joinRoomData);
+
+    if (!validatedData) return;
+    const { roomId, username } = validatedData;
+
+    if (isRoomCreated(roomId)) {
+      return joinRoom(socket, roomId, username);
+    }
+
+    socket.emit("room-not-found", {
+      message:
+        "Oops! The Room ID you entered doesn't exist or hasn't been created yet.",
+    });
+  });
+
+  socket.on("leave-room", () => {
+    leaveRoom(socket);
+  });
+
+  socket.on("disconnect", () => {
+    socket.emit("disconnected");
+    leaveRoom(socket);
+  });
+});
+
+// UserDefined Functions
 function isRoomCreated(roomId: string) {
   const rooms = [...io.sockets.adapter.rooms];
   return rooms?.some((room) => room[0] === roomId);
@@ -74,45 +111,8 @@ function leaveRoom(socket: Socket) {
   socket.leave(roomId);
 }
 
-
-io.on('connection', socket => {
-  socket.on("create-room", (joinRoomData: JoinRoomData) => {
-    const validatedData = validateJoinRoomData(socket, joinRoomData);
-
-    if (!validatedData) return;
-    const { roomId, username } = validatedData;
-
-    joinRoom(socket, roomId, username);
-  });
-
-  socket.on("join-room", (joinRoomData: JoinRoomData) => {
-    const validatedData = validateJoinRoomData(socket, joinRoomData);
-
-    if (!validatedData) return;
-    const { roomId, username } = validatedData;
-
-    if (isRoomCreated(roomId)) {
-      return joinRoom(socket, roomId, username);
-    }
-
-    socket.emit("room-not-found", {
-      message:
-        "Oops! The Room ID you entered doesn't exist or hasn't been created yet.",
-    });
-  });
-
-  socket.on("leave-room", () => {
-    leaveRoom(socket);
-  });
-
-  socket.on("disconnect", () => {
-    socket.emit("disconnected");
-    leaveRoom(socket);
-  });
-})
-
+// Start the Server with the PORT number from the .env file or 3001
 const PORT = process.env.PORT || 3001;
-
-server.listen(PORT, () =>
-  console.log(`Server is running on port ${PORT} now!`)
-);
+server.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`);
+});

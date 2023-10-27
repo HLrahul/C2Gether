@@ -1,76 +1,99 @@
+import { nextui } from "@nextui-org/theme";
+
 /** @type {import('tailwindcss').Config} */
 module.exports = {
-  darkMode: ["class"],
   content: [
-    './pages/**/*.{ts,tsx}',
-    './components/**/*.{ts,tsx}',
-    './app/**/*.{ts,tsx}',
-    './src/**/*.{ts,tsx}',
-	],
+    "./pages/**/*.{js,ts,jsx,tsx,mdx}",
+    "./components/**/*.{js,ts,jsx,tsx,mdx}",
+    "./app/**/*.{js,ts,jsx,tsx,mdx}",
+    "./node_modules/@nextui-org/theme/dist/**/*.{js,ts,jsx,tsx}",
+  ],
   theme: {
-    container: {
-      center: true,
-      padding: "2rem",
-      screens: {
-        "2xl": "1400px",
-      },
-    },
-    extend: {
-      colors: {
-        border: "hsl(var(--border))",
-        input: "hsl(var(--input))",
-        ring: "hsl(var(--ring))",
-        background: "hsl(var(--background))",
-        foreground: "hsl(var(--foreground))",
-        primary: {
-          DEFAULT: "hsl(var(--primary))",
-          foreground: "hsl(var(--primary-foreground))",
-        },
-        secondary: {
-          DEFAULT: "hsl(var(--secondary))",
-          foreground: "hsl(var(--secondary-foreground))",
-        },
-        destructive: {
-          DEFAULT: "hsl(var(--destructive))",
-          foreground: "hsl(var(--destructive-foreground))",
-        },
-        muted: {
-          DEFAULT: "hsl(var(--muted))",
-          foreground: "hsl(var(--muted-foreground))",
-        },
-        accent: {
-          DEFAULT: "hsl(var(--accent))",
-          foreground: "hsl(var(--accent-foreground))",
-        },
-        popover: {
-          DEFAULT: "hsl(var(--popover))",
-          foreground: "hsl(var(--popover-foreground))",
-        },
-        card: {
-          DEFAULT: "hsl(var(--card))",
-          foreground: "hsl(var(--card-foreground))",
-        },
-      },
-      borderRadius: {
-        lg: "var(--radius)",
-        md: "calc(var(--radius) - 2px)",
-        sm: "calc(var(--radius) - 4px)",
-      },
-      keyframes: {
-        "accordion-down": {
-          from: { height: 0 },
-          to: { height: "var(--radix-accordion-content-height)" },
-        },
-        "accordion-up": {
-          from: { height: "var(--radix-accordion-content-height)" },
-          to: { height: 0 },
-        },
-      },
-      animation: {
-        "accordion-down": "accordion-down 0.2s ease-out",
-        "accordion-up": "accordion-up 0.2s ease-out",
-      },
-    },
+    extend: {},
   },
-  plugins: [require("tailwindcss-animate")],
-}
+  darkMode: "class",
+  plugins: [
+    nextui({
+      themes: {
+        light: {
+          layout: {},
+          colors: {},
+        },
+        dark: {
+          layout: {},
+          colors: {},
+        },
+
+        "teal-light": {
+          extend: "light",
+          colors: {
+            background: "#ffffff",
+            foreground: "#00140d",
+            primary: {
+              100: "#CDFCD7",
+              200: "#9DF9BA",
+              300: "#6AEDA1",
+              400: "#44DC93",
+              500: "#10C680",
+              600: "#0BAA7D",
+              700: "#088E75",
+              800: "#057269",
+              900: "#035D5F",
+              DEFAULT: "#10C680",
+              foreground: "#00140d",
+            },
+            focus: "#0fd48f",
+          },
+          layout: {
+            disabledOpacity: "0.3",
+            radius: {
+              small: "4px",
+              medium: "6px",
+              large: "8px",
+            },
+            borderWidth: {
+              small: "1px",
+              medium: "2px",
+              large: "3px",
+            },
+          },
+        },
+
+        "teal-dark": {
+          extend: "dark",
+          colors: {
+            background: "#010a07",
+            foreground: "#ffffff",
+            primary: {
+              100: "#CDFCD7",
+              200: "#9DF9BA",
+              300: "#6AEDA1",
+              400: "#44DC93",
+              500: "#10C680",
+              600: "#0BAA7D",
+              700: "#088E75",
+              800: "#057269",
+              900: "#035D5F",
+              DEFAULT: "#10C680",
+              foreground: "#ffffff",
+            },
+            focus: "#0fd48f",
+          },
+          layout: {
+            disabledOpacity: "0.3",
+            radius: {
+              small: "4px",
+              medium: "6px",
+              large: "8px",
+            },
+            borderWidth: {
+              small: "1px",
+              medium: "2px",
+              large: "3px",
+            },
+          },
+        },
+      },
+    }),
+  ],
+};

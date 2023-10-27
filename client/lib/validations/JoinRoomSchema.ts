@@ -1,8 +1,12 @@
-import * as z from 'zod';
+import * as z from "zod"
 
-export const joinRoomSchema = z.object({
-    username: z.string()
-    .min(3, "Username must atleast contain 3 characters")
-    .max(20, "Username must be less than 20 characters"),
-    roomId: z.string().trim().length(21, "Room ID must exactly 21 characters"),
+export const joinRoomFormSchema = z.object({
+    username: z
+    .string()
+    .min(3, "Username must be at least 3 characters long")
+    .max(20, "Username must be at most 20 characters long"),
+
+    roomId: z
+    .string()
+    .length(21, "Room ID must be 21 characters long"),
 })

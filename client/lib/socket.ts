@@ -1,11 +1,8 @@
-import { io } from 'socket.io-client';
+import { io } from "socket.io-client";
 
-// const SERVER =
-//   process.env.NODE_ENV === "production"
-//     ? ""
-//     : "https://urban-space-robot-qg7ggg45vpqcxr9v-3001.app.github.dev/";
+const SERVER =
+  process.env.NODE_ENV === "production"
+    ? "https://scribble-production-d6c0.up.railway.app"
+    : "http://127.0.0.1:3001";
 
-export const socket = io(
-  "https://urban-space-robot-qg7ggg45vpqcxr9v-3001.app.github.dev/",
-  { transports: ["websocket"] }
-);
+export const socket = io(SERVER, { transports: ["websocket"] });
