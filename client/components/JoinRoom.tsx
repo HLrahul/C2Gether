@@ -1,11 +1,12 @@
 "use client"
 
 import React, { useState } from "react";
-import * as z from "zod";
-import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 
-import { Snippet } from "@nextui-org/react";
+import * as z from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { TbLogin2 } from "react-icons/Tb"
+
 import {
   Modal,
   ModalContent,
@@ -22,7 +23,7 @@ import {
   FormField,
   FormItem,
   FormMessage,
-} from "@/components/ui/Form";
+} from "@/components/ui/form";
 
 import { joinRoomFormSchema } from "@/lib/validations/joinRoomSchema";
 
@@ -50,8 +51,9 @@ export default function JoinRoom() {
         <Button
           onPress={onOpen}
           color="primary"
-          variant="solid"
+          variant="light"
           className="w-fit"
+          endContent={<TbLogin2 />}
         >
           Join Room
         </Button>
@@ -65,7 +67,7 @@ export default function JoinRoom() {
             {(onClose) => (
               <>
                 <ModalHeader className="flex flex-col gap-1">
-                  Create a Room
+                  Join Room
                 </ModalHeader>
                 <ModalBody>
                   <Form {...form}>

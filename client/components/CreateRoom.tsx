@@ -22,7 +22,7 @@ import {
   FormField,
   FormItem,
   FormMessage,
-} from "@/components/ui/Form";
+} from "@/components/ui/form";
 
 import { socket } from "@/lib/socket";
 import { createRoomFormSchema } from "@/lib/validations/createRoomSchema";
@@ -92,7 +92,7 @@ export default function CreateRoomButton({ roomId }: CreateRoomFormProps) {
                       )}
                     />
 
-                    <Snippet symbol="RoomId: " variant="bordered">
+                    <Snippet symbol="Room ID: " variant="bordered">
                       {roomId}
                     </Snippet>
 
