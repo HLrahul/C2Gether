@@ -83,7 +83,7 @@ export default function JoinRoom() {
                           <FormItem>
                             <FormControl id="joinRoom-username">
                               <Input
-                              autoComplete="off"
+                                autoComplete="off"
                                 autoFocus
                                 label="Username"
                                 placeholder="Enter a Name"
@@ -126,7 +126,8 @@ export default function JoinRoom() {
                           color="primary"
                           variant="solid"
                           type="submit"
-                          isLoading = {isLoading}
+                          isLoading={isLoading}
+                          endContent={<TbLogin2 />}
                         >
                           Join Room
                         </Button>
