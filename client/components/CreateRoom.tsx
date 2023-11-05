@@ -34,7 +34,7 @@ type createRoomForm= z.infer<typeof createRoomFormSchema>;
 
 export default function CreateRoomButton({ roomId }: CreateRoomFormProps) {
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
 
   const form = useForm<createRoomForm>({
     resolver: zodResolver(createRoomFormSchema),

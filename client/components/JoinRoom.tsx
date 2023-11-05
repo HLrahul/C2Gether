@@ -5,8 +5,7 @@ import { useForm } from "react-hook-form";
 
 import * as z from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { TbLogin2 } from "react-icons/Tb"
-
+import { TbLogin2 } from "react-icons/tb"
 import {
   Modal,
   ModalContent,

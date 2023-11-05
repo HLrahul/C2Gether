@@ -11,7 +11,7 @@ import JoinRoom from "@/components/JoinRoom";
 
 export default function NavBar() {
   return (
-    <Navbar shouldHideOnScroll className="sm:w-[80%] m-auto">
+    <Navbar shouldHideOnScroll className="m-auto">
       <NavbarBrand>
         <p className="font-bold text-inherit">CollabStudy</p>
       </NavbarBrand>

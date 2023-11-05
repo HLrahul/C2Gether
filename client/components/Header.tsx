@@ -1,0 +1,37 @@
+import { Button } from "@nextui-org/react";
+import { PanelRightOpen } from "lucide-react";
+
+import { Sheet, SheetContent, SheetTrigger } from "./ui/sheet";
+import { ThemeSwitch } from "./theme-switch";
+import RightPanel from "./RightPanel";
+
+export default function Header() {
+  return (
+    <header className="sticky top-0 z-40 w-full select-none border-b bg-background/80 saturate-200 backdrop-blur-sm">
+      <div className="container flex items-center justify-between py-3">
+        <h2 className="text-lg font-medium">CollabStudy</h2>
+
+        <div className="flex items-center gap-3 md:gap-4">
+          <ThemeSwitch />
+
+          <Sheet>
+            <SheetTrigger asChild>
+              <Button
+                variant="bordered"
+                isIconOnly
+                className="flex h-9 lg:hidden"
+                aria-label="Open right panel"
+              >
+                <PanelRightOpen size={20} />
+              </Button>
+
+              <SheetContent className="w-[17rem]">
+                <RightPanel />
+              </SheetContent>
+            </SheetTrigger>
+          </Sheet>
+        </div>
+      </div>
+    </header>
+  );
+}

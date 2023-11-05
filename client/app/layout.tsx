@@ -1,12 +1,14 @@
 import "@/styles/globals.css";
 
 import clsx from "clsx";
-import Navbar from "@/components/navbar";
 
 import { Metadata } from "next";
 import { Providers } from "./providers";
 import { fontSans } from "@/config/fonts";
 import { siteConfig } from "@/config/site";
+
+import Navbar from "@/components/navbar";
+import { Toaster } from "@/components/ui/toaster";
 
 export const metadata: Metadata = {
 	title: {
@@ -42,7 +44,7 @@ export default function RootLayout({
         <Providers
           themeProps={{
             attribute: "class",
-            defaultTheme: "dark",
+            defaultTheme: "teal=dark",
             themes: ["light", "dark", "teal-light", "teal-dark"],
           }}
         >
@@ -52,6 +54,8 @@ export default function RootLayout({
             <main className="flex-grow">{children}</main>
           </div>
         </Providers>
+
+        <Toaster />
       </body>
     </html>
   );

@@ -1,69 +1,44 @@
-import { Card, CardHeader, CardFooter, Image } from "@nextui-org/react";
-
+import { Card, CardBody, Checkbox } from "@nextui-org/react";
 
 export default function HeroSection () {
     
 
     return (
-      <section className="h-auto min-w-[70%] m-auto mt-[4rem] mb-[10vh] flex flex-col gap-[2rem] sm:flex-col md:flex-col lg:flex-row items-center justify-between">
-        <Card
-          isFooterBlurred
-          className="col-span-12 sm:col-span-4 h-[200px] w-[300px]"
-        >
-          <Image
-            removeWrapper
-            alt="Card background"
-            className="z-0 w-full h-full object-cover"
-            src="/multistream.jpg"
-          />
-          <CardFooter className="absolute bg-black/40 bottom-0 z-10 border-default-600 dark:border-default-100 gap-4">
-            <p className="text-tiny text-white/60 uppercase font-bold">
-              Realtime Stream
-            </p>
-            <h4 className="text-white font-medium text-small">
-              Watch videos together
-            </h4>
-          </CardFooter>
+      <section className="h-auto w-[70%] m-auto mt-[4rem] mb-[10vh] flex flex-col sm:flex-col md:flex-col lg:flex-row items-center justify-between gap-10">
+        <Card>
+          <CardBody className="flex flex-row items-center justify-center gap-4">
+            <Checkbox isReadOnly defaultSelected color="primary"></Checkbox>
+            <div>
+              <p className="text-foreground/60">Realtime MultiCast</p>
+              <p className="text-foreground">
+                Stream Youtube Videos amongst room members in sync.
+              </p>
+            </div>
+          </CardBody>
         </Card>
 
-        <Card
-          isFooterBlurred
-          className="col-span-12 sm:col-span-4 h-[200px] w-[300px]"
-        >
-          <Image
-            removeWrapper
-            alt="Card background"
-            className="z-0 w-full h-full object-cover"
-            src="/chat.jpg"
-          />
-          <CardFooter className="absolute bg-black/40 bottom-0 z-10 border-default-600 dark:border-default-100 gap-4">
-            <p className="text-tiny text-white/60 uppercase font-bold">
-              Realtime Chat
-            </p>
-            <h4 className="text-white font-medium text-small">
-              Chat with other members
-            </h4>
-          </CardFooter>
+        <Card>
+          <CardBody className="flex flex-row items-center justify-center gap-4">
+            <Checkbox isReadOnly defaultSelected color="primary"></Checkbox>
+            <div>
+              <p className="text-foreground/60">Realtime Chat</p>
+              <p className="text-foreground">
+                Chat with the room members in real time.
+              </p>
+            </div>
+          </CardBody>
         </Card>
 
-        <Card
-          isFooterBlurred
-          className="col-span-12 sm:col-span-4 h-[200px] w-[300px]"
-        >
-          <Image
-            removeWrapper
-            alt="Card background"
-            className="z-0 w-full h-full object-cover"
-            src="/multistream.jpg"
-          />
-          <CardFooter className="absolute bg-black/40 bottom-0 z-10 border-default-600 dark:border-default-100 gap-4">
-            <p className="text-tiny text-white/60 uppercase font-bold">
-              Realtime Drawing
-            </p>
-            <h4 className="text-white font-medium text-small">
-              Collaborate in Canvas
-            </h4>
-          </CardFooter>
+        <Card>
+          <CardBody className="flex flex-row items-center justify-center gap-4">
+            <Checkbox isReadOnly defaultSelected color="primary"></Checkbox>
+            <div>
+              <p className="text-foreground/60">Realtime Drawing</p>
+              <p className="text-foreground">
+                Draw with members in real time in collaborative canvas.
+              </p>
+            </div>
+          </CardBody>
         </Card>
       </section>
     );
