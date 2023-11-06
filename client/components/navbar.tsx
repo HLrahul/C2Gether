@@ -15,8 +15,6 @@ export default function NavBar() {
       <NavbarBrand>
         <p className="font-bold text-inherit">CollabStudy</p>
       </NavbarBrand>
-      <NavbarContent className="hidden sm:flex gap-4" justify="center">
-      </NavbarContent>
       <NavbarContent justify="end">
         <ThemeSwitch />
 

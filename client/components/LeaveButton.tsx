@@ -1,10 +1,13 @@
+"use client";
+
 import { useState } from "react";
-import router from "next/router";
+import { useRouter } from "next/navigation";
 
 import { Button } from "@nextui-org/react";
 import { socket } from "@/lib/socket";
  
  export default function LeaveButton () {
+    const router = useRouter();
 
     const [isLoading, setIsLoading] = useState(false);
 

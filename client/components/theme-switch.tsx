@@ -4,7 +4,7 @@ import clsx from "clsx";
 
 import { FC } from "react";
 import { useTheme } from "next-themes";
-import {useIsSSR} from "@react-aria/ssr";
+import { useIsSSR } from "@react-aria/ssr";
 import { SwitchProps, useSwitch } from "@nextui-org/switch";
 import { VisuallyHidden } from "@react-aria/visually-hidden";
 import { SunFilledIcon, MoonFilledIcon } from "@/components/icons";
@@ -70,7 +70,7 @@ export const ThemeSwitch: FC<ThemeSwitchProps> = ({
 					),
 				})}
 			>
-			 {!isSelected || isSSR ? <SunFilledIcon size={22} /> : <MoonFilledIcon size={22} />}
+			 {!isSelected || isSSR ? <SunFilledIcon id="sun-icon" size={22} /> : <MoonFilledIcon id="moon-icon" size={22} />}
 			</div>
 		</Component>
 	);

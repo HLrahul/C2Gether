@@ -7,7 +7,6 @@ import { Providers } from "./providers";
 import { fontSans } from "@/config/fonts";
 import { siteConfig } from "@/config/site";
 
-import Navbar from "@/components/navbar";
 import { Toaster } from "@/components/ui/toaster";
 
 export const metadata: Metadata = {
@@ -49,8 +48,6 @@ export default function RootLayout({
           }}
         >
           <div className="relative flex flex-col h-screen">
-            <Navbar />
-
             <main className="flex-grow">{children}</main>
           </div>
         </Providers>

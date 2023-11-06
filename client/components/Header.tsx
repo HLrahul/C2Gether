@@ -1,4 +1,10 @@
-import { Button } from "@nextui-org/react";
+import {
+  Button,
+  Navbar,
+  NavbarBrand,
+  NavbarContent,
+  NavbarItem,
+} from "@nextui-org/react";
 import { PanelRightOpen } from "lucide-react";
 
 import { Sheet, SheetContent, SheetTrigger } from "./ui/sheet";
@@ -7,31 +13,33 @@ import RightPanel from "./RightPanel";
 
 export default function Header() {
   return (
-    <header className="sticky top-0 z-40 w-full select-none border-b bg-background/80 saturate-200 backdrop-blur-sm">
-      <div className="container flex items-center justify-between py-3">
-        <h2 className="text-lg font-medium">CollabStudy</h2>
+    <Navbar>
+      <NavbarBrand>
+        <p className="font-bold text-inherit">CollabStudy</p>
+      </NavbarBrand>
 
-        <div className="flex items-center gap-3 md:gap-4">
-          <ThemeSwitch />
+      <NavbarContent justify="end">
+        <ThemeSwitch />
 
+        <NavbarItem>
           <Sheet>
             <SheetTrigger asChild>
               <Button
-                variant="bordered"
+                variant="ghost"
                 isIconOnly
-                className="flex h-9 lg:hidden"
+                className="flex h-9"
                 aria-label="Open right panel"
               >
                 <PanelRightOpen size={20} />
               </Button>
-
-              <SheetContent className="w-[17rem]">
-                <RightPanel />
-              </SheetContent>
             </SheetTrigger>
+
+            <SheetContent className="w-[17rem]">
+              <RightPanel />
+            </SheetContent>
           </Sheet>
-        </div>
-      </div>
-    </header>
+        </NavbarItem>
+      </NavbarContent>
+    </Navbar>
   );
 }

@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import * as z from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
@@ -25,32 +25,77 @@ import {
 } from "@/components/ui/form";
 
 import { socket } from "@/lib/socket";
+import { RoomJoinedData } from "@/types";
+import { useToast } from "./ui/useToast";
+import { useRouter } from "next/navigation";
+import { useUserStore } from "@/store/userStore";
+import { useMembersStore } from "@/store/membersStore";
 import { createRoomFormSchema } from "@/lib/validations/createRoomSchema";
 
 interface CreateRoomFormProps {
-    roomId: string;
+  roomId: string;
 }
-type createRoomForm= z.infer<typeof createRoomFormSchema>;
+type createRoomForm = z.infer<typeof createRoomFormSchema>;
 
 export default function CreateRoomButton({ roomId }: CreateRoomFormProps) {
+  const { toast } = useToast();
+  const router = useRouter();
+
+  const setUser = useUserStore((state) => state.setUser);
+  const setMembers = useMembersStore((state) => state.setMembers);
+
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
-  const [isLoading, setIsLoading] = useState(true);
+
+  const [isLoading, setIsLoading] = useState(false);
 
   const form = useForm<createRoomForm>({
     resolver: zodResolver(createRoomFormSchema),
     defaultValues: {
       username: "",
+      roomId: roomId,
     },
-  })
+  });
 
-  function onSubmit (data: createRoomForm) {
+  function onSubmit({ username, roomId }: createRoomForm) {
     setIsLoading(true);
+    socket.emit("create-room", { username, roomId });
   }
 
+  useEffect(() => {
+    socket.on("room-joined", ({ user, roomId, members }: RoomJoinedData) => {
+      setUser(user);
+      setMembers(members);
+      router.replace(`/${roomId}`);
+    });
+
+    function handleErrorMessage({ message }: { message: string }) {
+      toast({
+        title: "Failed to join room!",
+        description: message,
+      });
+      setIsLoading(false);
+    }
+
+    socket.on("room-not-found", handleErrorMessage);
+
+    socket.on("invalid-data", handleErrorMessage);
+
+    return () => {
+      socket.off("room-joined");
+      socket.off("room-not-found");
+      socket.off("invalid-data", handleErrorMessage);
+    };
+  }, [toast, router, setUser, setMembers]);
 
   return (
     <>
-      <Button onPress={onOpen} color="primary" variant="solid" className="w-fit">
+      <Button
+        id="open-modal-button"
+        onPress={onOpen}
+        color="primary"
+        variant="solid"
+        className="w-fit"
+      >
         Create Room
       </Button>
       <Modal
@@ -79,6 +124,7 @@ export default function CreateRoomButton({ roomId }: CreateRoomFormProps) {
                         <FormItem id="username">
                           <FormControl>
                             <Input
+                              id="username-input"
                               autoComplete="off"
                               autoFocus
                               label="Username"
@@ -96,14 +142,15 @@ export default function CreateRoomButton({ roomId }: CreateRoomFormProps) {
                       {roomId}
                     </Snippet>
 
-                    <div className="flex justify-between items-center">
-                      <Button color="danger" variant="ghost" onPress={onClose}>
-                        Close
-                      </Button>
-                      <Button color="primary" variant="solid" type="submit" isLoading={isLoading}>
-                        Create Room
-                      </Button>
-                    </div>
+                    <Button
+                      type="submit"
+                      id="submit-create-room-button"
+                      color="primary"
+                      variant="solid"
+                      isLoading={isLoading}
+                    >
+                      Create Room
+                    </Button>
                   </form>
                 </Form>
               </ModalBody>
