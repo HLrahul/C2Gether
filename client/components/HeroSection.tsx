@@ -43,7 +43,6 @@ export default function HeroSection () {
           <CardBody className="flex flex-row items-center justify-center gap-4">
             <Checkbox
               isReadOnly
-              defaultSelected
               id="drawing-check"
               color="primary"
             ></Checkbox>

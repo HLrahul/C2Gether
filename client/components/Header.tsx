@@ -15,7 +15,7 @@ export default function Header() {
   return (
     <Navbar>
       <NavbarBrand>
-        <p className="font-bold text-inherit">CollabStudy</p>
+        <p className="font-bold text-primary">CollabStudy</p>
       </NavbarBrand>
 
       <NavbarContent justify="end">

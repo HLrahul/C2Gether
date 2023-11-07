@@ -102,61 +102,57 @@ export default function CreateRoomButton({ roomId }: CreateRoomFormProps) {
         backdrop="blur"
         isOpen={isOpen}
         onOpenChange={onOpenChange}
-        placement="top-center"
+        placement="center"
       >
         <ModalContent>
-          {(onClose) => (
-            <>
-              <ModalHeader className="flex flex-col gap-1">
-                Create a Room
-              </ModalHeader>
-              <ModalBody>
-                <Form {...form}>
-                  <form
-                    id="create-room-form"
-                    onSubmit={form.handleSubmit(onSubmit)}
-                    className="flex flex-col gap-5"
-                  >
-                    <FormField
-                      name="username"
-                      control={form.control}
-                      render={({ field }) => (
-                        <FormItem id="username">
-                          <FormControl>
-                            <Input
-                              id="username-input"
-                              autoComplete="off"
-                              autoFocus
-                              label="Username"
-                              placeholder="Enter a Name"
-                              variant="bordered"
-                              {...field}
-                            />
-                          </FormControl>
-                          <FormMessage className="text-xs text-red-500" />
-                        </FormItem>
-                      )}
-                    />
+          <ModalHeader className="flex flex-col gap-1">
+            Create a Room
+          </ModalHeader>
+          <ModalBody>
+            <Form {...form}>
+              <form
+                id="create-room-form"
+                onSubmit={form.handleSubmit(onSubmit)}
+                className="flex flex-col gap-5"
+              >
+                <FormField
+                  name="username"
+                  control={form.control}
+                  render={({ field }) => (
+                    <FormItem id="username">
+                      <FormControl>
+                        <Input
+                          id="username-input"
+                          autoComplete="off"
+                          autoFocus
+                          label="Username"
+                          placeholder="Enter a Name"
+                          variant="bordered"
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormMessage className="text-xs text-red-500" />
+                    </FormItem>
+                  )}
+                />
 
-                    <Snippet symbol="Room ID: " variant="bordered">
-                      {roomId}
-                    </Snippet>
+                <Snippet symbol="Room ID: " variant="bordered">
+                  {roomId}
+                </Snippet>
 
-                    <Button
-                      type="submit"
-                      id="submit-create-room-button"
-                      color="primary"
-                      variant="solid"
-                      isLoading={isLoading}
-                    >
-                      Create Room
-                    </Button>
-                  </form>
-                </Form>
-              </ModalBody>
-              <ModalFooter></ModalFooter>
-            </>
-          )}
+                <Button
+                  type="submit"
+                  id="submit-create-room-button"
+                  color="primary"
+                  variant="solid"
+                  isLoading={isLoading}
+                >
+                  Create Room
+                </Button>
+              </form>
+            </Form>
+          </ModalBody>
+          <ModalFooter></ModalFooter>
         </ModalContent>
       </Modal>
     </>

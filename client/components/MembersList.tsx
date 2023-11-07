@@ -33,7 +33,7 @@ export default function MembersList() {
 
   return (
     <div className='my-6 select-none'>
-      <h2 className='pb-2.5 font-medium'>Members</h2>
+      <h2 className='pb-2.5 font-medium text-primary'>Members</h2>
 
       <ScrollArea className='h-48'>
         <ul className='flex flex-col gap-1 rounded-md px-1'>

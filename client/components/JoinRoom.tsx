@@ -30,8 +30,6 @@ import { socket } from "@/lib/socket";
 type joinRoomForm = z.infer<typeof joinRoomFormSchema>;
 
 export default function JoinRoom() {
-  const { isOpen, onOpen, onOpenChange } = useDisclosure();
-
   const [isLoading, setIsLoading] = useState(false);
 
   const form = useForm<joinRoomForm>({
@@ -51,12 +49,14 @@ export default function JoinRoom() {
   useEffect(() => {
     socket.on("room-not-found", () => {
       setIsLoading(false);
-    })
+    });
 
     socket.on("invalid-data", () => {
       setIsLoading(false);
-    })
-  })
+    });
+  });
+
+  const { isOpen, onOpen, onOpenChange } = useDisclosure();
 
   return (
     <>
@@ -64,7 +64,7 @@ export default function JoinRoom() {
         id="joinRoom-open-modal-button"
         onPress={onOpen}
         color="primary"
-        variant="light"
+        variant="ghost"
         className="w-fit"
         endContent={<TbLogin2 />}
       >
@@ -74,77 +74,71 @@ export default function JoinRoom() {
         backdrop="blur"
         isOpen={isOpen}
         onOpenChange={onOpenChange}
-        placement="top-center"
+        placement="center"
       >
         <ModalContent>
-          {(onClose) => (
-            <>
-              <ModalHeader className="flex flex-col gap-1">
-                Join Room
-              </ModalHeader>
-              <ModalBody>
-                <Form {...form}>
-                  <form
-                    id="join-room-form"
-                    onSubmit={form.handleSubmit(onSubmit)}
-                    className="flex flex-col gap-5"
-                  >
-                    <FormField
-                      name="username"
-                      control={form.control}
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormControl id="joinRoom-username">
-                            <Input
-                              id="joinRoom-username-input"
-                              autoComplete="off"
-                              autoFocus
-                              label="Username"
-                              placeholder="Enter a Name"
-                              variant="bordered"
-                              {...field}
-                            />
-                          </FormControl>
-                          <FormMessage className="text-xs text-red-500" />
-                        </FormItem>
-                      )}
-                    />
+          <ModalHeader className="flex flex-col gap-1">Join Room</ModalHeader>
+          <ModalBody>
+            <Form {...form}>
+              <form
+                id="join-room-form"
+                onSubmit={form.handleSubmit(onSubmit)}
+                className="flex flex-col gap-5"
+              >
+                <FormField
+                  name="username"
+                  control={form.control}
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormControl id="joinRoom-username">
+                        <Input
+                          id="joinRoom-username-input"
+                          autoComplete="off"
+                          autoFocus
+                          label="Username"
+                          placeholder="Enter a Name"
+                          variant="bordered"
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormMessage className="text-xs text-red-500" />
+                    </FormItem>
+                  )}
+                />
 
-                    <FormField
-                      name="roomId"
-                      control={form.control}
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormControl id="joinRoom-roomId">
-                            <Input
-                              id="joinRoom-roomId-input"
-                              label="Room ID"
-                              placeholder="Enter a Room ID"
-                              variant="bordered"
-                              {...field}
-                            />
-                          </FormControl>
-                          <FormMessage className="text-xs text-red-500" />
-                        </FormItem>
-                      )}
-                    />
+                <FormField
+                  name="roomId"
+                  control={form.control}
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormControl id="joinRoom-roomId">
+                        <Input
+                          id="joinRoom-roomId-input"
+                          label="Room ID"
+                          placeholder="Enter a Room ID"
+                          variant="bordered"
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormMessage className="text-xs text-red-500" />
+                    </FormItem>
+                  )}
+                />
 
-                    <Button
-                      id="submit-join-room-button"
-                      color="primary"
-                      variant="solid"
-                      type="submit"
-                      isLoading={isLoading}
-                      endContent={<TbLogin2 />}
-                    >
-                      Join Room
-                    </Button>
-                  </form>
-                </Form>
-              </ModalBody>
-              <ModalFooter></ModalFooter>
-            </>
-          )}
+                <Button
+                  id="submit-join-room-button"
+                  color="primary"
+                  variant="solid"
+                  type="submit"
+                  isLoading={isLoading}
+                  endContent={<TbLogin2 />}
+                >
+                  Join Room
+                </Button>
+              </form>
+            </Form>
+          </ModalBody>
+          <ModalFooter></ModalFooter>
         </ModalContent>
       </Modal>
     </>
