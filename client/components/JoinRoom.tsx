@@ -133,7 +133,7 @@ export default function JoinRoom() {
                   isLoading={isLoading}
                   endContent={<TbLogin2 />}
                 >
-                  Join Room
+                  Join the Party
                 </Button>
               </form>
             </Form>

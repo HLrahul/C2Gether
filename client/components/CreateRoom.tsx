@@ -147,7 +147,7 @@ export default function CreateRoomButton({ roomId }: CreateRoomFormProps) {
                   variant="solid"
                   isLoading={isLoading}
                 >
-                  Create Room
+                  Create your Den
                 </Button>
               </form>
             </Form>
