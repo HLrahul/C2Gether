@@ -1,5 +1,7 @@
 "use client";
 
+import { useState } from "react";
+
 import {
   Button,
   Divider,
@@ -13,10 +15,18 @@ import {
   useDisclosure,
 } from "@nextui-org/react";
 import { SearchIcon } from "lucide-react";
+
 import LoadedSkeletonCard from "./LoadedSkeletonCard";
 
 export default function VideoSearchBar() {
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
+
+  const [ searchKeyword, setSearchKeyword ] = useState<string>("");
+  const [ fetchedVideos, setFetchedVideos ] = useState();
+  
+  function onSearch () {
+    
+  }
 
   return (
     <>
@@ -35,6 +45,7 @@ export default function VideoSearchBar() {
         onOpenChange={onOpenChange}
         placement="center"
         hideCloseButton
+        scrollBehavior="inside"
       >
         <ModalContent>
           <ModalHeader className="flex flex-col gap-[1rem]">
@@ -47,8 +58,10 @@ export default function VideoSearchBar() {
                   Esc
                 </Kbd>
               }
+              value={searchKeyword}
+              onChange={(e) => setSearchKeyword(e.target.value)}
             />
-            <Button>Get Videos from Youtube</Button>
+            <Button onClick={(e) => { e.preventDefault(); onSearch(); }} >Search</Button>
           </ModalHeader>
           <Divider className="mb-4" />
 

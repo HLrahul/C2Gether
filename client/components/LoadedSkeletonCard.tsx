@@ -1,24 +1,36 @@
-import { Card, Skeleton } from "@nextui-org/react";
+"use client";
+
+import { useEffect, useState } from "react";
+import { Skeleton } from "@nextui-org/react";
 
 export default function LoadedSkeletonCard () {
 
-    return (
-      <Card className="w-full space-y-5 p-4" radius="lg">
-        <Skeleton isLoaded className="rounded-lg">
-          <div className="h-28 w-[50%] rounded-lg bg-primary"></div>
-        </Skeleton>
+    const [isLoaded, setIsLoaded] = useState(false);
+    useEffect(() => {
+        setTimeout(() => {
+            setIsLoaded(true);
+        }, 1000);
+    }, []);
 
-        <div className="space-y-3">
-          <Skeleton isLoaded className="w-3/5 rounded-lg">
-            <div className="h-3 w-full rounded-lg bg-primary"></div>
-          </Skeleton>
-          <Skeleton isLoaded className="w-4/5 rounded-lg">
-            <div className="h-3 w-full rounded-lg bg-primary-300"></div>
-          </Skeleton>
-          <Skeleton isLoaded className="w-2/5 rounded-lg">
-            <div className="h-3 w-full rounded-lg bg-primary-200"></div>
+    return (
+      <div className="w-full p-4 flex gap-4 bg-foreground/10 rounded-md">
+        <div className="w-full">
+          <Skeleton isLoaded={isLoaded} className="rounded-lg">
+            <div className="h-28 w-full rounded-lg bg-primary"></div>
           </Skeleton>
         </div>
-      </Card>
+
+        <div className="space-y-3 w-full py-1">
+          <Skeleton isLoaded={isLoaded} className="w-5/5 rounded-lg">
+            <div className="h-3 w-full rounded-lg bg-primary-300"></div>
+          </Skeleton>
+          <Skeleton isLoaded={isLoaded} className="w-3/5 rounded-lg">
+            <div className="h-3 w-full rounded-lg bg-primary-200"></div>
+          </Skeleton>
+          <Skeleton isLoaded={isLoaded} className="w-1/5 rounded-full">
+            <div className="h-8 w-full rounded-lg bg-primary"></div>
+          </Skeleton>
+        </div>
+      </div>
     );
 }
