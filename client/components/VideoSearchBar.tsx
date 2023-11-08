@@ -1,8 +1,6 @@
 "use client";
 
-import { useState } from "react";
-import { useInfiniteQuery } from "@tanstack/react-query";
-import axios from "axios";
+import { useEffect, useState } from "react";
 
 import {
   Button,
@@ -18,16 +16,47 @@ import {
 } from "@nextui-org/react";
 import { SearchIcon } from "lucide-react";
 
-import LoadedSkeletonCard from "./LoadedSkeletonCard";
+import { Item, Video } from "@/types";
 import { useFetchVideos } from "@/hooks/useFetchVideos";
+
+import LoadedSkeletonCard from "./LoadedSkeletonCard";
+import LoadingSkeletonCard from "./LoadingSkeletonCard";
 
 export default function VideoSearchBar() {
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
 
-  const [ searchKeyword, setSearchKeyword ] = useState<string>("");
-  const [ fetchedVideos, setFetchedVideos ] = useState([]);
-  
-  const { data, isLoading, error, isFetching, fetchNextPage, hasNextPage } = useFetchVideos(searchKeyword);
+  const [searchKeyword, setSearchKeyword] = useState<string>("");
+  const [fetchedVideos, setFetchedVideos] = useState<Video[] | undefined>();
+  const [shouldFetch, setShouldFetch] = useState(false);
+
+  const { data, isLoading, error, isFetching, fetchNextPage, hasNextPage } =
+    useFetchVideos(searchKeyword, shouldFetch);
+
+  useEffect(() => {
+    if (data) {
+      setFetchedVideos(
+        data.pages.flatMap((page) =>
+          page.items.map((item: Item) => {
+            return {
+              kind: item.kind,
+              etag: item.etag,
+              id: item.id,
+              snippet: {
+                publishedAt: item.snippet.publishedAt,
+                channelId: item.snippet.channelId,
+                title: item.snippet.title,
+                description: item.snippet.description,
+                thumbnails: item.snippet.thumbnails,
+                channelTitle: item.snippet.channelTitle,
+                liveBroadcastContent: item.snippet.liveBroadcastContent,
+                publishTime: item.snippet.publishTime,
+              },
+            };
+          })
+        )
+      );
+    }
+  }, [data]);
 
   return (
     <>
@@ -45,7 +74,7 @@ export default function VideoSearchBar() {
         backdrop="blur"
         isOpen={isOpen}
         onOpenChange={onOpenChange}
-        placement="center"
+        placement="auto"
         hideCloseButton
         scrollBehavior="inside"
       >
@@ -63,12 +92,21 @@ export default function VideoSearchBar() {
               value={searchKeyword}
               onChange={(e) => setSearchKeyword(e.target.value)}
             />
-            <Button onClick={(e) => { e.preventDefault(); }} >Search</Button>
+            <Button
+              onClick={(e) => {
+                e.preventDefault();
+                setShouldFetch(true);
+              }}
+            >
+              Search
+            </Button>
           </ModalHeader>
           <Divider className="mb-4" />
 
-          <ModalBody>
-            <LoadedSkeletonCard />
+          <ModalBody className="min-h-[30vh]">
+            {!shouldFetch && <LoadedSkeletonCard />}
+
+            {shouldFetch && isLoading && <LoadingSkeletonCard />}
           </ModalBody>
 
           <Divider className="mt-4" />

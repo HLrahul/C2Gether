@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Skeleton } from "@nextui-org/react";
+import { Card, Skeleton } from "@nextui-org/react";
 
 export default function LoadedSkeletonCard () {
 
@@ -13,7 +13,7 @@ export default function LoadedSkeletonCard () {
     }, []);
 
     return (
-      <div className="w-full p-4 flex gap-4 bg-foreground/10 rounded-md">
+      <Card className="w-full p-4 flex gap-4" radius="lg">
         <div className="w-full">
           <Skeleton isLoaded={isLoaded} className="rounded-lg">
             <div className="h-28 w-full rounded-lg bg-primary"></div>
@@ -28,9 +28,9 @@ export default function LoadedSkeletonCard () {
             <div className="h-3 w-full rounded-lg bg-primary-200"></div>
           </Skeleton>
           <Skeleton isLoaded={isLoaded} className="w-1/5 rounded-full">
-            <div className="h-8 w-full rounded-lg bg-primary"></div>
+            <div className="h-3 w-full rounded-lg bg-primary"></div>
           </Skeleton>
         </div>
-      </div>
+      </Card>
     );
 }

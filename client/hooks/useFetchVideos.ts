@@ -1,7 +1,7 @@
 import { useInfiniteQuery } from "@tanstack/react-query";
 import axios from "axios";
 
-export const useFetchVideos = (searchKeyword: string) => {
+export const useFetchVideos = (searchKeyword: string, shouldFetch: boolean) => {
 
   const fetchVideosandPlaylists = async (pageToken: string) => {
     const { data } = await axios.get(
@@ -23,6 +23,7 @@ export const useFetchVideos = (searchKeyword: string) => {
     queryFn: ({ pageParam = "" }) => fetchVideosandPlaylists(pageParam),
     getNextPageParam: (lastPage) => lastPage.nextPageToken,
     initialPageParam: "",
+    enabled: shouldFetch,
   });
 
   return {
