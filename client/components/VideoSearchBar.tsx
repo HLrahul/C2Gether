@@ -1,6 +1,8 @@
 "use client";
 
 import { useState } from "react";
+import { useInfiniteQuery } from "@tanstack/react-query";
+import axios from "axios";
 
 import {
   Button,
@@ -17,16 +19,15 @@ import {
 import { SearchIcon } from "lucide-react";
 
 import LoadedSkeletonCard from "./LoadedSkeletonCard";
+import { useFetchVideos } from "@/hooks/useFetchVideos";
 
 export default function VideoSearchBar() {
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
 
   const [ searchKeyword, setSearchKeyword ] = useState<string>("");
-  const [ fetchedVideos, setFetchedVideos ] = useState();
+  const [ fetchedVideos, setFetchedVideos ] = useState([]);
   
-  function onSearch () {
-    
-  }
+  const { data, isLoading, error, isFetching, fetchNextPage, hasNextPage } = useFetchVideos(searchKeyword);
 
   return (
     <>
@@ -40,6 +41,7 @@ export default function VideoSearchBar() {
       </Button>
 
       <Modal
+        size="xs"
         backdrop="blur"
         isOpen={isOpen}
         onOpenChange={onOpenChange}
@@ -61,7 +63,7 @@ export default function VideoSearchBar() {
               value={searchKeyword}
               onChange={(e) => setSearchKeyword(e.target.value)}
             />
-            <Button onClick={(e) => { e.preventDefault(); onSearch(); }} >Search</Button>
+            <Button onClick={(e) => { e.preventDefault(); }} >Search</Button>
           </ModalHeader>
           <Divider className="mb-4" />
 
