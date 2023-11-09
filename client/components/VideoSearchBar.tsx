@@ -16,47 +16,30 @@ import {
 } from "@nextui-org/react";
 import { SearchIcon } from "lucide-react";
 
-import { Item, Video } from "@/types";
+import { Video } from "@/types";
 import { useFetchVideos } from "@/hooks/useFetchVideos";
+import { useVideoStore } from "@/store/videosStore";
 
-import LoadedSkeletonCard from "./LoadedSkeletonCard";
-import LoadingSkeletonCard from "./LoadingSkeletonCard";
+import { VideoCard } from "./VideoCard";
 
 export default function VideoSearchBar() {
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
 
   const [searchKeyword, setSearchKeyword] = useState<string>("");
-  const [fetchedVideos, setFetchedVideos] = useState<Video[] | undefined>();
   const [shouldFetch, setShouldFetch] = useState(false);
+  
+  const { fetchedVideos, setFetchedVideos } = useVideoStore((state) => state);
+  const reset = () => setFetchedVideos([]);
 
-  const { data, isLoading, error, isFetching, fetchNextPage, hasNextPage } =
-    useFetchVideos(searchKeyword, shouldFetch);
+  const {
+    data,
+    isLoading,
+    error,
+    isFetching,
+    fetchNextPage,
+    hasNextPage,
+  } = useFetchVideos(searchKeyword, shouldFetch);
 
-  useEffect(() => {
-    if (data) {
-      setFetchedVideos(
-        data.pages.flatMap((page) =>
-          page.items.map((item: Item) => {
-            return {
-              kind: item.kind,
-              etag: item.etag,
-              id: item.id,
-              snippet: {
-                publishedAt: item.snippet.publishedAt,
-                channelId: item.snippet.channelId,
-                title: item.snippet.title,
-                description: item.snippet.description,
-                thumbnails: item.snippet.thumbnails,
-                channelTitle: item.snippet.channelTitle,
-                liveBroadcastContent: item.snippet.liveBroadcastContent,
-                publishTime: item.snippet.publishTime,
-              },
-            };
-          })
-        )
-      );
-    }
-  }, [data]);
 
   return (
     <>
@@ -70,13 +53,13 @@ export default function VideoSearchBar() {
       </Button>
 
       <Modal
-        size="xs"
+        size="md"
         backdrop="blur"
         isOpen={isOpen}
         onOpenChange={onOpenChange}
-        placement="auto"
+        placement="center"
         hideCloseButton
-        scrollBehavior="inside"
+        scrollBehavior="outside"
       >
         <ModalContent>
           <ModalHeader className="flex flex-col gap-[1rem]">
@@ -95,6 +78,7 @@ export default function VideoSearchBar() {
             <Button
               onClick={(e) => {
                 e.preventDefault();
+                reset();
                 setShouldFetch(true);
               }}
             >
@@ -103,17 +87,35 @@ export default function VideoSearchBar() {
           </ModalHeader>
           <Divider className="mb-4" />
 
-          <ModalBody className="min-h-[30vh]">
-            {!shouldFetch && <LoadedSkeletonCard />}
+          <ModalBody className="flex flex-col gap-5">
+            {fetchedVideos &&
+              fetchedVideos.length > 0 &&
+              fetchedVideos.map((video) => (
+                <VideoCard key={video.id.videoId} video={video} />
+              ))}
 
-            {shouldFetch && isLoading && <LoadingSkeletonCard />}
+            {fetchedVideos && hasNextPage && (
+              <Button
+                className="w-full"
+                onClick={(e) => {
+                  e.preventDefault();
+                  fetchNextPage();
+                }}
+              >
+                load more
+              </Button>
+            )}
+
+            {error && !fetchedVideos && (
+              <p className="text-red-500 w-full text-center">
+                Unable to fetch Videos. Try again!
+              </p>
+            )}
           </ModalBody>
 
           <Divider className="mt-4" />
-          <ModalFooter className="justify-center">
-            <p className="text-sm text-foreground-400">
-              Every Vidoes are fetched from Youtube.
-            </p>
+          <ModalFooter className="flex justify-center items-center">
+            <p className="text-[0.8rem] text-foreground/70" >Videos are fetched from Youtube.</p>
           </ModalFooter>
         </ModalContent>
       </Modal>

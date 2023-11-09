@@ -16,37 +16,49 @@ export interface RoomJoinedData {
   members: User[];
 }
 
-export interface Item {
-  kind: any;
-  etag: any;
-  id: any;
-  snippet: {
-    publishedAt: any;
-    channelId: any;
-    title: any;
-    description: any;
-    thumbnails: any;
-    channelTitle: any;
-    liveBroadcastContent: any;
-    publishTime: any;
-  };
-}
-
 export interface Snippet {
   publishedAt: string;
   channelId: string;
   title: string;
   description: string;
-  thumbnails: any; // replace 'any' with the actual type
+  thumbnails: {
+    default: {
+      url: string;
+      width: number;
+      height: number;
+    };
+    medium: {
+      url: string;
+      width: number;
+      height: number;
+    };
+    high: {
+      url: string;
+      width: number;
+      height: number;
+    };
+  };
   channelTitle: string;
   liveBroadcastContent: string;
   publishTime: string;
 }
 
+export interface Id {
+  kind: string;
+  videoId: string;
+}
+
+export interface Item {
+  kind: any;
+  etag: any;
+  id: any;
+  snippet: Snippet;
+}
+
 export interface Video {
   kind: string;
   etag: string;
-  id: string;
+  id: Id;
   snippet: Snippet;
 }
 
