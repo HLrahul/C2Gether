@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useEffect, useRef } from "react";
 
 import { useInfiniteQuery } from "@tanstack/react-query";
 import axios from "axios";
@@ -9,19 +9,13 @@ import { useVideoStore } from "@/store/videosStore";
 
 import { Item } from "@/types";
 
-export const useFetchVideos = (
-  searchKeyword: string,
-  shouldFetch: boolean
-) => {
-  const { setFetchedVideos } = useVideoStore();
-
-  useEffect(() => {
-    if (!shouldFetch) return;
-  }, [shouldFetch]);
+export const useFetchVideos = (searchKeyword: string) => {
+  const { fetchedVideos, setFetchedVideos } = useVideoStore();
+  const fetchedVideosRef = useRef(fetchedVideos);
 
   const fetchVideosandPlaylists = async (pageToken: string) => {
     const { data } = await axios.get(
-      `https://www.googleapis.com/youtube/v3/search?part=snippet&maxResults=15&pageToken=${pageToken}&q=${searchKeyword}&key=${process.env.NEXT_PUBLIC_YOUTUBE_API_KEY}`
+      `https://www.googleapis.com/youtube/v3/search?part=snippet&maxResults=12&pageToken=${pageToken}&q=${searchKeyword}&key=${process.env.NEXT_PUBLIC_YOUTUBE_API_KEY}`
     );
     return data;
   };
@@ -39,7 +33,8 @@ export const useFetchVideos = (
     queryFn: ({ pageParam = "" }) => fetchVideosandPlaylists(pageParam),
     getNextPageParam: (lastPage) => lastPage.nextPageToken,
     initialPageParam: "",
-    enabled: shouldFetch,
+    enabled: false,
+    retry: 0,
   });
 
   useEffect(() => {
@@ -64,7 +59,12 @@ export const useFetchVideos = (
         })
       );
 
-      setFetchedVideos(videos);
+      // Append new videos to the existing ones
+      fetchedVideosRef.current = [
+        ...(fetchedVideosRef.current || []),
+        ...videos,
+      ];
+      setFetchedVideos(fetchedVideosRef.current);
     }
   }, [data, setFetchedVideos]);
 

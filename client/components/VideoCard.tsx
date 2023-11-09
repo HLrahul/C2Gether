@@ -15,8 +15,8 @@ export const VideoCard = ({ video }: VideoCardProps) => {
   return (
     <Card isPressable isBlurred className="border-none w-full">
       <CardBody>
-        <div className="grid grid-cols-12 md:grid-cols-12 gap-6 md:gap-4 items-center justify-center">
-          <div className="relative col-span-5 md:col-span-12">
+        <div className="grid grid-cols-12 gap-6 md:gap-4 items-center justify-center">
+          <div className="relative col-span-12">
             <Image
               alt={video.snippet.title || "Video"}
               className="object-cover"
@@ -27,9 +27,8 @@ export const VideoCard = ({ video }: VideoCardProps) => {
             />
           </div>
 
-          <div className="flex flex-col col-span-6 md:col-span-8">
+          <div className="flex flex-col col-span-12">
             <div className="flex flex-col justify-between items-start gap-4">
-              
                 <h3 style={{
                   display: "-webkit-box",
                   WebkitLineClamp: 2,
