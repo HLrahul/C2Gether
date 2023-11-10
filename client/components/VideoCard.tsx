@@ -1,7 +1,6 @@
-import { Avatar, Card, CardBody, Chip, Image } from "@nextui-org/react";
+import { Avatar, Card, CardBody, Image } from "@nextui-org/react";
 
 import { Video } from "@/types";
-import { Eye, ThumbsUp } from "lucide-react";
 
 export const VideoCard = ({ video }: { video: Video }) => {
   return (
@@ -32,13 +31,8 @@ export const VideoCard = ({ video }: { video: Video }) => {
                 {video.snippet.title}
               </h3>
 
-              <div className="flex gap-2">
-                <Chip startContent={<Eye />}>{video.statistics.viewCount}</Chip>
-                <Chip startContent={<ThumbsUp />}>{video.statistics.likeCount}</Chip>
-              </div>
-
-              <div className="flex gap-2">
-                <Avatar src={video.channelLogo} />
+              <div className="flex gap-2 items-center">
+                <Avatar size="sm" src={video.channelLogo} />
                 <p className="text-small text-foreground/80">
                   {video.snippet.channelTitle}
                 </p>

@@ -13,7 +13,7 @@ import { socket } from "@/lib/socket";
 
     return (
       <Button
-        variant="ghost"
+        variant="solid"
         color="danger"
         className="absolute bottom-0 w-full"
         isLoading={isLoading}
