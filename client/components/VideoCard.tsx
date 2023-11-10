@@ -1,17 +1,9 @@
-import { Card, CardBody, Image } from "@nextui-org/react";
+import { Avatar, Card, CardBody, Chip, Image } from "@nextui-org/react";
 
-import { Id, Snippet } from "@/types";
+import { Video } from "@/types";
+import { Eye, ThumbsUp } from "lucide-react";
 
-interface VideoCardProps {
-  video: {
-    kind: string;
-    etag: string;
-    id: Id;
-    snippet: Snippet;
-  };
-}
-
-export const VideoCard = ({ video }: VideoCardProps) => {
+export const VideoCard = ({ video }: { video: Video }) => {
   return (
     <Card isPressable isBlurred className="border-none w-full">
       <CardBody>
@@ -39,9 +31,18 @@ export const VideoCard = ({ video }: VideoCardProps) => {
               >
                 {video.snippet.title}
               </h3>
-              <p className="text-small text-foreground/80">
-                {video.snippet.channelTitle}
-              </p>
+
+              <div className="flex gap-2">
+                <Chip startContent={<Eye />}>{video.statistics.viewCount}</Chip>
+                <Chip startContent={<ThumbsUp />}>{video.statistics.likeCount}</Chip>
+              </div>
+
+              <div className="flex gap-2">
+                <Avatar src={video.channelLogo} />
+                <p className="text-small text-foreground/80">
+                  {video.snippet.channelTitle}
+                </p>
+              </div>
             </div>
           </div>
         </div>

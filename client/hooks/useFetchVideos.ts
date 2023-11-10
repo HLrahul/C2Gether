@@ -1,21 +1,38 @@
 "use client";
 
 import { useEffect } from "react";
-
 import { useInfiniteQuery } from "@tanstack/react-query";
 import axios from "axios";
-
 import { useVideoStore } from "@/store/videosStore";
-
 import { Item } from "@/types";
 
 export const useFetchVideos = (searchKeyword: string, isSearchOperation: boolean) => {
   const { setFetchedVideos, appendFetchedVideos } = useVideoStore();
+
   const fetchVideosandPlaylists = async (pageToken: string) => {
     const { data } = await axios.get(
       `https://www.googleapis.com/youtube/v3/search?part=snippet&maxResults=12&pageToken=${pageToken}&q=${searchKeyword}&key=${process.env.NEXT_PUBLIC_YOUTUBE_API_KEY}`
     );
-    return data;
+
+    const videoIds = data.items.map((item: any) => item.id.videoId).join(',');
+    const channelIds = data.items.map((item: any) => item.snippet.channelId).join(',');
+
+    const [statsResponse, channelResponse] = await Promise.all([
+      axios.get(`https://www.googleapis.com/youtube/v3/videos?part=statistics&id=${videoIds}&key=${process.env.NEXT_PUBLIC_YOUTUBE_API_KEY}`),
+      axios.get(`https://www.googleapis.com/youtube/v3/channels?part=snippet&id=${channelIds}&key=${process.env.NEXT_PUBLIC_YOUTUBE_API_KEY}`)
+    ]);
+
+    const videosWithStatsAndLogo = data.items.map((item: any) => {
+      const stats = statsResponse.data.items.find((video: any) => video.id === item.id.videoId).statistics;
+      const channel = channelResponse.data.items.find((channel: any) => channel.id === item.snippet.channelId);
+      return {
+        ...item,
+        statistics: stats,
+        channelLogo: channel.snippet.thumbnails.default.url
+      };
+    });
+
+    return { ...data, items: videosWithStatsAndLogo };
   };
 
   const {
@@ -26,6 +43,7 @@ export const useFetchVideos = (searchKeyword: string, isSearchOperation: boolean
     hasNextPage,
     isFetching,
     isFetchingNextPage,
+    refetch
   } = useInfiniteQuery({
     queryKey: ["videos"],
     queryFn: ({ pageParam = "" }) => fetchVideosandPlaylists(pageParam),
@@ -53,6 +71,8 @@ export const useFetchVideos = (searchKeyword: string, isSearchOperation: boolean
             liveBroadcastContent: item.snippet.liveBroadcastContent,
             publishTime: item.snippet.publishTime,
           },
+          statistics: item.statistics,
+          channelLogo: item.channelLogo
         };
       });
 
@@ -69,5 +89,6 @@ export const useFetchVideos = (searchKeyword: string, isSearchOperation: boolean
     hasNextPage,
     isFetching,
     isFetchingNextPage,
+    refetch
   };
 };

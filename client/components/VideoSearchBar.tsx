@@ -28,7 +28,7 @@ export default function VideoSearchBar() {
 
   const { fetchedVideos, setFetchedVideos } = useVideoStore((state) => state);
 
-  const { isLoading, error, isFetching, fetchNextPage, hasNextPage } =
+  const { isLoading, error, isFetching, fetchNextPage, hasNextPage, refetch } =
     useFetchVideos(searchKeyword, isSearchOperation);
 
   const queryClient = useQueryClient();
@@ -38,7 +38,7 @@ export default function VideoSearchBar() {
     queryClient.removeQueries({ queryKey: ['videos'] });
     setIsSearchOperation(true);
     setFetchedVideos([]);
-    fetchNextPage();
+    refetch();
   };
 
   return (
@@ -47,7 +47,7 @@ export default function VideoSearchBar() {
         variant="solid"
         onPress={onOpen}
         startContent={<SearchIcon size={18} />}
-        className="w-fit"
+        className="w-full"
       >
         Type to Search
       </Button>
