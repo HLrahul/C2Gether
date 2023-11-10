@@ -6,7 +6,6 @@ import {
   Button,
   Divider,
   Input,
-  Kbd,
   Modal,
   ModalBody,
   ModalContent,
@@ -14,28 +13,31 @@ import {
   ModalHeader,
   useDisclosure,
 } from "@nextui-org/react";
-import { ArrowDown, ArrowUp, SearchIcon } from "lucide-react";
-
-import { Video } from "@/types";
-import { useFetchVideos } from "@/hooks/useFetchVideos";
-import { useVideoStore } from "@/store/videosStore";
+import { SearchIcon } from "lucide-react";
 
 import { VideoCard } from "./VideoCard";
+import { useVideoStore } from "@/store/videosStore";
+import { useQueryClient } from "@tanstack/react-query";
+import { useFetchVideos } from "@/hooks/useFetchVideos";
 
 export default function VideoSearchBar() {
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
 
   const [searchKeyword, setSearchKeyword] = useState<string>("");
+  const [isSearchOperation, setIsSearchOperation] = useState<boolean>(false);
 
   const { fetchedVideos, setFetchedVideos } = useVideoStore((state) => state);
-  const reset = () => setFetchedVideos([]);
 
   const { isLoading, error, isFetching, fetchNextPage, hasNextPage } =
-    useFetchVideos(searchKeyword);
+    useFetchVideos(searchKeyword, isSearchOperation);
 
+  const queryClient = useQueryClient();
   const handleSearch = (e: React.MouseEvent) => {
     e.preventDefault();
-    reset();
+
+    queryClient.removeQueries({ queryKey: ['videos'] });
+    setIsSearchOperation(true);
+    setFetchedVideos([]);
     fetchNextPage();
   };
 
@@ -56,32 +58,29 @@ export default function VideoSearchBar() {
         isOpen={isOpen}
         onOpenChange={onOpenChange}
         placement="center"
-        hideCloseButton
         scrollBehavior="outside"
       >
         <ModalContent>
-          <ModalHeader className="flex flex-col gap-[1rem]">
+          <ModalHeader className="flex gap-[1rem] w-[80%] md:w-[70%] lg:w-[50%] m-auto">
             <Input
+              className="w-[80%] m-auto"
               id="youtube-video-search-keyword"
               autoFocus
               startContent={<SearchIcon size={16} />}
-              endContent={
-                <Kbd className="text-foreground bg-background/80 hidden sm:block md:block lg:block">
-                  Esc
-                </Kbd>
-              }
               value={searchKeyword}
               onChange={(e) => setSearchKeyword(e.target.value)}
             />
-            <Button onClick={handleSearch}>Search</Button>
+            <Button className="w-[20%] m-auto" onClick={handleSearch}>
+              Search
+            </Button>
           </ModalHeader>
           <Divider className="mb-4" />
 
           <ModalBody className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
             {fetchedVideos &&
               fetchedVideos.length > 0 &&
-              fetchedVideos.map((video) => (
-                <VideoCard key={video.id.videoId} video={video} />
+              fetchedVideos.map((video, index) => (
+                <VideoCard key={video.id.videoId || index} video={video} />
               ))}
 
             {isLoading && (
@@ -120,9 +119,10 @@ export default function VideoSearchBar() {
           <ModalFooter className="flex flex-col justify-center items-center gap-4">
             {fetchedVideos && hasNextPage && (
               <Button
-                className="w-full"
+                className="w-[80%] md:w-[70%] lg:w-[50%]"
                 onClick={(e) => {
                   e.preventDefault();
+                  setIsSearchOperation(false);
                   fetchNextPage();
                 }}
                 isLoading={isFetching}

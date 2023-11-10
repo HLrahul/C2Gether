@@ -16,28 +16,32 @@ export const VideoCard = ({ video }: VideoCardProps) => {
     <Card isPressable isBlurred className="border-none w-full">
       <CardBody>
         <div className="grid grid-cols-12 gap-6 md:gap-4 items-center justify-center">
-          <div className="relative col-span-12">
+          <div className="relative col-span-12 aspect-w-16 aspect-h-9">
             <Image
               alt={video.snippet.title || "Video"}
-              className="object-cover"
-              height={300}
+              className="object-cover w-full h-full"
               shadow="md"
               src={video.snippet.thumbnails.high.url}
-              width="100%"
             />
           </div>
 
-          <div className="flex flex-col col-span-12">
-            <div className="flex flex-col justify-between items-start gap-4">
-                <h3 style={{
+          <div className="flex flex-col col-span-12 h-full">
+            <div className="flex flex-col h-full justify-between items-start gap-4">
+              <h3
+                style={{
                   display: "-webkit-box",
                   WebkitLineClamp: 2,
                   WebkitBoxOrient: "vertical",
                   overflow: "hidden",
                   textOverflow: "ellipsis",
-                }} className="font-semibold text-foreground/90">{video.snippet.title}</h3>
-                <p className="text-small text-foreground/80">{video.snippet.channelTitle}</p>
-             
+                }}
+                className="font-semibold text-foreground/90"
+              >
+                {video.snippet.title}
+              </h3>
+              <p className="text-small text-foreground/80">
+                {video.snippet.channelTitle}
+              </p>
             </div>
           </div>
         </div>
