@@ -1,9 +1,21 @@
 import { Avatar, Card, CardBody, Chip, Image } from "@nextui-org/react";
 
 import { Video } from "@/types";
-import { Eye, ThumbsUp } from "lucide-react";
+import { useVideoIdStore } from "@/store/videoIdStore";
 
-export const VideoCard = ({ video }: { video: Video }) => {
+interface VideoCardProps {
+  video: Video;
+  onClose: () => void;
+}
+
+export const VideoCard = ({ video, onClose }: VideoCardProps) => {
+  const { setVideoId } = useVideoIdStore();
+
+  function decodeHtml(html: string) {
+    var txt = document.createElement("textarea");
+    txt.innerHTML = html;
+    return txt.value;
+  }
   
   function convertDuration(duration: string) {
     const match = duration.match(/PT(\d+H)?(\d+M)?(\d+S)?/);
@@ -27,8 +39,11 @@ export const VideoCard = ({ video }: { video: Video }) => {
     return formattedDuration;
   }
 
+  const decodedTitle = decodeHtml(video.snippet.title);
+  const decodedDescription = decodeHtml(video.snippet.description);
+
   return (
-    <Card isPressable isBlurred className="border-none w-full">
+    <Card isPressable isBlurred className="border-none w-full hover:bg-primary" onClick={() => { setVideoId(video.id.videoId); onClose(); }} >
       <CardBody>
         <div className="grid grid-cols-12 gap-6 md:gap-4 items-center justify-center">
           <div className="relative col-span-12 aspect-w-16 aspect-h-9">
@@ -49,11 +64,6 @@ export const VideoCard = ({ video }: { video: Video }) => {
           </div>
 
           <div className="flex flex-col flex-grow col-span-12 gap-5 justify-between items-start">
-            {/* <div className="flex gap-2">
-              <Chip size="sm" className="text-[0.8rem] rounded-md" startContent={ <Eye size={18} /> }>16K</Chip>
-              <Chip size="sm" className="text-[0.8rem] rounded-md" startContent={ <ThumbsUp size={16} /> }>10K</Chip>
-            </div> */}
-
             <div className="flex flex-col h-full justify-between items-start gap-1">
               <h3
                 style={{
@@ -65,7 +75,7 @@ export const VideoCard = ({ video }: { video: Video }) => {
                 }}
                 className="h-[3em] font-semibold text-foreground/90"
               >
-                {video.snippet.title}
+                {decodedTitle}
               </h3>
               <h3
                 style={{
@@ -77,7 +87,7 @@ export const VideoCard = ({ video }: { video: Video }) => {
                 }}
                 className="h-[3em] font-lighter text-sm text-foreground/80"
               >
-                {video.snippet.description}
+                {decodedDescription}
               </h3>
             </div>
 

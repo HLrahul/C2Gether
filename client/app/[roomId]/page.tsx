@@ -1,6 +1,6 @@
-import DisconnectedNote from "@/components/DisconnectedNote";
 import VideoPlayer from "@/components/VideoPlayer";
 import VideoSearchBar from "@/components/VideoSearchBar";
+import DisconnectedNote from "@/components/DisconnectedNote";
 
 export default function RoomPage() {
   return (
@@ -8,10 +8,10 @@ export default function RoomPage() {
       <DisconnectedNote />
 
       <section className="min-h-[90vh] w-full m-auto px-1">
-        <div className="h-full w-full lg:w-[75%] m-auto p-5 flex flex-col gap-[2rem]">
+        <div className="grid grid-rows-6 grid-cols-8 lg:w-[75%] gap-5 h-auto m-auto p-5">
           <VideoSearchBar />
 
-          {/* <VideoPlayer /> */}
+          <VideoPlayer />
         </div>
       </section>
     </>

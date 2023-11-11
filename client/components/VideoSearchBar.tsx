@@ -21,7 +21,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import { useFetchVideos } from "@/hooks/useFetchVideos";
 
 export default function VideoSearchBar() {
-  const { isOpen, onOpen, onOpenChange } = useDisclosure();
+  const { isOpen, onOpen, onOpenChange, onClose } = useDisclosure();
 
   const [searchKeyword, setSearchKeyword] = useState<string>("");
   const [isSearchOperation, setIsSearchOperation] = useState<boolean>(false);
@@ -47,7 +47,7 @@ export default function VideoSearchBar() {
         variant="solid"
         onPress={onOpen}
         startContent={<SearchIcon size={18} />}
-        className="w-full"
+        className="row-span-1 col-span-8 hover:bg-primary"
       >
         Type to Search
       </Button>
@@ -80,7 +80,7 @@ export default function VideoSearchBar() {
             {fetchedVideos &&
               fetchedVideos.length > 0 &&
               fetchedVideos.map((video, index) => (
-                <VideoCard key={video.id.videoId || index} video={video} />
+                <VideoCard key={video.id.videoId || index} video={video} onClose={onClose} />
               ))}
 
             {isLoading && (
