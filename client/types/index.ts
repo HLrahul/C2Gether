@@ -53,6 +53,7 @@ export interface Item {
   etag: any;
   id: any;
   snippet: Snippet;
+  duration: string;
   channelLogo: string;
 }
 
@@ -61,6 +62,7 @@ export interface Video {
   etag: string;
   id: Id;
   snippet: Snippet;
+  duration: string;
   channelLogo: string;
 }
 

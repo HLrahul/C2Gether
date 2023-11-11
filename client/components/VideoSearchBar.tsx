@@ -66,17 +66,17 @@ export default function VideoSearchBar() {
               className="w-[80%] m-auto"
               id="youtube-video-search-keyword"
               autoFocus
-              startContent={<SearchIcon size={16} />}
+              startContent={<SearchIcon size={16} className="text-primary" />}
               value={searchKeyword}
               onChange={(e) => setSearchKeyword(e.target.value)}
             />
-            <Button className="w-[20%] m-auto" onClick={handleSearch}>
+            <Button className="w-[20%] m-auto bg-primary" onClick={handleSearch}>
               Search
             </Button>
           </ModalHeader>
           <Divider className="mb-4" />
 
-          <ModalBody className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+          <ModalBody className="bg-transparent h-auto grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
             {fetchedVideos &&
               fetchedVideos.length > 0 &&
               fetchedVideos.map((video, index) => (
@@ -119,7 +119,7 @@ export default function VideoSearchBar() {
           <ModalFooter className="flex flex-col justify-center items-center gap-4">
             {fetchedVideos && hasNextPage && (
               <Button
-                className="w-[80%] md:w-[70%] lg:w-[50%]"
+                className="w-[80%] md:w-[70%] lg:w-[50%] bg-primary"
                 onClick={(e) => {
                   e.preventDefault();
                   setIsSearchOperation(false);

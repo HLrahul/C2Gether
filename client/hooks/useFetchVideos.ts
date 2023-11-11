@@ -11,23 +11,36 @@ export const useFetchVideos = (searchKeyword: string, isSearchOperation: boolean
 
   const fetchVideosandPlaylists = async (pageToken: string) => {
     const { data } = await axios.get(
-      `https://www.googleapis.com/youtube/v3/search?part=snippet&maxResults=12&pageToken=${pageToken}&q=${searchKeyword}&key=${process.env.NEXT_PUBLIC_YOUTUBE_API_KEY}`
+      `https://www.googleapis.com/youtube/v3/search?part=snippet&type=video&maxResults=20&pageToken=${pageToken}&q=${searchKeyword}&key=${process.env.NEXT_PUBLIC_YOUTUBE_API_KEY}`
     );
 
+    const videoIds = data.items.map((item: any) => item.id.videoId).join(",");
     const channelIds = data.items.map((item: any) => item.snippet.channelId).join(',');
-    const [channelResponse] = await Promise.all([
-      axios.get(`https://www.googleapis.com/youtube/v3/channels?part=snippet&id=${channelIds}&key=${process.env.NEXT_PUBLIC_YOUTUBE_API_KEY}`)
+    const [videoResponse, channelResponse] = await Promise.all([
+      axios.get(
+        `https://www.googleapis.com/youtube/v3/videos?part=contentDetails&id=${videoIds}&key=${process.env.NEXT_PUBLIC_YOUTUBE_API_KEY}`
+      ),
+      axios.get(
+        `https://www.googleapis.com/youtube/v3/channels?part=snippet&id=${channelIds}&key=${process.env.NEXT_PUBLIC_YOUTUBE_API_KEY}`
+      ),
     ]);
 
-    const videosWithStatsAndLogo = data.items.map((item: any) => {
-      const channel = channelResponse.data.items.find((channel: any) => channel.id === item.snippet.channelId);
+    const videosWithDetailsAndLogo = data.items.map((item: any) => {
+      const video = videoResponse.data.items.find(
+        (video: any) => video.id === item.id.videoId
+      );
+      const channel = channelResponse.data.items.find(
+        (channel: any) => channel.id === item.snippet.channelId
+      );
+
       return {
         ...item,
-        channelLogo: channel.snippet.thumbnails.default.url
+        duration: video.contentDetails.duration,
+        channelLogo: channel.snippet.thumbnails.default.url,
       };
     });
 
-    return { ...data, items: videosWithStatsAndLogo };
+    return { ...data, items: videosWithDetailsAndLogo };
   };
 
   const {
@@ -66,6 +79,7 @@ export const useFetchVideos = (searchKeyword: string, isSearchOperation: boolean
             liveBroadcastContent: item.snippet.liveBroadcastContent,
             publishTime: item.snippet.publishTime,
           },
+          duration: item.duration,
           channelLogo: item.channelLogo
         };
       });
