@@ -1,4 +1,6 @@
-import VideoSearchBar from "@/components/VideoSearchBar";
+import VideoPlayer from "@/components/VideoPlayer";
+import VideoDetails from "@/components/VideoDetails";
+import VideoInputGroup from "@/components/VideoInputGroup";
 import DisconnectedNote from "@/components/DisconnectedNote";
 
 export default function RoomPage() {
@@ -6,9 +8,12 @@ export default function RoomPage() {
     <>
       <DisconnectedNote />
 
-      <section className="min-h-[90vh] w-full m-auto px-1">
-        <div className="grid grid-rows-6 grid-cols-8 lg:w-[75%] gap-5 h-auto m-auto p-5">
-          <VideoSearchBar />
+      <section className="min-h-full w-full m-auto px-1">
+        <div className="grid grid-rows-4 grid-cols-8 lg:w-[75%] gap-5 m-auto p-5">
+          <VideoInputGroup />
+
+          <VideoPlayer />
+          <VideoDetails />
         </div>
       </section>
     </>

@@ -47,7 +47,7 @@ export default function VideoSearchBar() {
         variant="solid"
         onPress={onOpen}
         startContent={<SearchIcon size={18} />}
-        className="row-span-1 col-span-8 hover:bg-primary"
+        className="col-span-8 w-full hover:bg-primary"
       >
         Type to Search
       </Button>

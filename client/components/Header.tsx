@@ -13,7 +13,7 @@ import RightPanel from "./RightPanel";
 
 export default function Header() {
   return (
-    <Navbar>
+    <Navbar shouldHideOnScroll>
       <NavbarBrand>
         <p className="font-bold text-primary">CollabStudy</p>
       </NavbarBrand>
