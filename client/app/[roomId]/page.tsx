@@ -9,7 +9,7 @@ export default function RoomPage() {
       <DisconnectedNote />
 
       <section className="min-h-full w-full m-auto px-1">
-        <div className="grid grid-rows-4 grid-cols-8 lg:w-[75%] gap-5 m-auto p-5">
+        <div className="grid grid-rows-5 grid-cols-8 lg:w-[75%] gap-5 m-auto p-5">
           <VideoInputGroup />
 
           <VideoPlayer />

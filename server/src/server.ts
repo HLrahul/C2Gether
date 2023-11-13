@@ -103,6 +103,16 @@ io.on("connection", (socket) => {
     });
   });
 
+  socket.on('client-ready', (roomId: string) => {
+    const members = getRoomMembers(roomId);
+    if (members.length === 1) return socket.emit('client-loaded');
+
+    const adminMember = members[0]
+    if(!adminMember) return
+
+    socket.to(adminMember.id).emit('get-player-state');
+  });
+
   socket.on("leave-room", () => {
     leaveRoom(socket);
   });

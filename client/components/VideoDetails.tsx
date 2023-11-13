@@ -29,6 +29,8 @@ interface ChannelDetails {
 export default function VideoDetails() {
   const { videoId } = useVideoIdStore();
 
+  const [isLoading, setIsLoading] = useState(true);
+
   const [videoDetails, setVideoDetails] = useState<VideoDetails | null>(null);
   const [channelDetails, setChannelDetails] = useState<ChannelDetails | null>(null);
 
@@ -39,6 +41,8 @@ export default function VideoDetails() {
           `https://www.googleapis.com/youtube/v3/videos?id=${videoId}&key=${process.env.NEXT_PUBLIC_YOUTUBE_API_KEY}&part=snippet`
         );
         setVideoDetails(response.data.items[0].snippet);
+        
+        setIsLoading(false);
       };
 
       fetchVideoDetails();
@@ -65,9 +69,7 @@ export default function VideoDetails() {
           <div className="flex flex-col gap-2">
             <p className="font-bold">{videoDetails.title}</p>
 
-            <p
-              className="text-default-400 text-sm transition-all duration-500 ease-in-out transform line-clamp-2"
-            >
+            <p className="text-default-400 text-sm transition-all duration-500 ease-in-out transform line-clamp-2">
               {videoDetails.description}
             </p>
           </div>
@@ -87,26 +89,26 @@ export default function VideoDetails() {
       ) : (
         <div className="flex flex-col gap-4">
           <div className="flex flex-col gap-2">
-            <Skeleton isLoaded className="w-4/5 rounded-lg">
+            <Skeleton isLoaded={isLoading} className="w-4/5 rounded-lg">
               <div className="h-3 w-5/5 rounded-lg bg-default-200"></div>
             </Skeleton>
 
-            <Skeleton isLoaded className="w-3/5 rounded-lg">
+            <Skeleton isLoaded={isLoading} className="w-3/5 rounded-lg">
               <div className="h-3 w-5/5 rounded-lg bg-default-200"></div>
             </Skeleton>
           </div>
 
           <div className="max-w-[300px] w-full flex items-center gap-3">
             <div>
-              <Skeleton isLoaded className="flex rounded-full">
+              <Skeleton isLoaded={isLoading} className="flex rounded-full">
                 <div className="bg-default-200 w-12 h-12"></div>
               </Skeleton>
             </div>
             <div className="w-full flex flex-col gap-2">
-              <Skeleton isLoaded className="rounded-lg">
+              <Skeleton isLoaded={isLoading} className="rounded-lg">
                 <div className="h-3 w-1/2 bg-default-200 rounded-lg"></div>
               </Skeleton>
-              <Skeleton isLoaded className="rounded-lg">
+              <Skeleton isLoaded={isLoading} className="rounded-lg">
                 <div className="h-3 w-3/3 bg-default-200"></div>
               </Skeleton>
             </div>
