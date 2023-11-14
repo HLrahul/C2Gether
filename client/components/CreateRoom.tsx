@@ -41,6 +41,9 @@ export default function CreateRoomButton({ roomId }: CreateRoomFormProps) {
   const { toast } = useToast();
   const router = useRouter();
 
+  const { user }= useUserStore();
+  const [serverRoomId, setServerRoomId] = useState<string>("");
+
   const setUser = useUserStore((state) => state.setUser);
   const setMembers = useMembersStore((state) => state.setMembers);
 
@@ -62,10 +65,16 @@ export default function CreateRoomButton({ roomId }: CreateRoomFormProps) {
   }
 
   useEffect(() => {
+  if (user) {
+    router.replace(`/${serverRoomId}`);
+  }
+}, [user, serverRoomId, router]);
+
+  useEffect(() => {
     socket.on("room-joined", ({ user, roomId, members }: RoomJoinedData) => {
-      setUser(user);
+      setServerRoomId(roomId);
       setMembers(members);
-      router.replace(`/${roomId}`);
+      setUser(user);
     });
 
     function handleErrorMessage({ message }: { message: string }) {

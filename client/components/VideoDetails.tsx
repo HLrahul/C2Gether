@@ -73,8 +73,8 @@ export default function VideoDetails() {
             <p className="font-bold">{videoDetails.title}</p>
 
             <p
-              className={`text-default-400 text-sm transition-all duration-500 ease-in-out transform ${
-                isExpanded ? "" : "line-clamp-2"
+              className={`text-default-400 text-sm transition-all duration-500 ease-in-out transform overflow-hidden ${
+                isExpanded ? "max-h-full" : "max-h-[3em]"
               }`}
               onClick={() => setIsExpanded(!isExpanded)}
             >
