@@ -47,7 +47,6 @@ function joinRoom(socket: Socket, roomId: string, username: string) {
   };
   addUser({ ...user, roomId });
   const members = getRoomMembers(roomId);
-  console.log("Member Added: ", members);
 
   socket.emit("room-joined", { user, roomId, members });
 
@@ -74,7 +73,6 @@ function leaveRoom(socket: Socket) {
   });
   socket.leave(roomId);
 }
-
 
 // Create a socket.io server instance
 const io = new Server(server);
@@ -104,24 +102,62 @@ io.on("connection", (socket) => {
     });
   });
 
-  socket.on('client-ready', (roomId: string) => {
+  socket.on("client-ready", (roomId: string) => {
     const members = getRoomMembers(roomId);
-    if (members.length === 1) return socket.emit('client-loaded');
+    if (members.length === 1) return socket.emit("client-loaded");
 
-    const adminMember = members[0]
-    if(!adminMember) return
+    const adminMember = members[0];
+    if (!adminMember) return;
 
-    socket.to(adminMember.id).emit('get-player-state');
+    socket.to(adminMember.id).emit("get-player-state");
   });
 
-  socket.on('send-player-state', ({ roomId, currentTime }: { roomId: string, currentTime: number }) => {
+  socket.on("is-admin", ({ roomId, userId }: { roomId: string, userId: string }) => {
     const members = getRoomMembers(roomId);
-    console.log(members);
-    const lastMember = members[members.length - 1];
 
-    if (!lastMember) return;
-    socket.to(lastMember.id).emit('player-state-from-server', { roomId, currentTime })
+    if (members[0].id === userId) return socket.emit("admin-user", true);
+    else return socket.emit("admin-user", false);
+  })
+
+  socket.on(
+    "send-player-state",
+    ({
+      roomId,
+      videoId,
+      currentTime,
+    }: {
+      roomId: string;
+      videoId: string;
+      currentTime: number;
+    }) => {
+      const members = getRoomMembers(roomId);
+      const lastMember = members[members.length - 1];
+
+      if (!lastMember) return;
+      socket
+        .to(lastMember.id)
+        .emit("player-state-from-server", { videoId, currentTime });
+      socket.to(lastMember.id).emit("client-loaded");
+    }
+  );
+
+  socket.on("player-play", ({ roomId }: { roomId: string }) => {
+    socket.to(roomId).emit("player-play-from-server");
   });
+
+  socket.on(
+    "player-pause",
+    ({ roomId, currentTime }: { roomId: string; currentTime: number }) => {
+      socket.to(roomId).emit("player-pause-from-server", currentTime);
+    }
+  );
+
+  socket.on(
+    "video-change",
+    ({ roomId, videoId }: { roomId: string; videoId: string }) => {
+      socket.to(roomId).emit("video-change-from-server", videoId);
+    }
+  );
 
   socket.on("leave-room", () => {
     leaveRoom(socket);
