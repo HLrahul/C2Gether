@@ -1,15 +1,37 @@
+"use client";
+
+import { useEffect } from "react";
+import { useRouter, useParams } from "next/navigation";
+
+import { usePromptStore, useUserStore } from "@/store/userStore";
+
 import VideoPlayer from "@/components/VideoPlayer";
 import VideoDetails from "@/components/VideoDetails";
 import VideoInputGroup from "@/components/VideoInputGroup";
 import DisconnectedNote from "@/components/DisconnectedNote";
 
 export default function RoomPage() {
+  const router = useRouter();
+  const { roomId } = useParams();
+  const { user } = useUserStore();
+  const { setShowPrompt } = usePromptStore();
+
+  useEffect(() => {
+    if (!user) {
+      if (roomId.length === 21) setShowPrompt(true);
+      else router.replace("/");
+    }
+  }, [user, roomId, router, setShowPrompt]);
+
   return (
     <>
       <DisconnectedNote />
 
       <section className="min-h-full w-full m-auto px-1">
-        <div className="grid grid-rows-5 grid-cols-8 lg:w-[75%] gap-5 m-auto p-5">
+        <div
+          className="grid grid-cols-8 lg:w-[75%] gap-5 m-auto p-5"
+          style={{ gridAutoRows: "min-content" }}
+        >
           <VideoInputGroup />
 
           <VideoPlayer />

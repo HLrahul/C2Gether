@@ -31,8 +31,11 @@ export default function VideoDetails() {
 
   const [isLoading, setIsLoading] = useState(true);
 
+  const [isExpanded, setIsExpanded] = useState(false);
   const [videoDetails, setVideoDetails] = useState<VideoDetails | null>(null);
-  const [channelDetails, setChannelDetails] = useState<ChannelDetails | null>(null);
+  const [channelDetails, setChannelDetails] = useState<ChannelDetails | null>(
+    null
+  );
 
   useEffect(() => {
     if (videoId) {
@@ -41,7 +44,7 @@ export default function VideoDetails() {
           `https://www.googleapis.com/youtube/v3/videos?id=${videoId}&key=${process.env.NEXT_PUBLIC_YOUTUBE_API_KEY}&part=snippet`
         );
         setVideoDetails(response.data.items[0].snippet);
-        
+
         setIsLoading(false);
       };
 
@@ -69,7 +72,12 @@ export default function VideoDetails() {
           <div className="flex flex-col gap-2">
             <p className="font-bold">{videoDetails.title}</p>
 
-            <p className="text-default-400 text-sm transition-all duration-500 ease-in-out transform line-clamp-2">
+            <p
+              className={`text-default-400 text-sm transition-all duration-500 ease-in-out transform ${
+                isExpanded ? "" : "line-clamp-2"
+              }`}
+              onClick={() => setIsExpanded(!isExpanded)}
+            >
               {videoDetails.description}
             </p>
           </div>

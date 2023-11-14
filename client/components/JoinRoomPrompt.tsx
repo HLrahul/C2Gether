@@ -2,9 +2,9 @@ import * as z  from "zod";
 import { Home } from "lucide-react";
 import { TbLogin2 } from "react-icons/tb";
 import { useForm } from "react-hook-form";
+import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useParams, useRouter } from "next/navigation";
 import {
   Button,
   Divider,
@@ -33,7 +33,7 @@ import { joinRoomFormSchema } from "@/lib/validations/joinRoomSchema";
 
 type joinRoomForm = z.infer<typeof joinRoomFormSchema>;
 
-export default function JoinRoomPrompt() {
+export default function JoinRoomPrompt({ roomId }: { roomId: string }) {
   const { toast } = useToast();
     
   const setUser = useUserStore((state) => state.setUser);
@@ -42,7 +42,6 @@ export default function JoinRoomPrompt() {
   const [isJoinLoading, setIsJoinLoading] = useState(false);
   const [isHomeLoading, setIsHomeLoading] = useState(false);
 
-  const {roomId} = useParams(); 
   const router = useRouter();
   
   const { showPrompt, setShowPrompt } = usePromptStore();
@@ -64,6 +63,8 @@ export default function JoinRoomPrompt() {
       setMembers(members);
       setShowPrompt(false);
       router.replace(`/${roomId}`);
+
+      socket.emit('client-ready', roomId);
     });
 
     function handleErrorMessage({ message }: { message: string }) {
@@ -89,7 +90,7 @@ export default function JoinRoomPrompt() {
     resolver: zodResolver(joinRoomFormSchema),
     defaultValues: {
       username: "",
-      roomId: "",
+      roomId: roomId,
     },
   });
 
@@ -110,7 +111,7 @@ export default function JoinRoomPrompt() {
       placement="center"
     >
       <ModalContent>
-        <ModalHeader className="flex flex-col gap-1">Join Room</ModalHeader>
+        <ModalHeader className="flex flex-col gap-1">Join Room Again!</ModalHeader>
         <ModalBody>
           <Form {...form}>
             <form
@@ -130,25 +131,6 @@ export default function JoinRoomPrompt() {
                         autoFocus
                         label="Username"
                         placeholder="Enter a Name"
-                        variant="bordered"
-                        {...field}
-                      />
-                    </FormControl>
-                    <FormMessage className="text-xs text-red-500" />
-                  </FormItem>
-                )}
-              />
-
-              <FormField
-                name="roomId"
-                control={form.control}
-                render={({ field }) => (
-                  <FormItem>
-                    <FormControl id="joinRoom-roomId">
-                      <Input
-                        id="joinRoom-roomId-input"
-                        label="Room ID"
-                        placeholder="Enter a Room ID"
                         variant="bordered"
                         {...field}
                       />
@@ -180,7 +162,7 @@ export default function JoinRoomPrompt() {
                 variant="solid"
                 className=""
                 isLoading={isHomeLoading}
-                startContent={<Home size={16} />}
+                startContent={<Home size={12} />}
                 onClick={(e) => {
                   setIsHomeLoading(true);
                   router.replace("/");
