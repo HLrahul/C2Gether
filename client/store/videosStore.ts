@@ -1,5 +1,5 @@
-import { create } from "zustand";
 import { Video } from "@/types";
+import { create } from "zustand";
 
 type VideoStore = {
   fetchedVideos: Video[];

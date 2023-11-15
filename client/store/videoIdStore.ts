@@ -1,4 +1,4 @@
-import { create } from 'zustand';
+import { create } from "zustand";
 
 type VideoIdStore = {
   videoId: string;
@@ -6,6 +6,6 @@ type VideoIdStore = {
 };
 
 export const useVideoIdStore = create<VideoIdStore>((set) => ({
-  videoId: '',
+  videoId: "",
   setVideoId: (videoId) => set({ videoId }),
 }));

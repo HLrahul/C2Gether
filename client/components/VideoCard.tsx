@@ -1,7 +1,6 @@
-import { Avatar, Card, CardBody, Chip, Image } from "@nextui-org/react";
-
 import { Video } from "@/types";
 import { useVideoIdStore } from "@/store/videoIdStore";
+import { Avatar, Card, CardBody, Chip, Image } from "@nextui-org/react";
 
 interface VideoCardProps {
   video: Video;
@@ -11,18 +10,15 @@ interface VideoCardProps {
 export const VideoCard = ({ video, onClose }: VideoCardProps) => {
   const { setVideoId } = useVideoIdStore();
 
-  function decodeHtml(html: string) {
-    var txt = document.createElement("textarea");
+  const decodeHtml = (html: string) => {
+    const txt = document.createElement("textarea");
     txt.innerHTML = html;
     return txt.value;
-  }
-  
-  function convertDuration(duration: string) {
-    const match = duration.match(/PT(\d+H)?(\d+M)?(\d+S)?/);
+  };
 
-    if (match === null) {
-      return "0:00";
-    }
+  const convertDuration = (duration: string) => {
+    const match = duration.match(/PT(\d+H)?(\d+M)?(\d+S)?/);
+    if (!match) return "0:00";
 
     const hours = parseInt(match[1]) || 0;
     const minutes = parseInt(match[2]) || 0;
@@ -37,13 +33,21 @@ export const VideoCard = ({ video, onClose }: VideoCardProps) => {
     }
 
     return formattedDuration;
-  }
+  };
 
   const decodedTitle = decodeHtml(video.snippet.title);
   const decodedDescription = decodeHtml(video.snippet.description);
 
   return (
-    <Card isPressable isBlurred className="border-none w-full hover:bg-primary" onClick={() => { setVideoId(video.id.videoId); onClose(); }} >
+    <Card
+      isPressable
+      isBlurred
+      className="border-none w-full hover:bg-primary"
+      onClick={() => {
+        setVideoId(video.id.videoId);
+        onClose();
+      }}
+    >
       <CardBody>
         <div className="grid grid-cols-12 gap-6 md:gap-4 items-center justify-center">
           <div className="relative col-span-12 aspect-w-16 aspect-h-9">

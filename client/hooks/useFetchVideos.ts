@@ -1,21 +1,28 @@
 "use client";
 
-import { useEffect } from "react";
-import { useInfiniteQuery } from "@tanstack/react-query";
 import axios from "axios";
+import { Video } from "@/types";
+import { useEffect } from "react";
 import { useVideoStore } from "@/store/videosStore";
-import { Item } from "@/types";
+import { useInfiniteQuery } from "@tanstack/react-query";
 
-export const useFetchVideos = (searchKeyword: string, isSearchOperation: boolean) => {
+export const useFetchVideos = (
+  searchKeyword: string,
+  isSearchOperation: boolean
+) => {
   const { setFetchedVideos, appendFetchedVideos } = useVideoStore();
 
+  // Function to fetch videos and playlists
   const fetchVideosandPlaylists = async (pageToken: string) => {
     const { data } = await axios.get(
       `https://www.googleapis.com/youtube/v3/search?part=snippet&type=video&maxResults=20&pageToken=${pageToken}&q=${searchKeyword}&key=${process.env.NEXT_PUBLIC_YOUTUBE_API_KEY}`
     );
 
     const videoIds = data.items.map((item: any) => item.id.videoId).join(",");
-    const channelIds = data.items.map((item: any) => item.snippet.channelId).join(',');
+    const channelIds = data.items
+      .map((item: any) => item.snippet.channelId)
+      .join(",");
+
     const [videoResponse, channelResponse] = await Promise.all([
       axios.get(
         `https://www.googleapis.com/youtube/v3/videos?part=contentDetails&id=${videoIds}&key=${process.env.NEXT_PUBLIC_YOUTUBE_API_KEY}`
@@ -51,7 +58,7 @@ export const useFetchVideos = (searchKeyword: string, isSearchOperation: boolean
     hasNextPage,
     isFetching,
     isFetchingNextPage,
-    refetch
+    refetch,
   } = useInfiniteQuery({
     queryKey: ["videos"],
     queryFn: ({ pageParam = "" }) => fetchVideosandPlaylists(pageParam),
@@ -61,10 +68,11 @@ export const useFetchVideos = (searchKeyword: string, isSearchOperation: boolean
     retry: 0,
   });
 
+  // Update the fetched videos when data changes
   useEffect(() => {
     if (data) {
       const lastPage = data.pages[data.pages.length - 1];
-      const videos = lastPage.items.map((item: Item) => {
+      const videos = lastPage.items.map((item: Video) => {
         return {
           kind: item.kind,
           etag: item.etag,
@@ -80,7 +88,7 @@ export const useFetchVideos = (searchKeyword: string, isSearchOperation: boolean
             publishTime: item.snippet.publishTime,
           },
           duration: item.duration,
-          channelLogo: item.channelLogo
+          channelLogo: item.channelLogo,
         };
       });
 
@@ -97,6 +105,6 @@ export const useFetchVideos = (searchKeyword: string, isSearchOperation: boolean
     hasNextPage,
     isFetching,
     isFetchingNextPage,
-    refetch
+    refetch,
   };
 };

@@ -1,20 +1,19 @@
-"use client";
+"use client"
 
 import React, { useEffect, useState } from "react";
 import * as z from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-
-import { Snippet } from "@nextui-org/react";
 import {
-  Modal,
-  ModalContent,
-  ModalHeader,
-  ModalBody,
-  ModalFooter,
   Button,
-  useDisclosure,
   Input,
+  Modal,
+  ModalBody,
+  ModalContent,
+  ModalFooter,
+  ModalHeader,
+  Snippet,
+  useDisclosure,
 } from "@nextui-org/react";
 import {
   Form,
@@ -23,7 +22,6 @@ import {
   FormItem,
   FormMessage,
 } from "@/components/ui/form";
-
 import { socket } from "@/lib/socket";
 import { RoomJoinedData } from "@/types";
 import { useToast } from "./ui/useToast";
@@ -35,21 +33,18 @@ import { createRoomFormSchema } from "@/lib/validations/createRoomSchema";
 interface CreateRoomFormProps {
   roomId: string;
 }
+
 type createRoomForm = z.infer<typeof createRoomFormSchema>;
 
 export default function CreateRoomButton({ roomId }: CreateRoomFormProps) {
-  const { toast } = useToast();
   const router = useRouter();
-
-  const { user }= useUserStore();
-  const [serverRoomId, setServerRoomId] = useState<string>("");
-
-  const setUser = useUserStore((state) => state.setUser);
-  const setMembers = useMembersStore((state) => state.setMembers);
-
-  const { isOpen, onOpen, onOpenChange } = useDisclosure();
-
+  const { toast } = useToast();
+  const { user } = useUserStore();
   const [isLoading, setIsLoading] = useState(false);
+  const setUser = useUserStore((state) => state.setUser);
+  const { isOpen, onOpen, onOpenChange } = useDisclosure();
+  const [serverRoomId, setServerRoomId] = useState<string>("");
+  const setMembers = useMembersStore((state) => state.setMembers);
 
   const form = useForm<createRoomForm>({
     resolver: zodResolver(createRoomFormSchema),
@@ -59,34 +54,33 @@ export default function CreateRoomButton({ roomId }: CreateRoomFormProps) {
     },
   });
 
-  function onSubmit({ username, roomId }: createRoomForm) {
+  const onSubmit = ({ username, roomId }: createRoomForm) => {
     setIsLoading(true);
     socket.emit("create-room", { username, roomId });
-  }
+  };
 
   useEffect(() => {
-  if (user) {
-    router.replace(`/${serverRoomId}`);
-  }
-}, [user, serverRoomId, router]);
+    if (user) {
+      router.replace(`/${serverRoomId}`);
+    }
+  }, [user, serverRoomId, router]);
 
   useEffect(() => {
+    const handleErrorMessage = ({ message }: { message: string }) => {
+      toast({
+        title: "Failed to join room!",
+        description: message,
+      });
+      setIsLoading(false);
+    };
+
     socket.on("room-joined", ({ user, roomId, members }: RoomJoinedData) => {
       setServerRoomId(roomId);
       setMembers(members);
       setUser(user);
     });
 
-    function handleErrorMessage({ message }: { message: string }) {
-      toast({
-        title: "Failed to join room!",
-        description: message,
-      });
-      setIsLoading(false);
-    }
-
     socket.on("room-not-found", handleErrorMessage);
-
     socket.on("invalid-data", handleErrorMessage);
 
     return () => {
@@ -144,11 +138,9 @@ export default function CreateRoomButton({ roomId }: CreateRoomFormProps) {
                     </FormItem>
                   )}
                 />
-
                 <Snippet symbol="Room ID: " variant="bordered">
                   {roomId}
                 </Snippet>
-
                 <Button
                   type="submit"
                   id="submit-create-room-button"
@@ -161,7 +153,7 @@ export default function CreateRoomButton({ roomId }: CreateRoomFormProps) {
               </form>
             </Form>
           </ModalBody>
-          <ModalFooter></ModalFooter>
+          <ModalFooter /> 
         </ModalContent>
       </Modal>
     </>

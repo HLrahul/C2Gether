@@ -1,4 +1,4 @@
-import * as z  from "zod";
+import * as z from "zod";
 import { Home } from "lucide-react";
 import { TbLogin2 } from "react-icons/tb";
 import { useForm } from "react-hook-form";
@@ -16,7 +16,6 @@ import {
   ModalHeader,
   useDisclosure,
 } from "@nextui-org/react";
-
 import {
   Form,
   FormControl,
@@ -35,70 +34,54 @@ type joinRoomForm = z.infer<typeof joinRoomFormSchema>;
 
 export default function JoinRoomPrompt({ roomId }: { roomId: string }) {
   const { toast } = useToast();
-    
   const setUser = useUserStore((state) => state.setUser);
   const setMembers = useMembersStore((state) => state.setMembers);
-
   const [isJoinLoading, setIsJoinLoading] = useState(false);
   const [isHomeLoading, setIsHomeLoading] = useState(false);
-
   const router = useRouter();
-  
   const { showPrompt, setShowPrompt } = usePromptStore();
   const { onOpenChange } = useDisclosure();
 
   useEffect(() => {
-    socket.on("room-not-found", () => {
-      setIsJoinLoading(false);
-    });
-
-    socket.on("invalid-data", () => {
-      setIsJoinLoading(false);
-    });
-  });
+    const handleLoading = () => setIsJoinLoading(false);
+    socket.on("room-not-found", handleLoading);
+    socket.on("invalid-data", handleLoading);
+  }, []);
 
   useEffect(() => {
-    socket.on("room-joined", ({ user, roomId, members }: RoomJoinedData) => {
+    const handleRoomJoined = ({ user, roomId, members }: RoomJoinedData) => {
       setUser(user);
       setMembers(members);
       setShowPrompt(false);
       router.replace(`/${roomId}`);
+      socket.emit("client-ready", roomId);
+    };
 
-      socket.emit('client-ready', roomId);
-    });
-
-    function handleErrorMessage({ message }: { message: string }) {
-      toast({
-        title: "Failed to join room!",
-        description: message,
-      });
+    const handleErrorMessage = ({ message }: { message: string }) => {
+      toast({ title: "Failed to join room!", description: message });
       setIsJoinLoading(false);
-    }
+    };
 
+    socket.on("room-joined", handleRoomJoined);
     socket.on("room-not-found", handleErrorMessage);
-
     socket.on("invalid-data", handleErrorMessage);
 
     return () => {
-      socket.off("room-joined");
-      socket.off("room-not-found");
+      socket.off("room-joined", handleRoomJoined);
+      socket.off("room-not-found", handleErrorMessage);
       socket.off("invalid-data", handleErrorMessage);
     };
   }, [toast, router, setUser, setMembers, setShowPrompt]);
 
   const form = useForm<joinRoomForm>({
     resolver: zodResolver(joinRoomFormSchema),
-    defaultValues: {
-      username: "",
-      roomId: roomId,
-    },
+    defaultValues: { username: "", roomId },
   });
 
-  function onSubmit({ username, roomId }: joinRoomForm) {
+  const onSubmit = ({ username, roomId }: joinRoomForm) => {
     setIsJoinLoading(true);
-
     socket.emit("join-room", { username, roomId });
-  }
+  };
 
   return (
     <Modal
@@ -111,13 +94,13 @@ export default function JoinRoomPrompt({ roomId }: { roomId: string }) {
       placement="center"
     >
       <ModalContent>
-        <ModalHeader className="flex flex-col gap-1">Join Room Again!</ModalHeader>
+        <ModalHeader>Join Room Again!</ModalHeader>
         <ModalBody>
           <Form {...form}>
             <form
               id="join-room-form"
               onSubmit={form.handleSubmit(onSubmit)}
-              className="flex flex-col gap-5"
+              className="flex flex-col gap-4"
             >
               <FormField
                 name="username"
@@ -135,11 +118,10 @@ export default function JoinRoomPrompt({ roomId }: { roomId: string }) {
                         {...field}
                       />
                     </FormControl>
-                    <FormMessage className="text-xs text-red-500" />
+                    <FormMessage />
                   </FormItem>
                 )}
               />
-
               <Button
                 id="submit-join-room-button"
                 color="primary"
@@ -151,19 +133,18 @@ export default function JoinRoomPrompt({ roomId }: { roomId: string }) {
                 Join the Party
               </Button>
 
-              <div className="flex w-[90%] m-auto gap-1 items-center">
-                <Divider className="w-[48%]" />
+              <div className="flex gap-1 items-center mt-2 mb-2 justify-between">
+                <Divider className="w-[45%]" />
                 <p className="text-[0.7rem] text-primary-400">OR</p>
-                <Divider className="w-[48%]" />
+                <Divider className="w-[45%]" />
               </div>
 
               <Button
                 color="primary"
                 variant="solid"
-                className=""
                 isLoading={isHomeLoading}
                 startContent={<Home size={12} />}
-                onClick={(e) => {
+                onClick={() => {
                   setIsHomeLoading(true);
                   router.replace("/");
                 }}
@@ -173,7 +154,7 @@ export default function JoinRoomPrompt({ roomId }: { roomId: string }) {
             </form>
           </Form>
         </ModalBody>
-        <ModalFooter></ModalFooter>
+        <ModalFooter />
       </ModalContent>
     </Modal>
   );

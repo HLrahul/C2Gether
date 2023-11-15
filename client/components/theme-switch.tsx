@@ -1,7 +1,6 @@
 "use client";
 
 import clsx from "clsx";
-
 import { FC } from "react";
 import { useTheme } from "next-themes";
 import { useIsSSR } from "@react-aria/ssr";
@@ -10,35 +9,36 @@ import { VisuallyHidden } from "@react-aria/visually-hidden";
 import { SunFilledIcon, MoonFilledIcon } from "@/components/icons";
 
 export interface ThemeSwitchProps {
-	className?: string;
-	classNames?: SwitchProps["classNames"];
+  className?: string;
+  classNames?: SwitchProps["classNames"];
 }
 
 export const ThemeSwitch: FC<ThemeSwitchProps> = ({
-	className,
-	classNames,
+  className,
+  classNames,
 }) => {
-	const { theme, setTheme } = useTheme();
-  	const isSSR = useIsSSR();
+  const { theme, setTheme } = useTheme();
+  const isSSR = useIsSSR();
 
-	const onChange = () => {
-		theme === "teal-light" ? setTheme("teal-dark") : setTheme("teal-light");
-	};
+  const onChange = () => {
+    theme === "teal-light" ? setTheme("teal-dark") : setTheme("teal-light");
+  };
+  const {
+    Component,
+    slots,
+    isSelected,
+    getBaseProps,
+    getInputProps,
+    getWrapperProps,
+  } = useSwitch({
+    isSelected: theme === "teal-light" || isSSR,
+    "aria-label": `Switch to ${
+      theme === "teal-light" || isSSR ? "teal-dark" : "teal-light"
+    } mode`,
+    onChange,
+  });
 
-	const {
-		Component,
-		slots,
-		isSelected,
-		getBaseProps,
-		getInputProps,
-		getWrapperProps,
-	} = useSwitch({
-		isSelected: theme === "teal-light" || isSSR,
-    "aria-label": `Switch to ${theme === "teal-light" || isSSR ? "teal-dark" : "teal-light"} mode`,
-		onChange,
-	});
-
-	return (
+  return (
     <Component
       {...getBaseProps({
         className: clsx(

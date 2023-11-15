@@ -1,10 +1,5 @@
 import React from "react";
-
-import {
-  Navbar,
-  NavbarBrand,
-  NavbarContent,
-} from "@nextui-org/react";
+import { Navbar, NavbarBrand, NavbarContent } from "@nextui-org/react";
 import { ThemeSwitch } from "./theme-switch";
 
 export default function NavBar() {

@@ -1,5 +1,5 @@
+import { SVGProps } from "react";
 import { User } from "@/store/userStore";
-import {SVGProps} from "react";
 
 export type IconSvgProps = SVGProps<SVGSVGElement> & {
   size?: number;
@@ -48,15 +48,6 @@ export interface Id {
   videoId: string;
 }
 
-export interface Item {
-  kind: any;
-  etag: any;
-  id: any;
-  snippet: Snippet;
-  duration: string;
-  channelLogo: string;
-}
-
 export interface Video {
   kind: string;
   etag: string;
@@ -65,4 +56,3 @@ export interface Video {
   duration: string;
   channelLogo: string;
 }
-

@@ -1,8 +1,7 @@
-"use client";
+"use client"
 
 import { useState } from "react";
 import { Button, Input } from "@nextui-org/react";
-
 import { useVideoIdStore } from "@/store/videoIdStore";
 
 export default function VideoLinkInput() {
@@ -10,7 +9,7 @@ export default function VideoLinkInput() {
   const [inputValue, setInputValue] = useState("");
 
   const getVideoIdFromUrl = (url: string) => {
-    if (url.length === 11) return url;  // Already a valid videoId
+    if (url.length === 11) return url; // Already a valid videoId
 
     const regex =
       /(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
@@ -27,12 +26,10 @@ export default function VideoLinkInput() {
         value={inputValue}
         onChange={(e) => setInputValue(e.target.value)}
         placeholder="Paste the link of the Video"
-        className="col-span-7 text-primary-500"
       />
       <Button
         color="primary"
         variant="ghost"
-        className="col-span-1"
         onClick={() => {
           const videoId = getVideoIdFromUrl(inputValue);
           if (videoId) {

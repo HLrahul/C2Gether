@@ -1,14 +1,13 @@
-import { nanoid } from "nanoid"
-
+import { nanoid } from "nanoid";
 import Navbar from "@/components/navbar";
+import { Divider } from "@nextui-org/react";
+import JoinRoom from "@/components/JoinRoom";
 import BottomBar from "@/components/BottomBar";
 import HeroSection from "@/components/HeroSection";
 import CreateRoomButton from "@/components/CreateRoom";
-import { Divider } from "@nextui-org/react";
-import JoinRoom from "@/components/JoinRoom";
 
 export default function Home() {
-	const roomId = nanoid();
+  const roomId = nanoid();
 
   return (
     <>
@@ -19,7 +18,6 @@ export default function Home() {
           <h1 className="text-3xl md:text-5xl text-center">
             Spend Quality time with your colleagues and friends.
           </h1>
-
           <div className="flex space-x-4  ">
             <CreateRoomButton roomId={roomId} />
             <Divider orientation="vertical" />
@@ -28,7 +26,6 @@ export default function Home() {
         </div>
 
         <HeroSection />
-
         <BottomBar />
       </section>
     </>

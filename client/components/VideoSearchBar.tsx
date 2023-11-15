@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-
 import {
   Button,
   Divider,
@@ -13,29 +12,24 @@ import {
   ModalHeader,
   useDisclosure,
 } from "@nextui-org/react";
-import { SearchIcon } from "lucide-react";
-
 import { VideoCard } from "./VideoCard";
+import { SearchIcon } from "lucide-react";
 import { useVideoStore } from "@/store/videosStore";
 import { useQueryClient } from "@tanstack/react-query";
 import { useFetchVideos } from "@/hooks/useFetchVideos";
 
 export default function VideoSearchBar() {
-  const { isOpen, onOpen, onOpenChange, onClose } = useDisclosure();
-
-  const [searchKeyword, setSearchKeyword] = useState<string>("");
-  const [isSearchOperation, setIsSearchOperation] = useState<boolean>(false);
-
+  const { isOpen, onOpen, onClose } = useDisclosure();
+  const [searchKeyword, setSearchKeyword] = useState("");
+  const [isSearchOperation, setIsSearchOperation] = useState(false);
   const { fetchedVideos, setFetchedVideos } = useVideoStore((state) => state);
-
-  const { isLoading, error, isFetching, fetchNextPage, hasNextPage, refetch } =
+  const { isLoading, error, fetchNextPage, isFetching, hasNextPage, refetch } =
     useFetchVideos(searchKeyword, isSearchOperation);
-
   const queryClient = useQueryClient();
+
   const handleSearch = (e: React.MouseEvent) => {
     e.preventDefault();
-
-    queryClient.removeQueries({ queryKey: ['videos'] });
+    queryClient.removeQueries({ queryKey: ["videos"] });
     setIsSearchOperation(true);
     setFetchedVideos([]);
     refetch();
@@ -47,7 +41,7 @@ export default function VideoSearchBar() {
         variant="solid"
         onPress={onOpen}
         startContent={<SearchIcon size={18} />}
-        className="col-span-8 w-full hover:bg-primary"
+        className="w-full hover:bg-primary hover:text-white"
       >
         Type to Search
       </Button>
@@ -56,31 +50,31 @@ export default function VideoSearchBar() {
         size="full"
         backdrop="blur"
         isOpen={isOpen}
-        onOpenChange={onOpenChange}
+        onOpenChange={onClose}
         placement="center"
         scrollBehavior="outside"
       >
         <ModalContent>
           <ModalHeader className="flex gap-[1rem] w-[80%] md:w-[70%] lg:w-[50%] m-auto">
             <Input
-              className="w-[80%] m-auto"
               id="youtube-video-search-keyword"
               autoFocus
               startContent={<SearchIcon size={16} className="text-primary" />}
               value={searchKeyword}
               onChange={(e) => setSearchKeyword(e.target.value)}
             />
-            <Button className="w-[20%] m-auto bg-primary" onClick={handleSearch}>
-              Search
-            </Button>
+            <Button onClick={handleSearch}>Search</Button>
           </ModalHeader>
           <Divider className="mb-4" />
 
           <ModalBody className="bg-transparent h-auto grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
             {fetchedVideos &&
-              fetchedVideos.length > 0 &&
               fetchedVideos.map((video, index) => (
-                <VideoCard key={video.id.videoId || index} video={video} onClose={onClose} />
+                <VideoCard
+                  key={video.id.videoId || index}
+                  video={video}
+                  onClose={onClose}
+                />
               ))}
 
             {isLoading && (
@@ -119,7 +113,6 @@ export default function VideoSearchBar() {
           <ModalFooter className="flex flex-col justify-center items-center gap-4">
             {fetchedVideos && hasNextPage && (
               <Button
-                className="w-[80%] md:w-[70%] lg:w-[50%] bg-primary"
                 onClick={(e) => {
                   e.preventDefault();
                   setIsSearchOperation(false);

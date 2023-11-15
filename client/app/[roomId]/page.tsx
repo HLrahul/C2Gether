@@ -2,7 +2,6 @@
 
 import { useEffect } from "react";
 import { useRouter, useParams } from "next/navigation";
-
 import { usePromptStore, useUserStore } from "@/store/userStore";
 
 import VideoPlayer from "@/components/VideoPlayer";
@@ -33,7 +32,6 @@ export default function RoomPage() {
           style={{ gridAutoRows: "min-content" }}
         >
           <VideoInputGroup />
-
           <VideoPlayer />
           <VideoDetails />
         </div>
