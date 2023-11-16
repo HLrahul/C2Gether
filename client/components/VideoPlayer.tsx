@@ -80,8 +80,8 @@ export default function VideoPlayer() {
 
   const onPlayerReady: YouTubeProps["onReady"] = (event) => {
     playerRef.current = event.target;
-    event.target.playVideo();
     if (timeStamp !== 0) event.target.seekTo(timeStamp, true);
+    socket.emit("player-pause", { roomId, currentTime: timeStamp });
   };
 
   const onPlayerPlay: YouTubeProps["onPlay"] = () =>

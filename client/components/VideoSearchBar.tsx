@@ -31,12 +31,12 @@ import { useQueryClient } from "@tanstack/react-query";
 import { useFetchVideos } from "@/hooks/useFetchVideos";
 import { useVideoIdStore } from "@/store/videoIdStore";
 
-type searchKeyword = z.infer<typeof searchKeywordSchema>
+type searchKeyword = z.infer<typeof searchKeywordSchema>;
 
 export default function VideoSearchInput() {
   const { isOpen, onOpen, onClose } = useDisclosure();
-  const [ searchKeyword, setSearchKeyword ] = useState<string>("");
-  const [ isSearchOperation, setIsSearchOperation ] = useState<boolean>(false);
+  const [searchKeyword, setSearchKeyword] = useState<string>("");
+  const [isSearchOperation, setIsSearchOperation] = useState<boolean>(false);
   const { fetchedVideos, setFetchedVideos } = useVideoStore((state) => state);
   const { isLoading, error, fetchNextPage, isFetching, hasNextPage, refetch } =
     useFetchVideos(searchKeyword, isSearchOperation);
@@ -85,8 +85,6 @@ export default function VideoSearchInput() {
       onOpen();
     }
   };
-
-  
 
   return (
     <div className="row-span-1 col-span-8">
