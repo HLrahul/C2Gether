@@ -40,9 +40,9 @@ export default function CreateRoomButton({ roomId }: CreateRoomFormProps) {
   const router = useRouter();
   const { toast } = useToast();
   const { user } = useUserStore();
-  const [isLoading, setIsLoading] = useState(false);
   const setUser = useUserStore((state) => state.setUser);
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
+  const [isLoading, setIsLoading] = useState<boolean>(false);
   const [serverRoomId, setServerRoomId] = useState<string>("");
   const setMembers = useMembersStore((state) => state.setMembers);
 

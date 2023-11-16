@@ -146,6 +146,7 @@ export default function JoinRoomPrompt({ roomId }: { roomId: string }) {
                 startContent={<Home size={12} />}
                 onClick={() => {
                   setIsHomeLoading(true);
+                  socket.emit("leave-room");
                   router.replace("/");
                 }}
               >

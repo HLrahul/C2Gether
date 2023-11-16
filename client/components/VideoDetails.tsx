@@ -48,7 +48,7 @@ export default function VideoDetails() {
         const response = await axios.get(
           `https://www.googleapis.com/youtube/v3/videos?id=${videoId}&key=${process.env.NEXT_PUBLIC_YOUTUBE_API_KEY}&part=snippet`
         );
-        setVideoDetails(response.data.items[0].snippet);
+        setVideoDetails(response?.data?.items[0]?.snippet);
         setIsLoading(false);
       };
 
@@ -62,7 +62,7 @@ export default function VideoDetails() {
         const response = await axios.get(
           `https://www.googleapis.com/youtube/v3/channels?id=${videoDetails.channelId}&key=${process.env.NEXT_PUBLIC_YOUTUBE_API_KEY}&part=snippet`
         );
-        setChannelDetails(response.data.items[0].snippet);
+        setChannelDetails(response?.data?.items[0]?.snippet);
       };
 
       fetchChannelDetails();

@@ -124,6 +124,7 @@ io.on("connection", (socket) => {
         .to(lastMember.id)
         .emit("player-state-from-server", { videoId, currentTime });
       socket.to(lastMember.id).emit("client-loaded");
+      socket.to(roomId).emit("player-pause-from-server", currentTime);
     }
   );
 

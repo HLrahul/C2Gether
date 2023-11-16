@@ -3,11 +3,10 @@
 import { useEffect } from "react";
 import { socket } from "@/lib/socket";
 import { Notification } from "@/types";
+import { Chip } from "@nextui-org/react";
 import { useToast } from "./ui/useToast";
 import { ScrollArea } from "./ui/scrollArea";
-import { useAdminStore } from "@/store/userStore";
 import { useMembersStore } from "@/store/membersStore";
-import { Chip } from "@nextui-org/react";
 
 export default function MembersList() {
   const { toast } = useToast();
@@ -15,7 +14,6 @@ export default function MembersList() {
     state.members,
     state.setMembers,
   ]);
-  const { isAdmin } = useAdminStore();
 
   useEffect(() => {
     socket.on("update-members", (members) => {
@@ -40,10 +38,10 @@ export default function MembersList() {
 
       <ScrollArea className="h-48">
         <ul className="flex flex-col gap-1 rounded-md px-1">
-          {members.map(({ id, username }) => (
+          {members.map(({ id, username }, index) => (
             <li className="flex gap-2 items-center" key={id}>
               <p>{username}</p>
-              {(isAdmin || members[0]?.id === id) && (
+              {(index === 0) && (
                 <Chip size="sm" color="primary" className="text-[0.7rem]">
                   Admin
                 </Chip>

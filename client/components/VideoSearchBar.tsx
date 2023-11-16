@@ -1,6 +1,10 @@
 "use client";
 
-import { useState } from "react";
+import * as z from "zod";
+import { useForm } from "react-hook-form";
+import { useEffect, useState } from "react";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { searchKeywordSchema } from "@/lib/validations/searchKeywordSchema";
 import {
   Button,
   Divider,
@@ -12,124 +16,186 @@ import {
   ModalHeader,
   useDisclosure,
 } from "@nextui-org/react";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormMessage,
+} from "@/components/ui/form";
 import { VideoCard } from "./VideoCard";
+import { LoadingSpinner } from "./icons";
 import { SearchIcon } from "lucide-react";
 import { useVideoStore } from "@/store/videosStore";
 import { useQueryClient } from "@tanstack/react-query";
 import { useFetchVideos } from "@/hooks/useFetchVideos";
+import { useVideoIdStore } from "@/store/videoIdStore";
 
-export default function VideoSearchBar() {
+type searchKeyword = z.infer<typeof searchKeywordSchema>
+
+export default function VideoSearchInput() {
   const { isOpen, onOpen, onClose } = useDisclosure();
-  const [searchKeyword, setSearchKeyword] = useState("");
-  const [isSearchOperation, setIsSearchOperation] = useState(false);
+  const [ searchKeyword, setSearchKeyword ] = useState<string>("");
+  const [ isSearchOperation, setIsSearchOperation ] = useState<boolean>(false);
   const { fetchedVideos, setFetchedVideos } = useVideoStore((state) => state);
   const { isLoading, error, fetchNextPage, isFetching, hasNextPage, refetch } =
     useFetchVideos(searchKeyword, isSearchOperation);
   const queryClient = useQueryClient();
+  const { setVideoId } = useVideoIdStore();
 
-  const handleSearch = (e: React.MouseEvent) => {
-    e.preventDefault();
-    queryClient.removeQueries({ queryKey: ["videos"] });
-    setIsSearchOperation(true);
-    setFetchedVideos([]);
-    refetch();
+  const form = useForm<searchKeyword>({
+    resolver: zodResolver(searchKeywordSchema),
+    defaultValues: {
+      keyword: searchKeyword,
+    },
+  });
+
+  const { watch } = form;
+  const keyword = watch("keyword");
+  useEffect(() => {
+    setSearchKeyword(keyword);
+  }, [keyword]);
+
+  const getVideoIdFromUrl = (url: string) => {
+    const regex =
+      /(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
+    const matches = url.match(regex);
+    if (matches && matches[2].length === 11) {
+      return matches[2];
+    }
+    return "";
   };
 
+  const handleSearch = form.handleSubmit(() => {
+    setIsSearchOperation(true);
+    queryClient.removeQueries({ queryKey: ["videos"] });
+    setFetchedVideos([]);
+    refetch();
+  });
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    setSearchKeyword(value);
+    form.setValue("keyword", value);
+
+    const videoId = getVideoIdFromUrl(e.target.value);
+    if (videoId !== "") {
+      setVideoId(videoId);
+    } else {
+      onOpen();
+    }
+  };
+
+  
+
   return (
-    <>
-      <Button
-        variant="solid"
-        onPress={onOpen}
-        startContent={<SearchIcon size={18} />}
-        className="w-full hover:bg-primary hover:text-white"
-      >
-        Type to Search
-      </Button>
+    <div className="row-span-1 col-span-8">
+      <div className="flex gap-2">
+        <Input
+          className="text-primary"
+          value={searchKeyword}
+          onChange={handleInputChange}
+          onFocus={(event) => (event.target as HTMLInputElement).select()}
+          endContent={<SearchIcon size={16} className="text-foreground" />}
+          placeholder="Paste the link of the Video or type to search"
+        />
 
-      <Modal
-        size="full"
-        backdrop="blur"
-        isOpen={isOpen}
-        onOpenChange={onClose}
-        placement="center"
-        scrollBehavior="outside"
-      >
-        <ModalContent>
-          <ModalHeader className="flex gap-[1rem] w-[80%] md:w-[70%] lg:w-[50%] m-auto">
-            <Input
-              id="youtube-video-search-keyword"
-              autoFocus
-              startContent={<SearchIcon size={16} className="text-primary" />}
-              value={searchKeyword}
-              onChange={(e) => setSearchKeyword(e.target.value)}
-            />
-            <Button onClick={handleSearch}>Search</Button>
-          </ModalHeader>
-          <Divider className="mb-4" />
-
-          <ModalBody className="bg-transparent h-auto grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-            {fetchedVideos &&
-              fetchedVideos.map((video, index) => (
-                <VideoCard
-                  key={video.id.videoId || index}
-                  video={video}
-                  onClose={onClose}
-                />
-              ))}
-
-            {isLoading && (
-              <p className="flex col-span-1 sm:col-span-2 md:col-span-3 lg:col-span-4 items-center justify-center">
-                <svg
-                  className="animate-spin h-5 w-5 text-current"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  xmlns="http://www.w3.org/2000/svg"
+        <Modal
+          size="full"
+          backdrop="blur"
+          isOpen={isOpen}
+          onOpenChange={onClose}
+          placement="center"
+          scrollBehavior="outside"
+        >
+          <ModalContent>
+            <ModalHeader className="flex gap-[1rem] w-[80%] md:w-[70%] lg:w-[50%] m-auto">
+              <Form {...form}>
+                <form
+                  id="search-videos-form"
+                  onSubmit={handleSearch}
+                  className="w-full m-auto flex gap-4"
                 >
-                  <circle
-                    className="opacity-25"
-                    cx="12"
-                    cy="12"
-                    r="10"
-                    stroke="currentColor"
-                    strokeWidth="4"
+                  <FormField
+                    name="keyword"
+                    control={form.control}
+                    render={({ field }) => (
+                      <FormItem id="keyword" className="w-full">
+                        <FormControl>
+                          <Input
+                            className="w-full"
+                            id="youtube-video-search-keyword"
+                            autoFocus
+                            startContent={
+                              <SearchIcon size={16} className="text-primary" />
+                            }
+                            placeholder="Search for videos"
+                            variant="bordered"
+                            {...field}
+                          />
+                        </FormControl>
+                        <FormMessage className="text-xs text-red-500" />
+                      </FormItem>
+                    )}
                   />
-                  <path
-                    className="opacity-75"
-                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                    fill="currentColor"
+                  <Button
+                    type="submit"
+                    id="search-videos-button"
+                    color="primary"
+                    variant="solid"
+                  >
+                    Search
+                  </Button>
+                </form>
+              </Form>
+            </ModalHeader>
+            <Divider className="mb-4" />
+
+            <ModalBody className="bg-transparent h-auto grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+              {fetchedVideos &&
+                fetchedVideos.map((video, index) => (
+                  <VideoCard
+                    key={video.id.videoId || index}
+                    video={video}
+                    onClose={onClose}
                   />
-                </svg>
+                ))}
+
+              {isLoading && (
+                <p className="flex col-span-1 sm:col-span-2 md:col-span-3 lg:col-span-4 items-center justify-center">
+                  <LoadingSpinner />
+                </p>
+              )}
+
+              {error && !fetchedVideos && (
+                <p className="text-red-500 w-full text-center">
+                  Unable to fetch Videos. Try again!
+                </p>
+              )}
+            </ModalBody>
+            <Divider className="mt-4" />
+            <ModalFooter className="flex flex-col justify-center items-center w-[80%] md:w-[70%] lg:w-[50%] m-auto gap-4">
+              {fetchedVideos && hasNextPage && (
+                <Button
+                  className="w-full hover:bg-primary"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    setIsSearchOperation(false);
+                    fetchNextPage();
+                  }}
+                  isLoading={isFetching}
+                >
+                  load more
+                </Button>
+              )}
+
+              <p className="text-[0.8rem] text-foreground/70">
+                Videos are fetched from Youtube.
               </p>
-            )}
-
-            {error && !fetchedVideos && (
-              <p className="text-red-500 w-full text-center">
-                Unable to fetch Videos. Try again!
-              </p>
-            )}
-          </ModalBody>
-
-          <Divider className="mt-4" />
-          <ModalFooter className="flex flex-col justify-center items-center gap-4">
-            {fetchedVideos && hasNextPage && (
-              <Button
-                onClick={(e) => {
-                  e.preventDefault();
-                  setIsSearchOperation(false);
-                  fetchNextPage();
-                }}
-                isLoading={isFetching}
-              >
-                load more
-              </Button>
-            )}
-
-            <p className="text-[0.8rem] text-foreground/70">
-              Videos are fetched from Youtube.
-            </p>
-          </ModalFooter>
-        </ModalContent>
-      </Modal>
-    </>
+            </ModalFooter>
+          </ModalContent>
+        </Modal>
+      </div>
+    </div>
   );
 }

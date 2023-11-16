@@ -6,7 +6,7 @@ import { usePromptStore, useUserStore } from "@/store/userStore";
 
 import VideoPlayer from "@/components/VideoPlayer";
 import VideoDetails from "@/components/VideoDetails";
-import VideoInputGroup from "@/components/VideoInputGroup";
+import VideoSearchBar from "@/components/VideoSearchBar";
 import DisconnectedNote from "@/components/DisconnectedNote";
 
 export default function RoomPage() {
@@ -31,7 +31,7 @@ export default function RoomPage() {
           className="grid grid-cols-8 lg:w-[75%] gap-5 m-auto p-5"
           style={{ gridAutoRows: "min-content" }}
         >
-          <VideoInputGroup />
+          <VideoSearchBar />
           <VideoPlayer />
           <VideoDetails />
         </div>
