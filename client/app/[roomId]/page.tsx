@@ -8,6 +8,7 @@ import VideoPlayer from "@/components/VideoPlayer";
 import VideoDetails from "@/components/VideoDetails";
 import VideoSearchBar from "@/components/VideoSearchBar";
 import DisconnectedNote from "@/components/DisconnectedNote";
+import ReactVideoPlayer from "@/components/ReactVideoPlayer";
 
 export default function RoomPage() {
   const router = useRouter();
@@ -32,8 +33,10 @@ export default function RoomPage() {
           style={{ gridAutoRows: "min-content" }}
         >
           <VideoSearchBar />
-          <VideoPlayer />
-          <VideoDetails />
+
+          <ReactVideoPlayer />
+          {/* <VideoPlayer />
+  <VideoDetails /> */}
         </div>
       </section>
     </>

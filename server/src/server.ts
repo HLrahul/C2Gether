@@ -10,7 +10,7 @@ import { addUser, getUser, removeUser, getRoomMembers } from "./data/user";
 const app = express();
 app.use(
   cors({
-    origin: "http://localhost:3000",
+    origin: "https://probable-goggles-wjrjjj5qvwph9jqv-3000.app.github.dev/",
     methods: ["GET", "POST"],
     credentials: true,
   })
