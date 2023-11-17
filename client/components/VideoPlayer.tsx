@@ -8,8 +8,8 @@ import YouTube, { YouTubeProps } from "react-youtube";
 import "@/styles/video-player.css";
 import { socket } from "@/lib/socket";
 import JoinRoomPrompt from "./JoinRoomPrompt";
-import { useAdminStore, useUserStore } from "@/store/userStore";
 import { useVideoIdStore } from "@/store/videoIdStore";
+import { useAdminStore, useUserStore } from "@/store/userStore";
 
 export default function VideoPlayer() {
   const { roomId } = useParams();
@@ -18,14 +18,22 @@ export default function VideoPlayer() {
   const { videoId } = useVideoIdStore();
   const playerRef = useRef<YT.Player | null>(null);
   const [isLoading, setIsLoading] = useState(true);
-  const [timeStamp, setTimeStamp] = useState<number>(0);
+  const [serverTimeStamp, setServerTimeStamp] = useState<number>(0);
   const setIsAdmin = useAdminStore((state) => state.setIsAdmin);
   const setVideoId = useVideoIdStore((state) => state.setVideoId);
 
   useEffect(() => {
-    if (isAdmin) socket.emit("video-change", { roomId, videoId });
+    if (videoId) {
+      socket.emit("video-change", { roomId, videoId });
+    }
+    socket.on("video-change-from-server", (videoId) => { setVideoId(videoId); });
 
-    socket.on("video-change-from-server", setVideoId);
+    return () => {
+      socket.off("video-change-from-server");
+    }
+  }, [videoId, roomId, setVideoId]);
+
+  useEffect(() => { 
     socket.emit("client-ready", roomId);
     socket.emit("is-admin", { roomId, userId: user?.id });
     socket.on("admin-user", setIsAdmin);
@@ -38,7 +46,7 @@ export default function VideoPlayer() {
     });
     socket.on("player-state-from-server", ({ videoId, currentTime }) => {
       setVideoId(videoId);
-      setTimeStamp(currentTime);
+      setServerTimeStamp(currentTime);
     });
     socket.on("player-play-from-server", () => {
       if (
@@ -64,7 +72,7 @@ export default function VideoPlayer() {
         playerRef.current.setPlaybackRate(playbackRate);
       }
     });
-
+    
     return () => {
       socket.off("admin-user");
       socket.off("client-loaded");
@@ -73,15 +81,16 @@ export default function VideoPlayer() {
       socket.off("player-play-from-server");
       socket.off("player-pause-from-server");
       socket.off("player-state-from-server");
-      socket.off("video-change-from-server");
       socket.off("playback-rate-change-from-server");
     };
   }, [isAdmin, setIsAdmin, roomId, videoId, setVideoId, user?.id]);
 
   const onPlayerReady: YouTubeProps["onReady"] = (event) => {
     playerRef.current = event.target;
-    if (timeStamp !== 0) event.target.seekTo(timeStamp, true);
-    socket.emit("player-pause", { roomId, currentTime: timeStamp });
+    if (event.target.getPlayerState() !== YT.PlayerState.UNSTARTED) {
+      event.target.seekTo(serverTimeStamp, true);
+      socket.emit("player-pause", { roomId, currentTime: serverTimeStamp });
+    }
   };
 
   const onPlayerPlay: YouTubeProps["onPlay"] = () =>
@@ -109,7 +118,7 @@ export default function VideoPlayer() {
       playbackRate: event.target.getPlaybackRate(),
     });
 
-  const opts: YouTubeProps["opts"] = { playerVars: { autoplay: 1, rel: 0 } };
+  const opts: YouTubeProps["opts"] = { playerVars: { autoplay: 1, rel: 0, modestbranding: 1, } };
 
   return (
     <>
@@ -120,7 +129,7 @@ export default function VideoPlayer() {
         {isLoading ? (
           <Skeleton
             isLoaded={isLoading}
-            className="h-[40vh] bg-default-200 rounded-lg"
+            className="h-[50vh] bg-default-200 rounded-lg"
           >
             <div className="h-[50vh] bg-default-200"></div>
           </Skeleton>
