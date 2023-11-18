@@ -35,8 +35,7 @@ export default function RoomPage() {
           <VideoSearchBar />
 
           <ReactVideoPlayer />
-          {/* <VideoPlayer />
-  <VideoDetails /> */}
+          <VideoDetails />
         </div>
       </section>
     </>

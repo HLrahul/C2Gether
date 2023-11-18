@@ -10,7 +10,7 @@ import { addUser, getUser, removeUser, getRoomMembers } from "./data/user";
 const app = express();
 app.use(
   cors({
-    origin: "https://probable-goggles-wjrjjj5qvwph9jqv-3000.app.github.dev/",
+    origin: "http://localhost:3000",
     methods: ["GET", "POST"],
     credentials: true,
   })
@@ -124,7 +124,7 @@ io.on("connection", (socket) => {
         .to(lastMember.id)
         .emit("player-state-from-server", { videoId, currentTime });
       socket.to(lastMember.id).emit("client-loaded");
-      socket.to(roomId).emit("player-pause-from-server", currentTime);
+      // socket.to(roomId).emit("player-pause-from-server", currentTime);
     }
   );
 

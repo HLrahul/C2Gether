@@ -46,6 +46,7 @@
     "nanoid": "^5.0.2",
     "next": "^13.5.6",
     "next-themes": "^0.2.1",
+    "next-videos": "^1.4.1",
     "postcss": "8.4.29",
     "react": "18.2.0",
     "react-dom": "18.2.0",
@@ -60,10 +61,12 @@
     "tailwindcss-animate": "^1.0.7",
     "typescript": "5.0.4",
     "utf-8-validate": "^5.0.10",
+    "videojs-youtube": "^3.0.1",
     "zod": "^3.22.4",
     "zustand": "^4.4.6"
   },
   "devDependencies": {
+    "@types/video.js": "^7.3.56",
     "video.js": "^8.6.1"
   }
 }
