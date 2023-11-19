@@ -124,7 +124,6 @@ io.on("connection", (socket) => {
         .to(lastMember.id)
         .emit("player-state-from-server", { videoId, currentTime });
       socket.to(lastMember.id).emit("client-loaded");
-      // socket.to(roomId).emit("player-pause-from-server", currentTime);
     }
   );
 
@@ -134,8 +133,8 @@ io.on("connection", (socket) => {
 
   socket.on(
     "player-pause",
-    ({ roomId, currentTime }: { roomId: string; currentTime: number }) => {
-      socket.to(roomId).emit("player-pause-from-server", currentTime);
+    ({ roomId, membersCurrentTime }: { roomId: string; membersCurrentTime: number }) => {
+      socket.to(roomId).emit("player-pause-from-server", membersCurrentTime);
     }
   );
 
