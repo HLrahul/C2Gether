@@ -10,7 +10,7 @@ import { addUser, getUser, removeUser, getRoomMembers } from "./data/user";
 const app = express();
 app.use(
   cors({
-    origin: "http://localhost:3000",
+    origin: "https://probable-goggles-wjrjjj5qvwph9jqv-3000.app.github.dev/",
     methods: ["GET", "POST"],
     credentials: true,
   })
@@ -128,34 +128,36 @@ io.on("connection", (socket) => {
   );
 
   socket.on("player-play", ({ roomId }: { roomId: string }) => {
-    socket.to(roomId).emit("player-play-from-server");
+    socket.broadcast.to(roomId).emit("player-play-from-server");
   });
 
   socket.on(
     "player-pause",
     ({ roomId, membersCurrentTime }: { roomId: string; membersCurrentTime: number }) => {
-      socket.to(roomId).emit("player-pause-from-server", membersCurrentTime);
+      socket.broadcast
+        .to(roomId)
+        .emit("player-pause-from-server", membersCurrentTime);
     }
   );
 
   socket.on(
     "player-seek",
     ({ roomId, currentTime }: { roomId: string; currentTime: number }) => {
-      socket.to(roomId).emit("player-seek-from-server", currentTime);
+      socket.broadcast.to(roomId).emit("player-seek-from-server", currentTime);
     }
   );
 
   socket.on(
     "playback-rate-change",
     ({ roomId, playbackRate }: { roomId: string; playbackRate: number }) => {
-      socket.to(roomId).emit("playback-rate-change-from-server", playbackRate);
+      socket.broadcast.to(roomId).emit("playback-rate-change-from-server", playbackRate);
     }
   );
 
   socket.on(
     "video-change",
     ({ roomId, videoId }: { roomId: string; videoId: string }) => {
-      socket.to(roomId).emit("video-change-from-server", videoId);
+      socket.broadcast.to(roomId).emit("video-change-from-server", videoId);
     }
   );
 

@@ -17,11 +17,9 @@ export default function ReactVideoPlayer() {
   const { user } = useUserStore();
   const { videoId } = useVideoIdStore();
   const setVideoId = useVideoIdStore((state) => state.setVideoId);
-  const [serverTimeStamp, setServerTimeStamp] = useState<number>(0);
   const setIsAdmin = useAdminStore((state) => state.setIsAdmin);
 
   const [player, setPlayer] = useState<any>(null);
-  const [isStarted, setIsStarted] = useState<boolean>(false);
   const [isPlaying, setIsPlaying] = useState<boolean>(true);
 
   useEffect(() => {
@@ -44,13 +42,15 @@ export default function ReactVideoPlayer() {
     });
     socket.on("player-state-from-server", ({ videoId, currentTime }) => {
       setVideoId(videoId);
-      setServerTimeStamp(currentTime);
       if (player && currentTime) {
         player.seekTo(currentTime);
       }
     });
     socket.on("video-change-from-server", (videoId) => {
-      setVideoId(videoId);
+      if(player) {
+        setVideoId(videoId);
+        player.seekTo(0);
+      }
     });
     socket.on("player-play-from-server", () => {
       if (player) {
@@ -88,15 +88,13 @@ export default function ReactVideoPlayer() {
   }, [roomId, player, videoId, setVideoId, user, setIsAdmin]);
 
   const onReady = (player: any) => {
-    setPlayer(player); 
-    player.seekTo(serverTimeStamp);
-    socket.emit("player-pause", { roomId, currentTime: serverTimeStamp });
+    setPlayer(player);
   };
   const onPlay = () => {
     if (player) {
       socket.emit("player-play", { roomId });
-      setIsPlaying(true);
     }
+    setIsPlaying(true);
   };
   const onPause = () => {
     setIsPlaying(false);
@@ -113,6 +111,12 @@ export default function ReactVideoPlayer() {
   const onPlaybackRateChange = (playbackRate: number) => {
     socket.emit("player-playback-rate", { roomId, playbackRate });
   };
+  const onEnded = () => {
+    if (player) {
+      player.seekTo(0);
+      setIsPlaying(true);
+    }
+  };
 
   return (
     <>
@@ -121,25 +125,25 @@ export default function ReactVideoPlayer() {
       />
 
       <div className="col-span-8 row-span-2 md:col-span-5">
-          <div className="video-responsive">
-            <ReactPlayer
-              url={`https://www.youtube.com/watch?v=${videoId}`}
-              className="react-player"
-              height="100%"
-              width="100%"
-              controls={true}
-              playing={isPlaying}
-              muted={false}
-              pip={true}
-              stopOnUnmount={false}
-              onReady={onReady}
-              onStart={() => setIsStarted(true)}
-              onPlay={onPlay}
-              onPause={onPause}
-              onSeek={onSeek}
-              onPlaybackRateChange={onPlaybackRateChange}
-            />
-          </div>
+        <div className="video-responsive">
+          <ReactPlayer
+            url={`https://www.youtube.com/watch?v=${videoId}`}
+            className="react-player"
+            height="100%"
+            width="100%"
+            controls={true}
+            playing={isPlaying}
+            muted={false}
+            pip={true}
+            stopOnUnmount={false}
+            onReady={onReady}
+            onPlay={onPlay}
+            onPause={onPause}
+            onSeek={onSeek}
+            onPlaybackRateChange={onPlaybackRateChange}
+            onEnded={onEnded}
+          />
+        </div>
       </div>
     </>
   );
