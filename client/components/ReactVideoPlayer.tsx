@@ -20,7 +20,9 @@ export default function ReactVideoPlayer() {
   const setIsAdmin = useAdminStore((state) => state.setIsAdmin);
 
   const [player, setPlayer] = useState<any>(null);
+  const [playbackRate, setPlaybackRate] = useState(1);
   const [isPlaying, setIsPlaying] = useState<boolean>(true);
+
 
   useEffect(() => {
     if (player && videoId) {
@@ -36,7 +38,7 @@ export default function ReactVideoPlayer() {
     socket.on("client-loaded", () => {});
     socket.on("get-player-state", () => {
       if (player) {
-        const currentTime = player.getCurrentTime() + 2;
+        const currentTime = player.getCurrentTime();
         socket.emit("send-player-state", { roomId, videoId, currentTime });
       }
     });
@@ -49,7 +51,9 @@ export default function ReactVideoPlayer() {
     socket.on("video-change-from-server", (videoId) => {
       if(player) {
         setVideoId(videoId);
-        player.seekTo(0);
+        if(!isPlaying) {
+          player.seekTo(0);
+        }
       }
     });
     socket.on("player-play-from-server", () => {
@@ -58,19 +62,19 @@ export default function ReactVideoPlayer() {
       }
     });
     socket.on("player-pause-from-server", (membersCurrentTime) => {
-      setIsPlaying(false);
       if (player) {
         player.seekTo(membersCurrentTime);
       }
+      setIsPlaying(false);
     });
     socket.on("player-seek-from-server", (currentTime) => {
       if (player) {
         player.seekTo(currentTime);
       }
     });
-    socket.on("player-playback-rate-from-server", (playbackRate) => {
+    socket.on("playback-rate-change-from-server", (playbackRate) => {
       if (player) {
-        player.setPlaybackRate(playbackRate);
+        setPlaybackRate(playbackRate);
       }
     });
 
@@ -85,7 +89,7 @@ export default function ReactVideoPlayer() {
       socket.off("player-state-from-server");
       socket.off("playback-rate-change-from-server");
     };
-  }, [roomId, player, videoId, setVideoId, user, setIsAdmin]);
+  }, [roomId, player, videoId, setVideoId, user, setIsAdmin, isPlaying]);
 
   const onReady = (player: any) => {
     setPlayer(player);
@@ -109,7 +113,7 @@ export default function ReactVideoPlayer() {
     socket.emit("player-seek", { roomId, currentTime: seek });
   };
   const onPlaybackRateChange = (playbackRate: number) => {
-    socket.emit("player-playback-rate", { roomId, playbackRate });
+    socket.emit("playback-rate-change", { roomId, playbackRate });
   };
   const onEnded = () => {
     if (player) {
@@ -140,6 +144,7 @@ export default function ReactVideoPlayer() {
             onPlay={onPlay}
             onPause={onPause}
             onSeek={onSeek}
+            playbackRate={playbackRate}
             onPlaybackRateChange={onPlaybackRateChange}
             onEnded={onEnded}
           />
