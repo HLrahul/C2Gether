@@ -20,6 +20,7 @@ export default function LeaveButton() {
         socket.emit("leave-room");
         setTimeout(() => {
           router.replace("/");
+          window.location.reload();
         }, 600);
       }}
     >

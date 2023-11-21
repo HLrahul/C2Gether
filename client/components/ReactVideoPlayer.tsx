@@ -6,6 +6,7 @@ import { useParams } from "next/navigation";
 
 import dynamic from "next/dynamic";
 import { socket } from "@/lib/socket";
+import VideoDetails from "./VideoDetails";
 import JoinRoomPrompt from "./JoinRoomPrompt";
 import { useVideoIdStore } from "@/store/videoIdStore";
 import { useAdminStore, useUserStore } from "@/store/userStore";
@@ -128,7 +129,7 @@ export default function ReactVideoPlayer() {
         roomId={roomId && (typeof roomId === "string" ? roomId : roomId[0])}
       />
 
-      <div className="col-span-8 row-span-2 md:col-span-5">
+      <div className="col-span-8 md:col-span-5">
         <div className="video-responsive">
           <ReactPlayer
             url={`https://www.youtube.com/watch?v=${videoId}`}
@@ -149,6 +150,8 @@ export default function ReactVideoPlayer() {
             onEnded={onEnded}
           />
         </div>
+
+        <VideoDetails />
       </div>
     </>
   );

@@ -4,8 +4,7 @@ import { useEffect } from "react";
 import { useRouter, useParams } from "next/navigation";
 import { usePromptStore, useUserStore } from "@/store/userStore";
 
-import VideoPlayer from "@/components/VideoPlayer";
-import VideoDetails from "@/components/VideoDetails";
+import ChatWindow from "@/components/ChatWindow";
 import VideoSearchBar from "@/components/VideoSearchBar";
 import DisconnectedNote from "@/components/DisconnectedNote";
 import ReactVideoPlayer from "@/components/ReactVideoPlayer";
@@ -35,7 +34,7 @@ export default function RoomPage() {
           <VideoSearchBar />
 
           <ReactVideoPlayer />
-          <VideoDetails />
+          <ChatWindow />
         </div>
       </section>
     </>

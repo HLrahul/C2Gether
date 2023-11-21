@@ -70,7 +70,7 @@ export default function VideoDetails() {
   }, [videoDetails]);
 
   return (
-    <div className="row-span-2 col-span-8 md:col-span-5">
+    <div className="col-span-8 md:col-span-5 mt-5">
       {isLoading ? (
         <SkeletonLoader />
       ) : (
