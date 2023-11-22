@@ -16,7 +16,7 @@ const ReactPlayer = dynamic(() => import("react-player"), { ssr: false });
 export default function ReactVideoPlayer() {
   const { roomId } = useParams();
   const { user } = useUserStore();
-  const { videoId } = useVideoIdStore();
+  const { videoId, isPlaylist } = useVideoIdStore();
   const setVideoId = useVideoIdStore((state) => state.setVideoId);
   const setIsAdmin = useAdminStore((state) => state.setIsAdmin);
 
@@ -132,7 +132,12 @@ export default function ReactVideoPlayer() {
       <div className="col-span-8 md:col-span-5">
         <div className="video-responsive">
           <ReactPlayer
-            url={`https://www.youtube.com/watch?v=${videoId}`}
+            key={videoId}
+            url={
+              isPlaylist
+                ? `https://www.youtube.com/playlist?list=${videoId}`
+                : `https://www.youtube.com/watch?v=${videoId}`
+            }
             className="react-player"
             height="100%"
             width="100%"

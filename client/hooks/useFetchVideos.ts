@@ -15,9 +15,8 @@ export const useFetchVideos = (
   // Function to fetch videos and playlists
   const fetchVideosandPlaylists = async (pageToken: string) => {
     const { data } = await axios.get(
-      `https://www.googleapis.com/youtube/v3/search?part=snippet&type=video&maxResults=20&pageToken=${pageToken}&q=${searchKeyword}&key=${process.env.NEXT_PUBLIC_YOUTUBE_API_KEY}`
+      `https://www.googleapis.com/youtube/v3/search?part=snippet&type=video&type=playlist&maxResults=20&pageToken=${pageToken}&q=${searchKeyword}&key=${process.env.NEXT_PUBLIC_YOUTUBE_API_KEY}`
     );
-
     const videoIds = data.items.map((item: any) => item.id.videoId).join(",");
     const channelIds = data.items
       .map((item: any) => item.snippet.channelId)
@@ -33,18 +32,29 @@ export const useFetchVideos = (
     ]);
 
     const videosWithDetailsAndLogo = data.items.map((item: any) => {
-      const video = videoResponse.data.items.find(
-        (video: any) => video.id === item.id.videoId
-      );
-      const channel = channelResponse.data.items.find(
-        (channel: any) => channel.id === item.snippet.channelId
-      );
+      if (item.id.videoId) {
+        const video = videoResponse.data.items.find(
+          (video: any) => video.id === item.id.videoId
+        );
+        const channel = channelResponse.data.items.find(
+          (channel: any) => channel.id === item.snippet.channelId
+        );
 
-      return {
-        ...item,
-        duration: video.contentDetails.duration,
-        channelLogo: channel.snippet.thumbnails.default.url,
-      };
+        return {
+          ...item,
+          duration: video.contentDetails.duration,
+          channelLogo: channel.snippet.thumbnails.default.url,
+        };
+      } else if (item.id.playlistId) {
+        const channel = channelResponse.data.items.find(
+          (channel: any) => channel.id === item.snippet.channelId
+        );
+
+        return {
+          ...item,
+          channelLogo: channel.snippet.thumbnails.default.url,
+        };
+      }   
     });
 
     return { ...data, items: videosWithDetailsAndLogo };
@@ -87,11 +97,10 @@ export const useFetchVideos = (
             liveBroadcastContent: item.snippet.liveBroadcastContent,
             publishTime: item.snippet.publishTime,
           },
-          duration: item.duration,
+          duration: item.duration || "",
           channelLogo: item.channelLogo,
         };
       });
-
       if (isSearchOperation) setFetchedVideos(videos);
       else appendFetchedVideos(videos);
     }

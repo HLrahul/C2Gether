@@ -8,7 +8,7 @@ interface VideoCardProps {
 }
 
 export const VideoCard = ({ video, onClose }: VideoCardProps) => {
-  const { setVideoId } = useVideoIdStore();
+  const { setVideoId, setIsPlaylist } = useVideoIdStore();
 
   const decodeHtml = (html: string) => {
     const txt = document.createElement("textarea");
@@ -44,7 +44,13 @@ export const VideoCard = ({ video, onClose }: VideoCardProps) => {
       isBlurred
       className="border-none w-full hover:bg-primary"
       onClick={() => {
-        setVideoId(video.id.videoId);
+        if (video.id.playlistId) {
+          setIsPlaylist(true);
+          setVideoId(video.id.playlistId);
+        } else {
+          setIsPlaylist(false);
+          setVideoId(video.id.videoId);
+        }
         onClose();
       }}
     >
@@ -57,14 +63,16 @@ export const VideoCard = ({ video, onClose }: VideoCardProps) => {
               shadow="md"
               src={video.snippet.thumbnails.high.url}
             />
-            <div className="z-2 absolute bottom-6 right-0">
-              <Chip
-                size="sm"
-                className="rounded-sm text-[0.8rem] bg-black text-white flex justify-center items-center"
-              >
-                {convertDuration(video.duration)}
-              </Chip>
-            </div>
+            {video.duration !== "" ? (
+              <div className="z-2 absolute bottom-6 right-0">
+                <Chip
+                  size="sm"
+                  className="rounded-sm text-[0.8rem] bg-black text-white flex justify-center items-center"
+                >
+                  {convertDuration(video.duration)}
+                </Chip>
+              </div>
+            ) : null}
           </div>
 
           <div className="flex flex-col flex-grow col-span-12 gap-5 justify-between items-start">

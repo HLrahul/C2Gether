@@ -46,6 +46,7 @@ export interface Snippet {
 export interface Id {
   kind: string;
   videoId: string;
+  playlistId?: string;
 }
 
 export interface Video {

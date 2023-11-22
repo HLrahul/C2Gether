@@ -86,14 +86,22 @@ export default function VideoSearchInput() {
     }
   };
 
+  const onFocus = (event: React.FocusEvent<Element>) => {
+    const value = (event.target as HTMLInputElement).value;
+    const videoId = getVideoIdFromUrl(value);
+    if (videoId) {
+      (event.target as HTMLInputElement).select();
+    }
+  };
+
   return (
-    <div className="row-span-1 col-span-8">
-      <div className="flex gap-2">
+    <div className="col-span-8">
+      <div>
         <Input
           className="text-primary"
           value={searchKeyword}
           onChange={handleInputChange}
-          onFocus={(event) => (event.target as HTMLInputElement).select()}
+          onFocus={onFocus}
           endContent={<SearchIcon size={16} className="text-foreground" />}
           placeholder="Paste the link of the Video or type to search"
         />
@@ -153,7 +161,7 @@ export default function VideoSearchInput() {
               {fetchedVideos &&
                 fetchedVideos.map((video, index) => (
                   <VideoCard
-                    key={video.id.videoId || index}
+                    key={video.id.playlistId || video.id.videoId || index}
                     video={video}
                     onClose={onClose}
                   />
