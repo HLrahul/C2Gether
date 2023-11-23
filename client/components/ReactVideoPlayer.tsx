@@ -21,27 +21,15 @@ export default function ReactVideoPlayer() {
   const setVideoId = useVideoIdStore((state) => state.setVideoId);
   const setIsAdmin = useAdminStore((state) => state.setIsAdmin);
 
+  const [url, setUrl] = useState<string>("");
   const [player, setPlayer] = useState<any>(null);
-  const [playbackRate, setPlaybackRate] = useState(1);
   const [isPlaying, setIsPlaying] = useState<boolean>(true);
+  const [playbackRate, setPlaybackRate] = useState<number>(1);
 
   useEffect(() => {
     if (player && videoId) {
-      console.log("video-change", videoId, isPlaylist);
       socket.emit("video-change", { roomId, videoId, isPlaylist });
     }
-    socket.on("video-change-from-server", (videoId, isPlaylist) => {
-      console.log("video-change-from-server", videoId, isPlaylist);
-      if (player) {
-        setIsPlaylist(isPlaylist);
-        setVideoId(videoId);
-        player.seekTo(0);
-      }
-    });
-
-    return () => {
-      socket.off("video-change-from-server");
-    };
   }, [videoId, player, roomId, isPlaylist, setIsPlaylist, setVideoId]);
 
   useEffect(() => {
@@ -62,7 +50,13 @@ export default function ReactVideoPlayer() {
         player.seekTo(currentTime);
       }
     });
-    
+    socket.on("video-change-from-server", (videoId, isPlaylist) => {
+      if (player) {
+        setIsPlaylist(isPlaylist);
+        setVideoId(videoId);
+        player.seekTo(0);
+      }
+    });
     socket.on("player-play-from-server", () => {
       if (player) {
         setIsPlaying(true);
@@ -91,11 +85,17 @@ export default function ReactVideoPlayer() {
       socket.off("get-player-state");
       socket.off("player-seek-from-server");
       socket.off("player-play-from-server");
+      socket.off("video-change-from-server");
       socket.off("player-pause-from-server");
       socket.off("player-state-from-server");
       socket.off("playback-rate-change-from-server");
     };
   }, [roomId, player, videoId, setVideoId, user, setIsAdmin, isPlaying, isPlaylist, setIsPlaylist]);
+
+  useEffect(() => {
+    if (isPlaylist) setUrl(`https://www.youtube.com/playlist?list=${videoId}`);
+    else setUrl(`https://www.youtube.com/watch?v=${videoId}`);
+  }, [videoId, isPlaylist]);
 
   const onReady = (player: any) => {
     setPlayer(player);
@@ -137,12 +137,7 @@ export default function ReactVideoPlayer() {
       <div className="col-span-8 md:col-span-5">
         <div className="video-responsive">
           <ReactPlayer
-            key={videoId}
-            url={
-              isPlaylist
-                ? `https://www.youtube.com/playlist?list=${videoId}`
-                : `https://www.youtube.com/watch?v=${videoId}`
-            }
+            url={url}
             className="react-player"
             height="100%"
             width="100%"
