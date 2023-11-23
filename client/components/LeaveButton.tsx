@@ -4,10 +4,13 @@ import { useState } from "react";
 import { socket } from "@/lib/socket";
 import { Button } from "@nextui-org/react";
 import { useRouter } from "next/navigation";
+import { usePromptStore } from "@/store/userStore";
 
 export default function LeaveButton() {
   const router = useRouter();
+  const { setShowPrompt } = usePromptStore();
   const [isLoading, setIsLoading] = useState(false);
+
 
   return (
     <Button
@@ -20,7 +23,7 @@ export default function LeaveButton() {
         socket.emit("leave-room");
         setTimeout(() => {
           router.replace("/");
-          window.location.reload();
+          setShowPrompt(false);
         }, 600);
       }}
     >
