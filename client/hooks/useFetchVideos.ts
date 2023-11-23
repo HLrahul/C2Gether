@@ -82,25 +82,27 @@ export const useFetchVideos = (
   useEffect(() => {
     if (data) {
       const lastPage = data.pages[data.pages.length - 1];
-      const videos = lastPage.items.map((item: Video) => {
-        return {
-          kind: item.kind,
-          etag: item.etag,
-          id: item.id,
-          snippet: {
-            publishedAt: item.snippet.publishedAt,
-            channelId: item.snippet.channelId,
-            title: item.snippet.title,
-            description: item.snippet.description,
-            thumbnails: item.snippet.thumbnails,
-            channelTitle: item.snippet.channelTitle,
-            liveBroadcastContent: item.snippet.liveBroadcastContent,
-            publishTime: item.snippet.publishTime,
-          },
-          duration: item.duration || "",
-          channelLogo: item.channelLogo,
-        };
-      });
+      const videos = lastPage.items
+        .filter((item: Video | undefined): item is Video => item !== undefined)
+        .map((item: Video) => {
+          return {
+            kind: item.kind,
+            etag: item.etag,
+            id: item.id,
+            snippet: {
+              publishedAt: item.snippet.publishedAt,
+              channelId: item.snippet.channelId,
+              title: item.snippet.title,
+              description: item.snippet.description,
+              thumbnails: item.snippet.thumbnails,
+              channelTitle: item.snippet.channelTitle,
+              liveBroadcastContent: item.snippet.liveBroadcastContent,
+              publishTime: item.snippet.publishTime,
+            },
+            duration: item.duration || "",
+            channelLogo: item.channelLogo,
+          };
+        });
       if (isSearchOperation) setFetchedVideos(videos);
       else appendFetchedVideos(videos);
     }

@@ -57,3 +57,38 @@ export interface Video {
   duration: string;
   channelLogo: string;
 }
+
+export interface VideoDetailsType {
+  title: string;
+  description: string;
+  channelId: string;
+  thumbnails: {
+    default: {
+      url: string;
+    };
+  };
+  channelTitle: string;
+}
+
+export interface PlaylistVideo {
+  snippet: {
+    resourceId: {
+      videoId: string;
+    };
+    title: string;
+    thumbnails: {
+      medium: {
+        url: string;
+      };
+    };
+  };
+}
+
+export interface ChannelDetailsType {
+  title: string;
+  thumbnails: {
+    default: {
+      url: string;
+    };
+  };
+}

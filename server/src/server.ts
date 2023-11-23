@@ -112,17 +112,19 @@ io.on("connection", (socket) => {
       roomId,
       videoId,
       currentTime,
+      isPlaylist,
     }: {
       roomId: string;
       videoId: string;
       currentTime: number;
+      isPlaylist: boolean;
     }) => {
       const members = getRoomMembers(roomId);
       const lastMember = members[members.length - 1];
       if (!lastMember) return;
       socket
         .to(lastMember.id)
-        .emit("player-state-from-server", { videoId, currentTime });
+        .emit("player-state-from-server", { videoId, currentTime, isPlaylist });
       socket.to(lastMember.id).emit("client-loaded");
     }
   );

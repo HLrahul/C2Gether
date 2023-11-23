@@ -17,6 +17,7 @@ export default function ReactVideoPlayer() {
   const { roomId } = useParams();
   const { user } = useUserStore();
   const { videoId, isPlaylist } = useVideoIdStore();
+  const setIsPlaylist = useVideoIdStore((state) => state.setIsPlaylist);
   const setVideoId = useVideoIdStore((state) => state.setVideoId);
   const setIsAdmin = useAdminStore((state) => state.setIsAdmin);
 
@@ -40,10 +41,11 @@ export default function ReactVideoPlayer() {
     socket.on("get-player-state", () => {
       if (player) {
         const currentTime = player.getCurrentTime();
-        socket.emit("send-player-state", { roomId, videoId, currentTime });
+        socket.emit("send-player-state", { roomId, videoId, currentTime, isPlaylist });
       }
     });
-    socket.on("player-state-from-server", ({ videoId, currentTime }) => {
+    socket.on("player-state-from-server", ({ videoId, currentTime, isPlaylist }) => {
+      setIsPlaylist(isPlaylist);
       setVideoId(videoId);
       if (player && currentTime) {
         player.seekTo(currentTime);
@@ -52,9 +54,7 @@ export default function ReactVideoPlayer() {
     socket.on("video-change-from-server", (videoId) => {
       if(player) {
         setVideoId(videoId);
-        if(!isPlaying) {
-          player.seekTo(0);
-        }
+        player.seekTo(0);
       }
     });
     socket.on("player-play-from-server", () => {
@@ -90,7 +90,7 @@ export default function ReactVideoPlayer() {
       socket.off("player-state-from-server");
       socket.off("playback-rate-change-from-server");
     };
-  }, [roomId, player, videoId, setVideoId, user, setIsAdmin, isPlaying]);
+  }, [roomId, player, videoId, setVideoId, user, setIsAdmin, isPlaying, isPlaylist, setIsPlaylist]);
 
   const onReady = (player: any) => {
     setPlayer(player);
