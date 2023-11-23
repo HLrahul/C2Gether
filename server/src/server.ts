@@ -158,8 +158,8 @@ io.on("connection", (socket) => {
 
   socket.on(
     "video-change",
-    ({ roomId, videoId }: { roomId: string; videoId: string }) => {
-      socket.broadcast.to(roomId).emit("video-change-from-server", videoId);
+    ({ roomId, videoId, isPlaylist }: { roomId: string; videoId: string, isPlaylist: boolean }) => {
+      socket.broadcast.to(roomId).emit("video-change-from-server", { videoId, isPlaylist });
     }
   );
 

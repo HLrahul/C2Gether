@@ -25,13 +25,24 @@ export default function ReactVideoPlayer() {
   const [playbackRate, setPlaybackRate] = useState(1);
   const [isPlaying, setIsPlaying] = useState<boolean>(true);
 
-
   useEffect(() => {
     if (player && videoId) {
-      socket.emit("video-change", { roomId, videoId });
+      console.log("video-change", videoId, isPlaylist);
+      socket.emit("video-change", { roomId, videoId, isPlaylist });
     }
-  }, [videoId, player, roomId]);
+    socket.on("video-change-from-server", (videoId, isPlaylist) => {
+      console.log("video-change-from-server", videoId, isPlaylist);
+      if (player) {
+        setIsPlaylist(isPlaylist);
+        setVideoId(videoId);
+        player.seekTo(0);
+      }
+    });
 
+    return () => {
+      socket.off("video-change-from-server");
+    };
+  }, [videoId, player, roomId, isPlaylist, setIsPlaylist, setVideoId]);
 
   useEffect(() => {
     socket.emit("client-ready", roomId);
@@ -51,12 +62,7 @@ export default function ReactVideoPlayer() {
         player.seekTo(currentTime);
       }
     });
-    socket.on("video-change-from-server", (videoId) => {
-      if(player) {
-        setVideoId(videoId);
-        player.seekTo(0);
-      }
-    });
+    
     socket.on("player-play-from-server", () => {
       if (player) {
         setIsPlaying(true);
@@ -85,7 +91,6 @@ export default function ReactVideoPlayer() {
       socket.off("get-player-state");
       socket.off("player-seek-from-server");
       socket.off("player-play-from-server");
-      socket.off("video-change-from-server");
       socket.off("player-pause-from-server");
       socket.off("player-state-from-server");
       socket.off("playback-rate-change-from-server");
