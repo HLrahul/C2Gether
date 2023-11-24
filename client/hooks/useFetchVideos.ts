@@ -15,7 +15,7 @@ export const useFetchVideos = (
   // Function to fetch videos and playlists
   const fetchVideosandPlaylists = async (pageToken: string) => {
     const { data } = await axios.get(
-      `https://www.googleapis.com/youtube/v3/search?part=snippet&type=video&type=playlist&maxResults=20&pageToken=${pageToken}&q=${searchKeyword}&key=${process.env.NEXT_PUBLIC_YOUTUBE_API_KEY}`
+      `https://www.googleapis.com/youtube/v3/search?part=snippet&type=video&maxResults=20&pageToken=${pageToken}&q=${searchKeyword}&key=${process.env.NEXT_PUBLIC_YOUTUBE_API_KEY}`
     );
     const videoIds = data.items.map((item: any) => item.id.videoId).join(",");
     const channelIds = data.items
