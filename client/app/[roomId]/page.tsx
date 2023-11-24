@@ -5,6 +5,7 @@ import { useRouter, useParams } from "next/navigation";
 import { usePromptStore, useUserStore } from "@/store/userStore";
 
 import ChatWindow from "@/components/ChatWindow";
+import JoinRoomPrompt from "@/components/JoinRoomPrompt";
 import VideoSearchBar from "@/components/VideoSearchBar";
 import DisconnectedNote from "@/components/DisconnectedNote";
 import ReactVideoPlayer from "@/components/ReactVideoPlayer";
@@ -24,6 +25,9 @@ export default function RoomPage() {
 
   return (
     <>
+      <JoinRoomPrompt
+        roomId={roomId && (typeof roomId === "string" ? roomId : roomId[0])}
+      />
       <DisconnectedNote />
 
       <section className="min-h-full w-full m-auto">

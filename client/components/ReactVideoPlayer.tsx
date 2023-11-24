@@ -1,5 +1,6 @@
 "use client";
 
+import "@/styles/input-styles.css";
 import "@/styles/video-player.css";
 import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
@@ -7,7 +8,6 @@ import { useParams } from "next/navigation";
 import dynamic from "next/dynamic";
 import { socket } from "@/lib/socket";
 import VideoDetails from "./VideoDetails";
-import JoinRoomPrompt from "./JoinRoomPrompt";
 import { useVideoUrlStore } from "@/store/videoUrlStore";
 import { useAdminStore, useUserStore } from "@/store/userStore";
 
@@ -37,7 +37,11 @@ export default function ReactVideoPlayer() {
     socket.on("get-player-state", () => {
       if (player) {
         const currentTime = player.getCurrentTime();
-        socket.emit("send-player-state", { roomId, currentTime, serverUrl: videoUrl });
+        socket.emit("send-player-state", {
+          roomId,
+          currentTime,
+          serverUrl: videoUrl,
+        });
       }
     });
     socket.on("player-state-from-server", ({ serverUrl, currentTime }) => {
@@ -121,36 +125,35 @@ export default function ReactVideoPlayer() {
   };
 
   return (
-    <>
-      <JoinRoomPrompt
-        roomId={roomId && (typeof roomId === "string" ? roomId : roomId[0])}
-      />
-
-      <div className="col-span-8 md:col-span-5">
-        <div className="video-responsive">
-          <ReactPlayer
-            key={videoUrl}
-            url={videoUrl}
-            className="react-player"
-            height="100%"
-            width="100%"
-            controls={true}
-            playing={isPlaying}
-            muted={false}
-            pip={true}
-            stopOnUnmount={false}
-            onReady={onReady}
-            onPlay={onPlay}
-            onPause={onPause}
-            onSeek={onSeek}
-            playbackRate={playbackRate}
-            onPlaybackRateChange={onPlaybackRateChange}
-            onEnded={onEnded}
-          />
-        </div>
-
-        <VideoDetails />
+    <div className="col-span-8 md:col-span-5">
+      <div className="video-responsive">
+        <ReactPlayer
+          key={videoUrl}
+          url={videoUrl}
+          className="react-player"
+          height="100%"
+          width="100%"
+          controls={true}
+          playing={isPlaying}
+          muted={false}
+          pip={true}
+          stopOnUnmount={false}
+          onReady={onReady}
+          onPlay={onPlay}
+          onPause={onPause}
+          onSeek={onSeek}
+          playbackRate={playbackRate}
+          onPlaybackRateChange={onPlaybackRateChange}
+          onEnded={onEnded}
+          config={{
+            youtube: {
+              playerVars: { disablekb: 1 },
+            },
+          }}
+        />
       </div>
-    </>
+
+      <VideoDetails />
+    </div>
   );
 }

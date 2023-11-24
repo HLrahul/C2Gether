@@ -98,6 +98,7 @@ export default function VideoSearchInput() {
     <div className="col-span-8">
       <div>
         <Input
+          size="sm"
           className="text-primary"
           value={searchKeyword}
           onChange={handleInputChange}
@@ -129,6 +130,7 @@ export default function VideoSearchInput() {
                       <FormItem id="keyword" className="w-full">
                         <FormControl>
                           <Input
+                            size="sm"
                             className="w-full"
                             id="youtube-video-search-keyword"
                             autoFocus

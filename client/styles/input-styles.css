@@ -1,0 +1,4 @@
+[data-slot="input-wrapper"] {
+  height: fit-content !important;
+  padding: 8px;
+}
