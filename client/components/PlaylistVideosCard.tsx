@@ -1,13 +1,29 @@
 import { PlaylistVideo } from "@/types";
+import { useVideoUrlStore } from "@/store/videoUrlStore";
 import { Card, CardBody, Image } from "@nextui-org/react";
 
 interface PlaylistVideosCardProps {
   video: PlaylistVideo;
+  index: number;
 }
 
-export default function PlaylistVideosCard({ video }: PlaylistVideosCardProps) {
+export default function PlaylistVideosCard({ video, index }: PlaylistVideosCardProps) {
+  const { videoUrl } = useVideoUrlStore();
+  const setVideoUrl = useVideoUrlStore((state) => state.setVideoUrl);
+
   return (
-    <Card isBlurred className="border-none w-full hover:bg-primary mt-3">
+    <Card
+      isBlurred
+      className="border-none w-full hover:bg-primary mt-3"
+      isPressable
+      // onClick={() =>
+      //   setVideoUrl(
+      //     `https://www.youtube.com/watch?v=${
+      //       video.snippet.resourceId.videoId
+      //     }&list=${videoUrl.split("list=")[1]}&index=${index}`
+      //   )
+      // }
+    >
       <CardBody>
         <div className="flex w-full">
           <div className="w-12">

@@ -74,6 +74,7 @@ export interface PlaylistVideo {
   snippet: {
     resourceId: {
       videoId: string;
+      playlistId: string;
     };
     title: string;
     thumbnails: {

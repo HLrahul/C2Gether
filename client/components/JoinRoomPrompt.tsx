@@ -94,7 +94,7 @@ export default function JoinRoomPrompt({ roomId }: { roomId: string }) {
       placement="center"
     >
       <ModalContent>
-        <ModalHeader>Join Room Again!</ModalHeader>
+        <ModalHeader>Join the Room</ModalHeader>
         <ModalBody>
           <Form {...form}>
             <form
@@ -148,6 +148,9 @@ export default function JoinRoomPrompt({ roomId }: { roomId: string }) {
                   setIsHomeLoading(true);
                   socket.emit("leave-room");
                   router.replace("/");
+                  setTimeout(() => {
+                    setShowPrompt(false);
+                  }, 2000);
                 }}
               >
                 Home

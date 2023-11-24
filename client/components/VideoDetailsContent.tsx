@@ -1,5 +1,3 @@
-import { useState } from "react";
-
 interface VideoDetailsContentProps {
   videoDetails: {
     title: string;
@@ -15,7 +13,7 @@ export default function VideoDetailsContent({
   setIsExpanded,
 }: VideoDetailsContentProps) {
   return (
-    <div className="flex flex-col gap-4">
+    <div className="flex flex-col gap-4 mb-2">
       <div className="flex flex-col gap-2">
         <p className="font-bold">{videoDetails?.title}</p>
         {videoDetails?.description && (

@@ -110,21 +110,19 @@ io.on("connection", (socket) => {
     "send-player-state",
     ({
       roomId,
-      videoId,
       currentTime,
-      isPlaylist,
+      serverUrl,
     }: {
       roomId: string;
-      videoId: string;
       currentTime: number;
-      isPlaylist: boolean;
+      serverUrl: string;
     }) => {
       const members = getRoomMembers(roomId);
       const lastMember = members[members.length - 1];
       if (!lastMember) return;
       socket
         .to(lastMember.id)
-        .emit("player-state-from-server", { videoId, currentTime, isPlaylist });
+        .emit("player-state-from-server", { serverUrl, currentTime });
       socket.to(lastMember.id).emit("client-loaded");
     }
   );
@@ -158,8 +156,8 @@ io.on("connection", (socket) => {
 
   socket.on(
     "video-change",
-    ({ roomId, videoId, isPlaylist }: { roomId: string; videoId: string, isPlaylist: boolean }) => {
-      socket.broadcast.to(roomId).emit("video-change-from-server", { videoId, isPlaylist });
+    ({ roomId, serverUrl }: { roomId: string; serverUrl: string }) => {
+      socket.broadcast.to(roomId).emit("video-change-from-server", { serverUrl });
     }
   );
 

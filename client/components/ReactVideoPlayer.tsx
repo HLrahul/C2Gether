@@ -8,7 +8,7 @@ import dynamic from "next/dynamic";
 import { socket } from "@/lib/socket";
 import VideoDetails from "./VideoDetails";
 import JoinRoomPrompt from "./JoinRoomPrompt";
-import { useVideoIdStore } from "@/store/videoIdStore";
+import { useVideoUrlStore } from "@/store/videoUrlStore";
 import { useAdminStore, useUserStore } from "@/store/userStore";
 
 const ReactPlayer = dynamic(() => import("react-player"), { ssr: false });
@@ -16,44 +16,41 @@ const ReactPlayer = dynamic(() => import("react-player"), { ssr: false });
 export default function ReactVideoPlayer() {
   const { roomId } = useParams();
   const { user } = useUserStore();
-  const { videoId, isPlaylist } = useVideoIdStore();
-  const setIsPlaylist = useVideoIdStore((state) => state.setIsPlaylist);
-  const setVideoId = useVideoIdStore((state) => state.setVideoId);
+  const { videoUrl } = useVideoUrlStore();
+  const setVideoUrl = useVideoUrlStore((state) => state.setVideoUrl);
   const setIsAdmin = useAdminStore((state) => state.setIsAdmin);
 
-  const [url, setUrl] = useState<string>("");
   const [player, setPlayer] = useState<any>(null);
   const [isPlaying, setIsPlaying] = useState<boolean>(true);
   const [playbackRate, setPlaybackRate] = useState<number>(1);
 
   useEffect(() => {
-    if (player && videoId) {
-      socket.emit("video-change", { roomId, videoId, isPlaylist });
+    if (player && videoUrl) {
+      socket.emit("video-change", { roomId, serverUrl: videoUrl });
     }
-  }, [videoId, player, roomId, isPlaylist, setIsPlaylist, setVideoId]);
+  }, [player, roomId, videoUrl]);
 
   useEffect(() => {
     socket.emit("client-ready", roomId);
     socket.emit("is-admin", { roomId, userId: user?.id });
     socket.on("admin-user", setIsAdmin);
-    socket.on("client-loaded", () => {});
     socket.on("get-player-state", () => {
       if (player) {
         const currentTime = player.getCurrentTime();
-        socket.emit("send-player-state", { roomId, videoId, currentTime, isPlaylist });
+        socket.emit("send-player-state", { roomId, currentTime, serverUrl: videoUrl });
       }
     });
-    socket.on("player-state-from-server", ({ videoId, currentTime, isPlaylist }) => {
-      setIsPlaylist(isPlaylist);
-      setVideoId(videoId);
+    socket.on("player-state-from-server", ({ serverUrl, currentTime }) => {
+      if (videoUrl !== serverUrl) {
+        setVideoUrl(serverUrl);
+      }
       if (player && currentTime) {
         player.seekTo(currentTime);
       }
     });
-    socket.on("video-change-from-server", (videoId, isPlaylist) => {
-      if (player) {
-        setIsPlaylist(isPlaylist);
-        setVideoId(videoId);
+    socket.on("video-change-from-server", ({ serverUrl }) => {
+      if (player && videoUrl !== serverUrl) {
+        setVideoUrl(serverUrl);
         player.seekTo(0);
       }
     });
@@ -90,12 +87,7 @@ export default function ReactVideoPlayer() {
       socket.off("player-state-from-server");
       socket.off("playback-rate-change-from-server");
     };
-  }, [roomId, player, videoId, setVideoId, user, setIsAdmin, isPlaying, isPlaylist, setIsPlaylist]);
-
-  useEffect(() => {
-    if (isPlaylist) setUrl(`https://www.youtube.com/playlist?list=${videoId}`);
-    else setUrl(`https://www.youtube.com/watch?v=${videoId}`);
-  }, [videoId, isPlaylist]);
+  }, [roomId, player, user, setIsAdmin, isPlaying, setVideoUrl, videoUrl]);
 
   const onReady = (player: any) => {
     setPlayer(player);
@@ -137,7 +129,8 @@ export default function ReactVideoPlayer() {
       <div className="col-span-8 md:col-span-5">
         <div className="video-responsive">
           <ReactPlayer
-            url={url}
+            key={videoUrl}
+            url={videoUrl}
             className="react-player"
             height="100%"
             width="100%"

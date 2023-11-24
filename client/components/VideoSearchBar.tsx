@@ -29,7 +29,7 @@ import { SearchIcon } from "lucide-react";
 import { useVideoStore } from "@/store/videosStore";
 import { useQueryClient } from "@tanstack/react-query";
 import { useFetchVideos } from "@/hooks/useFetchVideos";
-import { useVideoIdStore } from "@/store/videoIdStore";
+import { useVideoUrlStore } from "@/store/videoUrlStore";
 
 type searchKeyword = z.infer<typeof searchKeywordSchema>;
 
@@ -41,7 +41,7 @@ export default function VideoSearchInput() {
   const { isLoading, error, fetchNextPage, isFetching, hasNextPage, refetch } =
     useFetchVideos(searchKeyword, isSearchOperation);
   const queryClient = useQueryClient();
-  const { setVideoId } = useVideoIdStore();
+  const setVideoUrl = useVideoUrlStore((state) => state.setVideoUrl);
 
   const form = useForm<searchKeyword>({
     resolver: zodResolver(searchKeywordSchema),
@@ -58,7 +58,7 @@ export default function VideoSearchInput() {
 
   const getVideoIdFromUrl = (url: string) => {
     const regex =
-      /(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
+      /(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=|\&list=)([^#\&\?]*).*/;
     const matches = url.match(regex);
     if (matches && matches[2].length === 11) {
       return matches[2];
@@ -78,9 +78,9 @@ export default function VideoSearchInput() {
     setSearchKeyword(value);
     form.setValue("keyword", value);
 
-    const videoId = getVideoIdFromUrl(e.target.value);
-    if (videoId !== "") {
-      setVideoId(videoId);
+    const videoUrl = getVideoIdFromUrl(e.target.value);
+    if (videoUrl !== "") {
+      setVideoUrl(videoUrl);
     } else {
       onOpen();
     }

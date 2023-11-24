@@ -1,6 +1,6 @@
 import { useState } from "react";
 import PlaylistVideos from "./PlaylistVideos";
-import { useVideoIdStore } from "@/store/videoIdStore";
+import { useVideoUrlStore } from "@/store/videoUrlStore";
 import ChannelDetails from "@/components/ChannelDetails";
 import VideoDetailsContent from "@/components/VideoDetailsContent";
 import { ChannelDetailsType, PlaylistVideo, VideoDetailsType } from "@/types";
@@ -16,7 +16,11 @@ export default function VideoDetailsRenderer({
   channelDetails,
   playlistVideos,
 }: VideoDetailsRendererProps) {
+  const { videoUrl } = useVideoUrlStore();
   const [isExpanded, setIsExpanded] = useState(false);
+
+  const isPlaylist =
+    typeof videoUrl === "string" && videoUrl.includes("playlist");
 
   return (
     <div>
@@ -28,7 +32,7 @@ export default function VideoDetailsRenderer({
         />
       )}
 
-      {useVideoIdStore().isPlaylist && (
+      {isPlaylist && (
         <PlaylistVideos
         videos={playlistVideos.length}
           playlistVideos={playlistVideos}

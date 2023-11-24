@@ -36,11 +36,12 @@ export default function PlaylistVideos({ videos, playlistVideos }: PlaylistVideo
         title="Playlist"
       >
         <div className="overflow-y-auto max-h-64">
-          {playlistVideos?.map((video) => {
+          {playlistVideos?.map((video, index) => {
             return (
               <PlaylistVideosCard
                 key={video?.snippet?.resourceId?.videoId}
                 video={video}
+                index={index}
               />
             );
           })}

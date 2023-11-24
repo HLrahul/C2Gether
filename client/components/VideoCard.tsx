@@ -1,5 +1,5 @@
 import { Video } from "@/types";
-import { useVideoIdStore } from "@/store/videoIdStore";
+import { useVideoUrlStore } from "@/store/videoUrlStore";
 import { Avatar, Card, CardBody, Chip, Image } from "@nextui-org/react";
 
 interface VideoCardProps {
@@ -8,7 +8,7 @@ interface VideoCardProps {
 }
 
 export const VideoCard = ({ video, onClose }: VideoCardProps) => {
-  const { setVideoId, setIsPlaylist } = useVideoIdStore();
+  const setVideoUrl = useVideoUrlStore((state) => state.setVideoUrl);
 
   const decodeHtml = (html: string) => {
     const txt = document.createElement("textarea");
@@ -45,11 +45,9 @@ export const VideoCard = ({ video, onClose }: VideoCardProps) => {
       className="border-none w-full hover:bg-primary"
       onClick={() => {
         if (video.id.playlistId) {
-          setIsPlaylist(true);
-          setVideoId(video.id.playlistId);
+          setVideoUrl(`https://www.youtube.com/playlist?list=${video.id.playlistId}`);
         } else {
-          setIsPlaylist(false);
-          setVideoId(video.id.videoId);
+          setVideoUrl(`https://www.youtube.com/watch?v=${video.id.videoId}`);
         }
         onClose();
       }}
