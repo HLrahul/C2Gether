@@ -14,6 +14,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { socket } from "@/lib/socket";
+import { useChatStore } from "@/store/chatStore";
 import { useUserStore } from "@/store/userStore";
 import { Button, Input } from "@nextui-org/react";
 import { liveChatTextSchema } from "@/lib/validations/liveChatTextSchema";
@@ -23,6 +24,7 @@ type text = z.infer<typeof liveChatTextSchema>;
 export default function LiveChatInput() {
   const { roomId } = useParams();
   const { user } = useUserStore();
+  const addMessage = useChatStore((state) => state.addMessage);
 
   const form = useForm<text>({
     resolver: zodResolver(liveChatTextSchema),
@@ -32,7 +34,17 @@ export default function LiveChatInput() {
   });
 
   const handleSubmit = (data: text) => {
-    socket.emit("live-chat-text", { roomId, username: user?.username, data });
+    user &&
+      addMessage({
+        name: user.username,
+        message: data.text,
+        timeSent: new Date().toLocaleTimeString([], {
+          hour: "2-digit",
+          minute: "2-digit",
+          hour12: true,
+        }),
+      });
+    socket.emit("live-chat-text", { roomId, username: user?.username, message: data.text });
     form.reset();
   };
 
@@ -59,6 +71,7 @@ export default function LiveChatInput() {
                   {...field}
                   endContent={
                     <Button
+                      type="submit"
                       size="sm"
                       isIconOnly
                       variant="light"

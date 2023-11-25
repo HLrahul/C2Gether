@@ -161,6 +161,20 @@ io.on("connection", (socket) => {
     }
   );
 
+  socket.on("live-chat-text", ({ roomId, username, message }: { roomId: string, username: string, message: string }) => {
+    socket
+      .to(roomId)
+      .emit("live-chat-text-from-server", {
+        username,
+        message,
+        time: new Date().toLocaleTimeString([], {
+          hour: "2-digit",
+          minute: "2-digit",
+          hour12: true,
+        }),
+      });
+  })
+
   socket.on("leave-room", () => {
     leaveRoom(socket);
   });
