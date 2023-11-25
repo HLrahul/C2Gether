@@ -32,7 +32,7 @@ export default function RoomPage() {
 
       <section className="min-h-full w-full m-auto">
         <div
-          className="grid grid-cols-8 lg:w-[75%] gap-5 m-auto p-5"
+          className="grid grid-cols-8 lg:w-[75%] gap-5 m-auto px-5"
           style={{ gridAutoRows: "min-content" }}
         >
           <VideoSearchBar />

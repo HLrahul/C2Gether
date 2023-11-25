@@ -1,7 +1,7 @@
 "use client";
 
-import "@/styles/input-styles.css";
 import "@/styles/video-player.css";
+import styles from "@/styles/input-styles.module.css";
 import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 

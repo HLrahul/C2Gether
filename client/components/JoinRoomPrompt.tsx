@@ -111,6 +111,7 @@ export default function JoinRoomPrompt({ roomId }: { roomId: string }) {
                       <Input
                         id="joinRoom-username-input"
                         autoComplete="off"
+                        label="Username"
                         autoFocus
                         placeholder="Enter a Name"
                         variant="bordered"

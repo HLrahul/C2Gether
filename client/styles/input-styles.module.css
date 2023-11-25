@@ -1,0 +1,4 @@
+.inputWrapper [data-slot="input-wrapper"] {
+  height: 2.55rem !important;
+  /* padding: 9px; */
+}

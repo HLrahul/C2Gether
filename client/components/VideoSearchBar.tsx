@@ -1,5 +1,7 @@
 "use client";
 
+import styles from "@/styles/input-styles.module.css";
+
 import * as z from "zod";
 import { useForm } from "react-hook-form";
 import { useEffect, useState } from "react";
@@ -99,7 +101,7 @@ export default function VideoSearchInput() {
       <div>
         <Input
           size="sm"
-          className="text-primary"
+          className={`${styles.inputWrapper} text-primary`}
           value={searchKeyword}
           onChange={handleInputChange}
           onFocus={onFocus}
@@ -131,7 +133,7 @@ export default function VideoSearchInput() {
                         <FormControl>
                           <Input
                             size="sm"
-                            className="w-full"
+                            className={`${styles.inputWrapper} text-primary`}
                             id="youtube-video-search-keyword"
                             autoFocus
                             startContent={
