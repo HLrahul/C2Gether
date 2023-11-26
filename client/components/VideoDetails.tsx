@@ -4,7 +4,7 @@ import { useVideoUrlStore } from "@/store/videoUrlStore";
 import VideoDetailsRenderer from "./VideoDetailsRenderer";
 import { ChannelDetailsType, PlaylistVideo, VideoDetailsType } from "@/types";
 
-export default function VideoDetails() {
+export default function VideoDetails ({isVideoSet}: {isVideoSet: boolean}) {
   const { videoUrl } = useVideoUrlStore();
   const [videoDetails, setVideoDetails] = useState<VideoDetailsType | null>(null);
   const [channelDetails, setChannelDetails] = useState<ChannelDetailsType | null>(
@@ -36,6 +36,7 @@ export default function VideoDetails() {
   return (
     <div className="col-span-8 md:col-span-5 mt-5">
         <VideoDetailsRenderer
+          isVideoSet={isVideoSet}
           videoDetails={videoDetails}
           channelDetails={channelDetails}
           playlistVideos={playlistVideos}

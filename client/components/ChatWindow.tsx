@@ -1,9 +1,10 @@
 "use client";
 
-import { useEffect } from "react";
 import { socket } from "@/lib/socket";
-import { Message, useChatStore } from "@/store/chatStore";
+import { useEffect, useRef } from "react";
+import { Transition } from '@headlessui/react';
 import LiveChatInput from "@/components/LiveChatInput";
+import { Message, useChatStore } from "@/store/chatStore";
 import {
   Card,
   CardBody,
@@ -13,6 +14,7 @@ import {
 } from "@nextui-org/react";
 
 export default function ChatWindow() {
+  const messagesEndRef = useRef<null | HTMLDivElement>(null);
   const { messages } = useChatStore();
   const addMessage = useChatStore((state) => state.addMessage);
 
@@ -36,17 +38,33 @@ export default function ChatWindow() {
     };
   }, [addMessage]);
 
+  const scrollToBottom = () => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  };
+
+  useEffect(scrollToBottom, [messages]);
+
   return (
     <div className="col-span-8 md:col-span-3 max-h-full">
-      <Card isBlurred className="min-h-full max-h-full">
+      <Card isBlurred className="min-h-full max-h-full mt-2 md:mt-0">
         <CardHeader>
           <p className="text-primary">Live Chat</p>
         </CardHeader>
         <Divider />
-        <CardBody className="overflow-y-auto max-h-[60vh]">
-          {messages.map((message, index) => {
-            return <ChatMessage key={index} message={message} />;
-          })}
+        <CardBody className="overflow-y-auto max-h-[25vh] sm:max-h-[60vh]">
+          {messages.map((message, index) => (
+            <Transition
+              key={index}
+              as="div"
+              show={true}
+              enter="transform transition duration-[400ms]"
+              enterFrom="opacity-0 scale-95"
+              enterTo="opacity-100 scale-100"
+            >
+              <ChatMessage message={message} />
+            </Transition>
+          ))}
+          <div ref={messagesEndRef} />
         </CardBody>
         <Divider />
         <CardFooter>
@@ -61,10 +79,10 @@ const ChatMessage = ({ message }: { message: Message }) => {
   return (
     <div className="flex flex-col mb-3">
       <div className="w-full flex justify-between">
-        <p className="text-primary">{message.name}</p>
+        <p className="text-foreground-400 text-[13px]">{message.name}</p>
         <p className="text-gray-400 text-[10px] flex items-center">{message.timeSent}</p>
       </div>
-      <p className="text-foreground-400 text-[14px]">{message.message}</p>
+      <p className="text-[14px]">{message.message}</p>
     </div>
   );
 };

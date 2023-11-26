@@ -6,12 +6,14 @@ import VideoDetailsContent from "@/components/VideoDetailsContent";
 import { ChannelDetailsType, PlaylistVideo, VideoDetailsType } from "@/types";
 
 interface VideoDetailsRendererProps {
-    videoDetails: VideoDetailsType | null;
-    channelDetails: ChannelDetailsType | null;
-    playlistVideos: PlaylistVideo[];
+  isVideoSet: boolean;
+  videoDetails: VideoDetailsType | null;
+  channelDetails: ChannelDetailsType | null;
+  playlistVideos: PlaylistVideo[];
 }
 
 export default function VideoDetailsRenderer({
+  isVideoSet,
   videoDetails,
   channelDetails,
   playlistVideos,
@@ -34,10 +36,10 @@ export default function VideoDetailsRenderer({
 
       {isPlaylist && (
         <PlaylistVideos
-        videos={playlistVideos.length}
+          videos={playlistVideos.length}
           playlistVideos={playlistVideos}
         />
-        )}
+      )}
 
       {channelDetails && <ChannelDetails channelDetails={channelDetails} />}
     </div>

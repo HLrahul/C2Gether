@@ -1,7 +1,6 @@
 "use client";
 
 import "@/styles/video-player.css";
-import styles from "@/styles/input-styles.module.css";
 import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 
@@ -10,6 +9,7 @@ import { socket } from "@/lib/socket";
 import VideoDetails from "./VideoDetails";
 import { useVideoUrlStore } from "@/store/videoUrlStore";
 import { useAdminStore, useUserStore } from "@/store/userStore";
+import { Skeleton } from "@nextui-org/react";
 
 const ReactPlayer = dynamic(() => import("react-player"), { ssr: false });
 
@@ -21,8 +21,15 @@ export default function ReactVideoPlayer() {
   const setIsAdmin = useAdminStore((state) => state.setIsAdmin);
 
   const [player, setPlayer] = useState<any>(null);
+  const [isLoaded, setIsLoaded] = useState<boolean>(false);
   const [isPlaying, setIsPlaying] = useState<boolean>(true);
   const [playbackRate, setPlaybackRate] = useState<number>(1);
+
+  useEffect(() => {
+    if (videoUrl !== "") {
+      setIsLoaded(true);
+    }
+  }, [videoUrl]);
 
   useEffect(() => {
     if (player && videoUrl) {
@@ -126,34 +133,36 @@ export default function ReactVideoPlayer() {
 
   return (
     <div className="col-span-8 md:col-span-5">
-      <div className="video-responsive">
-        <ReactPlayer
-          key={videoUrl}
-          url={videoUrl}
-          className="react-player"
-          height="100%"
-          width="100%"
-          controls={true}
-          playing={isPlaying}
-          muted={false}
-          pip={true}
-          stopOnUnmount={false}
-          onReady={onReady}
-          onPlay={onPlay}
-          onPause={onPause}
-          onSeek={onSeek}
-          playbackRate={playbackRate}
-          onPlaybackRateChange={onPlaybackRateChange}
-          onEnded={onEnded}
-          config={{
-            youtube: {
-              playerVars: { disablekb: 1 },
-            },
-          }}
-        />
-      </div>
-
-      <VideoDetails />
+      <Skeleton isLoaded={isLoaded} className="w-5/5 rounded-lg mb-5">
+        <div className="video-responsive">
+          <ReactPlayer
+            key={videoUrl}
+            url={videoUrl}
+            className="react-player"
+            height="100%"
+            width="100%"
+            controls={true}
+            playing={isPlaying}
+            muted={false}
+            pip={true}
+            stopOnUnmount={false}
+            onReady={onReady}
+            onPlay={onPlay}
+            onPause={onPause}
+            onSeek={onSeek}
+            playbackRate={playbackRate}
+            onPlaybackRateChange={onPlaybackRateChange}
+            onEnded={onEnded}
+            config={{
+              youtube: {
+                playerVars: { disablekb: 1 },
+              },
+            }}
+          />
+        </div>
+      </Skeleton>
+      
+      <VideoDetails isVideoSet={isLoaded} />
     </div>
   );
 }

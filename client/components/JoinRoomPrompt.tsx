@@ -150,7 +150,7 @@ export default function JoinRoomPrompt({ roomId }: { roomId: string }) {
                   router.replace("/");
                   setTimeout(() => {
                     setShowPrompt(false);
-                  }, 2000);
+                  }, 4000);
                 }}
               >
                 Home

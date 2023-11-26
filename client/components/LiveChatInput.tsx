@@ -76,7 +76,7 @@ export default function LiveChatInput() {
                       isIconOnly
                       variant="light"
                       color="primary"
-                      className="h-5"
+                      className="h-5 outline-none min-w-unit-0 w-unit-5"
                     >
                       <SendHorizontal size={16} />
                     </Button>

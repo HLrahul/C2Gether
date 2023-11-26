@@ -163,6 +163,7 @@ io.on("connection", (socket) => {
 
   socket.on("live-chat-text", ({ roomId, username, message }: { roomId: string, username: string, message: string }) => {
     socket
+      .broadcast
       .to(roomId)
       .emit("live-chat-text-from-server", {
         username,
