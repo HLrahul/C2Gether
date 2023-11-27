@@ -131,10 +131,30 @@ export default function ReactVideoPlayer() {
     }
   };
 
+  const handleDoubleClick = (event: React.MouseEvent) => {
+    const target = event.target as HTMLElement;
+    const rect = target.getBoundingClientRect();
+    const x = event.clientX - rect.left;
+
+    let newTime;
+    if (x < rect.width / 2) {
+      newTime = player.getCurrentTime() - 10;
+    } else {
+      newTime = player.getCurrentTime() + 10;
+    }
+
+    newTime = Math.max(0, Math.min(newTime, player.getDuration()));
+    socket.emit("player-seek", { roomId, currentTime: newTime });
+    player.seekTo(newTime, "seconds");
+  };
+
   return (
     <div className="col-span-8 md:col-span-5">
       <Skeleton isLoaded={isLoaded} className="w-5/5 rounded-lg mb-5">
-        <div className="video-responsive">
+        <div
+          className="video-responsive"
+          onDoubleClick={handleDoubleClick}
+        >
           <ReactPlayer
             key={videoUrl}
             url={videoUrl}
@@ -161,7 +181,7 @@ export default function ReactVideoPlayer() {
           />
         </div>
       </Skeleton>
-      
+
       <VideoDetails isVideoSet={isLoaded} />
     </div>
   );
