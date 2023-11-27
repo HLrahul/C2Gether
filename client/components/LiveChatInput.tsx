@@ -54,7 +54,7 @@ export default function LiveChatInput() {
       <form
         id="live-chat-input-form"
         onSubmit={form.handleSubmit(handleSubmit)}
-        className="w-full m-auto flex gap-2 items-center justify-center"
+        className="w-full m-auto flex gap-2"
       >
         <FormField
           name="text"
@@ -70,23 +70,24 @@ export default function LiveChatInput() {
                   placeholder="Type to chat"
                   variant="flat"
                   {...field}
+                  endContent={
+                    <Button
+                      type="submit"
+                      size="sm"
+                      isIconOnly
+                      variant="light"
+                      color="primary"
+                      className="h-5 outline-none min-w-unit-0 w-unit-5"
+                    >
+                      <SendHorizontal size={16} />
+                    </Button>
+                  }
                 />
               </FormControl>
               <FormMessage className="text-xs text-red-500" />
             </FormItem>
           )}
         />
-
-        <Button
-          type="submit"
-          size="sm"
-          isIconOnly
-          variant="light"
-          color="primary"
-          className="h-10"
-        >
-          <SendHorizontal size={16} />
-        </Button>
       </form>
     </Form>
   );
