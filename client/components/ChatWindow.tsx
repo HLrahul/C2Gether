@@ -23,13 +23,22 @@ export default function ChatWindow() {
     const listener = ({
       username,
       message,
-      time,
+      timeSent,
+      timeZone,
     }: {
       username: string;
       message: string;
-      time: string;
+      timeSent: string;
+      timeZone: string;
     }) => {
-      addMessage({ name: username, message, timeSent: time });
+      const senderTime = new Date(timeSent);
+      const localTime = senderTime.toLocaleTimeString([], {
+        hour: "2-digit",
+        minute: "2-digit",
+        hour12: true,
+        timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+      });
+      addMessage({ name: username, message, timeSent: localTime });
     };
 
     socket.on("live-chat-text-from-server", listener);

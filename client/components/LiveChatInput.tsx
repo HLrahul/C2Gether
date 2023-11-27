@@ -34,17 +34,25 @@ export default function LiveChatInput() {
   });
 
   const handleSubmit = (data: text) => {
+    const time = new Date().toLocaleTimeString([], {
+      hour: "2-digit",
+      minute: "2-digit",
+      hour12: true,
+    });
+
     user &&
       addMessage({
         name: user.username,
         message: data.text,
-        timeSent: new Date().toLocaleTimeString([], {
-          hour: "2-digit",
-          minute: "2-digit",
-          hour12: true,
-        }),
+        timeSent: time,
       });
-    socket.emit("live-chat-text", { roomId, username: user?.username, message: data.text });
+    socket.emit("live-chat-text", {
+      roomId,
+      username: user?.username,
+      message: data.text,
+      timeSent: new Date().toISOString(),
+      timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+    });
     form.reset();
     form.setFocus("text");
   };
