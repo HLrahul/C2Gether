@@ -2,6 +2,7 @@
 
 import { socket } from "@/lib/socket";
 import { useEffect, useRef } from "react";
+import { MessagesSquare } from "lucide-react";
 import { Transition } from '@headlessui/react';
 import LiveChatInput from "@/components/LiveChatInput";
 import { Message, useChatStore } from "@/store/chatStore";
@@ -47,8 +48,9 @@ export default function ChatWindow() {
   return (
     <div className="col-span-8 md:col-span-3 max-h-full">
       <Card isBlurred className="min-h-full max-h-full mt-2 md:mt-0">
-        <CardHeader>
-          <p className="text-primary">Live Chat</p>
+        <CardHeader className="flex gap-2">
+          <MessagesSquare size={16} className="text-primary" />
+          <p className="">Live chat</p>
         </CardHeader>
         <Divider />
         <CardBody className="overflow-y-auto h-[25vh] sm:max-h-[60vh]">
@@ -57,7 +59,7 @@ export default function ChatWindow() {
               key={index}
               as="div"
               show={true}
-              enter="transform transition duration-[400ms]"
+              enter="transform transition duration-700"
               enterFrom="opacity-0 scale-95"
               enterTo="opacity-100 scale-100"
             >
