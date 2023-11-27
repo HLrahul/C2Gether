@@ -51,7 +51,7 @@ export default function ChatWindow() {
           <p className="text-primary">Live Chat</p>
         </CardHeader>
         <Divider />
-        <CardBody className="overflow-y-auto max-h-[25vh] sm:max-h-[60vh]">
+        <CardBody className="overflow-y-auto h-[25vh] sm:max-h-[60vh]">
           {messages.map((message, index) => (
             <Transition
               key={index}
