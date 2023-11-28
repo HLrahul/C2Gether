@@ -1,7 +1,11 @@
 import { Socket } from "socket.io";
 import { addUser, getUser, removeUser, getRoomMembers } from "../data/user";
 
-export function joinRoom(socket: Socket, roomId: string, username: string) {
+export async function joinRoom(
+  socket: Socket,
+  roomId: string,
+  username: string
+) {
   socket.join(roomId);
   const user = { id: socket.id, username };
   addUser({ ...user, roomId });

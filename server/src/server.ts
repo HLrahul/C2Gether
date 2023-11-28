@@ -1,6 +1,7 @@
 import cors from "cors";
 import http from "http";
 import express from "express";
+import { createWorker, types } from "mediasoup";
 import { Server } from "socket.io";
 import { handleSocketEvents } from "./services/socketEvents";
 
@@ -13,6 +14,9 @@ app.use(
   })
 );
 const server = http.createServer(app);
+
+export let worker: types.Worker<types.AppData>;
+createWorker({ logLevel: 'warn' }).then((w) => { worker = w; })
 
 const io = new Server(server);
 io.on("connection", (socket) => {

@@ -1,8 +1,8 @@
-import { Socket, Server } from "socket.io";
 import { JoinRoomData } from "../types";
+import { Server, Socket } from "socket.io";
+import { joinRoom, leaveRoom } from "./room";
 import { getRoomMembers } from "../data/user";
 import { validateJoinRoomData } from "./validation";
-import { joinRoom, leaveRoom } from "./room";
 
 export function handleSocketEvents(socket: Socket, io: Server) {
   function isRoomCreated(roomId: string) {
@@ -10,7 +10,7 @@ export function handleSocketEvents(socket: Socket, io: Server) {
     return rooms?.some((room) => room[0] === roomId);
   }
 
-  socket.on("create-room", (joinRoomData: JoinRoomData) => {
+  socket.on("create-room", async (joinRoomData: JoinRoomData) => {
     const validatedData = validateJoinRoomData(socket, joinRoomData);
     if (!validatedData) return;
     const { roomId, username } = validatedData;
