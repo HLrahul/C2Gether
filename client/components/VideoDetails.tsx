@@ -18,8 +18,15 @@ export default function VideoDetails ({isVideoSet}: {isVideoSet: boolean}) {
     
     let videoId;
     if (typeof videoUrl === "string") {
-      if (isPlaylist) videoId = videoUrl.split("list=")[1];
-      else videoId = videoUrl.split("v=")[1];
+      if (isPlaylist) {
+        videoId = videoUrl.split("list=")[1];
+      } else {
+        if (videoUrl.includes("youtu.be")) {
+          videoId = videoUrl.split("/").pop();
+        } else {
+          videoId = videoUrl.split("v=")[1];
+        }
+      }
     }
 
     if (videoId) {

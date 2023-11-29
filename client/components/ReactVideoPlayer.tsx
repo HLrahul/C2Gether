@@ -5,11 +5,12 @@ import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 
 import dynamic from "next/dynamic";
-import { socket } from "@/lib/socket";
 import VideoDetails from "./VideoDetails";
+
+import { socket } from "@/lib/socket";
+import { Skeleton } from "@nextui-org/react";
 import { useVideoUrlStore } from "@/store/videoUrlStore";
 import { useAdminStore, useUserStore } from "@/store/userStore";
-import { Skeleton } from "@nextui-org/react";
 
 const ReactPlayer = dynamic(() => import("react-player"), { ssr: false });
 
@@ -24,6 +25,8 @@ export default function ReactVideoPlayer() {
   const [isLoaded, setIsLoaded] = useState<boolean>(false);
   const [isPlaying, setIsPlaying] = useState<boolean>(true);
   const [playbackRate, setPlaybackRate] = useState<number>(1);
+  const [actualTime, setActualTime] = useState<number>(0);
+  const [playedSeconds, setPlayedSeconds] = useState<number>(0);
 
   useEffect(() => {
     if (videoUrl !== "") {
@@ -100,6 +103,44 @@ export default function ReactVideoPlayer() {
     };
   }, [roomId, player, user, setIsAdmin, isPlaying, setVideoUrl, videoUrl]);
 
+  useEffect(() => {
+    let interval: NodeJS.Timeout | null = null;
+
+    if (player && isPlaying) {
+      setActualTime(playedSeconds);
+      interval = setInterval(() => {
+        setActualTime((prevTime) => prevTime + 1 * playbackRate);
+      }, 1000);
+    } else if (!isPlaying && interval) {
+      clearInterval(interval);
+    }
+
+    return () => {
+      if (interval) clearInterval(interval);
+    };
+  }, [player, isPlaying, playedSeconds, playbackRate]);
+
+  useEffect(() => {
+    let interval: NodeJS.Timeout | null = null;
+
+    if (player && isPlaying) {
+      interval = setInterval(() => {
+        const timeDiff = Math.floor(actualTime - playedSeconds);
+        console.log(timeDiff + " " + playedSeconds + " " + actualTime);
+        if(Math.abs(timeDiff) > (1 * playbackRate)) {
+          socket.emit("player-seek", { roomId, currentTime: playedSeconds });
+          setActualTime(playedSeconds);
+        }
+      }, 1000);
+    } else if (!isPlaying && interval) {
+      clearInterval(interval);
+    }
+
+    return () => {
+      if (interval) clearInterval(interval);
+    };
+  }, [player, isPlaying, playedSeconds, playbackRate, roomId, actualTime]);
+
   const onReady = (player: any) => {
     setPlayer(player);
   };
@@ -131,30 +172,10 @@ export default function ReactVideoPlayer() {
     }
   };
 
-  const handleDoubleClick = (event: React.MouseEvent) => {
-    const target = event.target as HTMLElement;
-    const rect = target.getBoundingClientRect();
-    const x = event.clientX - rect.left;
-
-    let newTime;
-    if (x < rect.width / 2) {
-      newTime = player.getCurrentTime() - 10;
-    } else {
-      newTime = player.getCurrentTime() + 10;
-    }
-
-    newTime = Math.max(0, Math.min(newTime, player.getDuration()));
-    socket.emit("player-seek", { roomId, currentTime: newTime });
-    player.seekTo(newTime, "seconds");
-  };
-
   return (
     <div className="col-span-8 md:col-span-5">
       <Skeleton isLoaded={isLoaded} className="w-5/5 rounded-lg mb-5">
-        <div
-          className="video-responsive"
-          onDoubleClick={handleDoubleClick}
-        >
+        <div className="z-89 video-responsive">
           <ReactPlayer
             key={videoUrl}
             url={videoUrl}
@@ -170,14 +191,15 @@ export default function ReactVideoPlayer() {
             onPlay={onPlay}
             onPause={onPause}
             onSeek={onSeek}
+            onProgress={({ playedSeconds }) => { setPlayedSeconds(playedSeconds) }}
             playbackRate={playbackRate}
             onPlaybackRateChange={onPlaybackRateChange}
             onEnded={onEnded}
-            config={{
-              youtube: {
-                playerVars: { disablekb: 1 },
-              },
-            }}
+            // config={{
+            //   youtube: {
+            //     playerVars: { disablekb: 1 },
+            //   },
+            // }}
           />
         </div>
       </Skeleton>

@@ -82,7 +82,7 @@ export default function VideoSearchInput() {
 
     const videoUrl = getVideoIdFromUrl(e.target.value);
     if (videoUrl !== "") {
-      setVideoUrl(videoUrl);
+      setVideoUrl(`https://www.youtube.com/embed/${videoUrl}`);
     } else {
       onOpen();
     }

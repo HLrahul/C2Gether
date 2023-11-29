@@ -30,11 +30,9 @@
     "@react-aria/ssr": "^3.9.0",
     "@react-aria/visually-hidden": "^3.8.7",
     "@tanstack/react-query": "^5.8.4",
-    "@types/node": "20.9.3",
     "@types/react": "18.2.38",
     "@types/react-dom": "18.2.16",
-    "@types/youtube": "^0.0.50",
-    "autoprefixer": "10.4.16",
+    "autoprefixer": "^10.4.16",
     "axios": "^1.6.2",
     "bufferutil": "^4.0.8",
     "class-variance-authority": "^0.7.0",
@@ -42,14 +40,11 @@
     "eslint": "8.54.0",
     "eslint-config-next": "14.0.3",
     "framer-motion": "^10.16.5",
-    "intl-messageformat": "^10.5.8",
     "lucide-react": "^0.292.0",
     "mediasoup-client": "^3.7.0",
     "nanoid": "^5.0.3",
     "next": "^14.0.3",
     "next-themes": "^0.2.1",
-    "next-videos": "^1.4.1",
-    "postcss": "8.4.31",
     "react": "18.2.0",
     "react-dom": "18.2.0",
     "react-hook-form": "^7.48.2",
@@ -63,12 +58,10 @@
     "tailwindcss-animate": "^1.0.7",
     "typescript": "5.3.2",
     "utf-8-validate": "^6.0.3",
-    "videojs-youtube": "^3.0.1",
     "zod": "^3.22.4",
     "zustand": "^4.4.6"
   },
   "devDependencies": {
-    "@types/video.js": "^7.3.56",
-    "video.js": "^8.6.1"
+    "@types/node": "20.10.0"
   }
 }
