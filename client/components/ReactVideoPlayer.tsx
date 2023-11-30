@@ -70,15 +70,15 @@ export default function ReactVideoPlayer() {
       }
     });
     socket.on("player-play-from-server", () => {
-      if (player && !isPlaying) {
+      if (player) {
         setIsPlaying(true);
       }
     });
     socket.on("player-pause-from-server", (membersCurrentTime) => {
-      if (player) {
+      if (player && isPlaying) {
         player.seekTo(membersCurrentTime);
+        setIsPlaying(false);
       }
-      setIsPlaying(false);
     });
     socket.on("player-seek-from-server", (currentTime) => {
       if (player) {
@@ -131,7 +131,6 @@ export default function ReactVideoPlayer() {
     if(player && isPlaying) {
       const timeDiff = Math.ceil(Math.abs(playedSeconds - actualTime));
       if(timeDiff > 2) {
-        console.log("seeking");
         socket.emit("player-seek", { roomId, currentTime: playedSeconds });
         setActualTime(playedSeconds);
       }
@@ -159,7 +158,7 @@ export default function ReactVideoPlayer() {
   };
   const onSeek = (seek: number) => {
     if(seekByServer) setSeekByServer(false);
-    else { socket.emit("player-seek", { roomId, currentTime: seek }); setIsPlaying(false); }
+    else { socket.emit("player-seek", { roomId, currentTime: seek }); }
   };
   const onPlaybackRateChange = (playbackRate: number) => {
     socket.emit("playback-rate-change", { roomId, playbackRate });
