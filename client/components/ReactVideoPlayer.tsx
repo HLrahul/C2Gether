@@ -1,7 +1,7 @@
 "use client";
 
 import "@/styles/video-player.css";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 
 import dynamic from "next/dynamic";
@@ -194,11 +194,6 @@ export default function ReactVideoPlayer() {
             playbackRate={playbackRate}
             onPlaybackRateChange={onPlaybackRateChange}
             onEnded={onEnded}
-            // config={{
-            //   youtube: {
-            //     playerVars: { disablekb: 1 },
-            //   },
-            // }}
           />
         </div>
       </Skeleton>
