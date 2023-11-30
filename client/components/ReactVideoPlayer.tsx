@@ -1,7 +1,7 @@
 "use client";
 
 import "@/styles/video-player.css";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useParams } from "next/navigation";
 
 import dynamic from "next/dynamic";
@@ -25,8 +25,8 @@ export default function ReactVideoPlayer() {
   const [isLoaded, setIsLoaded] = useState<boolean>(false);
   const [isPlaying, setIsPlaying] = useState<boolean>(true);
   const [playbackRate, setPlaybackRate] = useState<number>(1);
-  const [actualTime, setActualTime] = useState<number>(0);
   const [playedSeconds, setPlayedSeconds] = useState<number>(0);
+  const [seekByServer, setSeekByServer] = useState<boolean>(false);
 
   useEffect(() => {
     if (videoUrl !== "") {
@@ -59,6 +59,7 @@ export default function ReactVideoPlayer() {
         setVideoUrl(serverUrl);
       }
       if (player && currentTime) {
+        setSeekByServer(true);
         player.seekTo(currentTime);
       }
     });
@@ -69,7 +70,7 @@ export default function ReactVideoPlayer() {
       }
     });
     socket.on("player-play-from-server", () => {
-      if (player) {
+      if (player && !isPlaying) {
         setIsPlaying(true);
       }
     });
@@ -81,7 +82,10 @@ export default function ReactVideoPlayer() {
     });
     socket.on("player-seek-from-server", (currentTime) => {
       if (player) {
+        setSeekByServer(true);
         player.seekTo(currentTime);
+        setActualTime(playedSeconds);
+        setIsPlaying(false);
       }
     });
     socket.on("playback-rate-change-from-server", (playbackRate) => {
@@ -101,8 +105,10 @@ export default function ReactVideoPlayer() {
       socket.off("player-state-from-server");
       socket.off("playback-rate-change-from-server");
     };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [roomId, player, user, setIsAdmin, isPlaying, setVideoUrl, videoUrl]);
 
+  const [actualTime, setActualTime] = useState<number>(0);
   useEffect(() => {
     let interval: NodeJS.Timeout | null = null;
 
@@ -118,28 +124,20 @@ export default function ReactVideoPlayer() {
     return () => {
       if (interval) clearInterval(interval);
     };
-  }, [player, isPlaying, playedSeconds, playbackRate]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [player, isPlaying, playbackRate]);
 
   useEffect(() => {
-    let interval: NodeJS.Timeout | null = null;
-
-    if (player && isPlaying) {
-      interval = setInterval(() => {
-        const timeDiff = Math.floor(actualTime - playedSeconds);
-        console.log(timeDiff + " " + playedSeconds + " " + actualTime);
-        if(Math.abs(timeDiff) > (1 * playbackRate)) {
-          socket.emit("player-seek", { roomId, currentTime: playedSeconds });
-          setActualTime(playedSeconds);
-        }
-      }, 1000);
-    } else if (!isPlaying && interval) {
-      clearInterval(interval);
+    if(player && isPlaying) {
+      const timeDiff = Math.ceil(Math.abs(playedSeconds - actualTime));
+      if(timeDiff > 2) {
+        console.log("seeking");
+        socket.emit("player-seek", { roomId, currentTime: playedSeconds });
+        setActualTime(playedSeconds);
+      }
     }
-
-    return () => {
-      if (interval) clearInterval(interval);
-    };
-  }, [player, isPlaying, playedSeconds, playbackRate, roomId, actualTime]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [player, playedSeconds, isPlaying, actualTime]);
 
   const onReady = (player: any) => {
     setPlayer(player);
@@ -147,20 +145,21 @@ export default function ReactVideoPlayer() {
   const onPlay = () => {
     if (player) {
       socket.emit("player-play", { roomId });
+      if (!isPlaying) setIsPlaying(true);
     }
-    setIsPlaying(true);
   };
   const onPause = () => {
-    setIsPlaying(false);
     if (player) {
       socket.emit("player-pause", {
         roomId,
         membersCurrentTime: player.getCurrentTime(),
       });
     }
+    setIsPlaying(false);
   };
   const onSeek = (seek: number) => {
-    socket.emit("player-seek", { roomId, currentTime: seek });
+    if(seekByServer) setSeekByServer(false);
+    else { socket.emit("player-seek", { roomId, currentTime: seek }); setIsPlaying(false); }
   };
   const onPlaybackRateChange = (playbackRate: number) => {
     socket.emit("playback-rate-change", { roomId, playbackRate });
