@@ -13,6 +13,11 @@ app.use(
     credentials: true,
   })
 );
+
+app.get("/", (req, res) => {
+  res.send("Socket server running");
+});
+
 const server = http.createServer(app);
 
 export let worker: types.Worker<types.AppData>;
