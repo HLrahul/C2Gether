@@ -65,14 +65,14 @@ export default function VideoSearchInput() {
         pattern:
           /(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=|\&list=)([^#\&\?]*).*/,
       },
-      {
-        platform: "vimeo",
-        pattern: /(vimeo)\.com\/([a-zA-Z0-9]+)(\/[a-zA-Z0-9]+)?\/?/,
-      },
-      {
-        platform: "dailymotion",
-        pattern: /(dailymotion)\.com\/video\/([a-zA-Z0-9]+)\/?/,
-      },
+      // {
+      //   platform: "vimeo",
+      //   pattern: /(vimeo)\.com\/([a-zA-Z0-9]+)(\/[a-zA-Z0-9]+)?\/?/,
+      // },
+      // {
+      //   platform: "dailymotion",
+      //   pattern: /(dailymotion)\.com\/video\/([a-zA-Z0-9]+)\/?/,
+      // },
     ];
 
     for (let i = 0; i < patterns.length; i++) {
