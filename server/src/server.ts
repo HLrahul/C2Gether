@@ -8,7 +8,7 @@ import { handleSocketEvents } from "./services/socketEvents";
 const app = express();
 app.use(
   cors({
-    origin: process.env.CLIENT_URL || "https://probable-goggles-wjrjjj5qvwph9jqv-3000.app.github.dev/",
+    origin: "https://collab-study-client-p455wmiav-hlrahul.vercel.app",
     methods: ["GET", "POST"],
     credentials: true,
   })
