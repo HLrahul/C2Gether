@@ -1,22 +1,14 @@
 "use client";
 
+import { useState } from "react";
+import { Button } from "@nextui-org/react";
 import { useParams } from "next/navigation";
-import { Button } from "@nextui-org/button";
-import {
-  Divider,
-  Modal,
-  ModalBody,
-  ModalContent,
-  ModalFooter,
-  ModalHeader,
-  Snippet,
-  useDisclosure,
-} from "@nextui-org/react";
 
 export default function InviteMembersButton() {
   const { roomId } = useParams();
   const currentUrl = `${process.env.NEXT_PUBLIC_BASE_URL}/${roomId}`;
-  const { isOpen, onOpen, onOpenChange } = useDisclosure();
+
+  const [buttonText, setButtonText] = useState<string>("Invite members");
 
   return (
     <>
@@ -24,28 +16,10 @@ export default function InviteMembersButton() {
         className="w-full"
         variant="solid"
         color="primary"
-        onPress={onOpen}
+        onClick={() => { navigator.clipboard.writeText(currentUrl); setButtonText("Copied!"); setTimeout(() => setButtonText("Invite members"), 1000); }}
       >
-        Invite members
+        { buttonText }
       </Button>
-      <Modal
-        backdrop="blur"
-        isOpen={isOpen}
-        onOpenChange={onOpenChange}
-        placement="center"
-      >
-        <ModalContent>
-          <ModalHeader>Invite link</ModalHeader>
-          <ModalBody>
-            <Snippet symbol="Link: " variant="bordered">
-              {currentUrl.length > 25
-                ? `${currentUrl.substring(0, 25)}...`
-                : currentUrl}
-            </Snippet>
-          </ModalBody>
-          <ModalFooter></ModalFooter>
-        </ModalContent>
-      </Modal>
     </>
   );
 }

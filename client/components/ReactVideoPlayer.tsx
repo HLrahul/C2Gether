@@ -26,7 +26,6 @@ export default function ReactVideoPlayer() {
   const [isPlaying, setIsPlaying] = useState<boolean>(true);
   const [playbackRate, setPlaybackRate] = useState<number>(1);
   const [playedSeconds, setPlayedSeconds] = useState<number>(0);
-  const [seekByServer, setSeekByServer] = useState<boolean>(false);
 
   useEffect(() => {
     if (videoUrl !== "") {
@@ -59,7 +58,6 @@ export default function ReactVideoPlayer() {
         setVideoUrl(serverUrl);
       }
       if (player && currentTime) {
-        setSeekByServer(true);
         player.seekTo(currentTime);
       }
     });
@@ -82,10 +80,12 @@ export default function ReactVideoPlayer() {
     });
     socket.on("player-seek-from-server", (currentTime) => {
       if (player) {
-        setSeekByServer(true);
         player.seekTo(currentTime);
-        setActualTime(playedSeconds);
+        setExpectedTime(playedSeconds);
         setIsPlaying(false);
+        setTimeout(() => {
+          setIsPlaying(true);
+        }, 700);
       }
     });
     socket.on("playback-rate-change-from-server", (playbackRate) => {
@@ -108,14 +108,14 @@ export default function ReactVideoPlayer() {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [roomId, player, user, setIsAdmin, isPlaying, setVideoUrl, videoUrl]);
 
-  const [actualTime, setActualTime] = useState<number>(0);
+  const [expectedTime, setExpectedTime] = useState<number>(0);
   useEffect(() => {
     let interval: NodeJS.Timeout | null = null;
 
     if (player && isPlaying) {
-      setActualTime(playedSeconds);
+      setExpectedTime(playedSeconds);
       interval = setInterval(() => {
-        setActualTime((prevTime) => prevTime + 1 * playbackRate);
+        setExpectedTime((prevTime) => prevTime + 1 * playbackRate);
       }, 1000);
     } else if (!isPlaying && interval) {
       clearInterval(interval);
@@ -128,15 +128,15 @@ export default function ReactVideoPlayer() {
   }, [player, isPlaying, playbackRate]);
 
   useEffect(() => {
-    if(player && isPlaying) {
-      const timeDiff = Math.ceil(Math.abs(playedSeconds - actualTime));
-      if(timeDiff > 2) {
+    if (player && isPlaying) {
+      const timeDiff = Math.ceil(Math.abs(playedSeconds - expectedTime));
+      if (timeDiff > 2) {
         socket.emit("player-seek", { roomId, currentTime: playedSeconds });
-        setActualTime(playedSeconds);
+        setExpectedTime(playedSeconds);
       }
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [player, playedSeconds, isPlaying, actualTime]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [player, playedSeconds, isPlaying, expectedTime]);
 
   const onReady = (player: any) => {
     setPlayer(player);
@@ -157,23 +157,29 @@ export default function ReactVideoPlayer() {
     setIsPlaying(false);
   };
   const onSeek = (seek: number) => {
-    if(seekByServer) setSeekByServer(false);
-    else { socket.emit("player-seek", { roomId, currentTime: seek }); }
+      socket.emit("player-seek", { roomId, currentTime: seek });
+      setTimeout(() => {
+        socket.emit("player-play", { roomId });
+        setIsPlaying(true);
+      }, 700);
   };
   const onPlaybackRateChange = (playbackRate: number) => {
     socket.emit("playback-rate-change", { roomId, playbackRate });
   };
   const onEnded = () => {
     if (player) {
+      setExpectedTime(0);
       player.seekTo(0);
-      setIsPlaying(true);
+      setTimeout(() => {
+        setIsPlaying(true);
+      }, 1000);
     }
   };
 
   return (
     <div className="col-span-8 md:col-span-5">
       <Skeleton isLoaded={isLoaded} className="w-5/5 rounded-lg mb-5">
-        <div className="z-89 video-responsive">
+        <div className="video-responsive">
           <ReactPlayer
             key={videoUrl}
             url={videoUrl}

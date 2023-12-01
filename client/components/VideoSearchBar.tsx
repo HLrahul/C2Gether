@@ -59,13 +59,34 @@ export default function VideoSearchInput() {
   }, [keyword]);
 
   const getVideoIdFromUrl = (url: string) => {
-    const regex =
-      /(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=|\&list=)([^#\&\?]*).*/;
-    const matches = url.match(regex);
-    if (matches && matches[2].length === 11) {
-      return matches[2];
+    const patterns = [
+      {
+        platform: "youtube",
+        pattern:
+          /(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=|\&list=)([^#\&\?]*).*/,
+      },
+      {
+        platform: "vimeo",
+        pattern: /(vimeo)\.com\/([a-zA-Z0-9]+)(\/[a-zA-Z0-9]+)?\/?/,
+      },
+      {
+        platform: "dailymotion",
+        pattern: /(dailymotion)\.com\/video\/([a-zA-Z0-9]+)\/?/,
+      },
+    ];
+
+    for (let i = 0; i < patterns.length; i++) {
+      const matches = url.match(patterns[i].pattern);
+      if (matches && matches[2]) {
+        return {
+          platform: patterns[i].platform,
+          id: matches[2],
+          hash: matches[3] ? matches[3].substring(1) : "",
+        };
+      }
     }
-    return "";
+
+    return { platform: "unknown", id: "", hash: "" };
   };
 
   const handleSearch = form.handleSubmit(() => {
@@ -81,8 +102,20 @@ export default function VideoSearchInput() {
     form.setValue("keyword", value);
 
     const videoUrl = getVideoIdFromUrl(e.target.value);
-    if (videoUrl !== "") {
-      setVideoUrl(`https://www.youtube.com/embed/${videoUrl}`);
+    if (videoUrl.platform !== "unknown") {
+      switch (videoUrl.platform) {
+        case "youtube":
+          setVideoUrl(`https://www.youtube.com/embed/${videoUrl.id}`);
+          break;
+        case "vimeo":
+          setVideoUrl(`https://player.vimeo.com/video/${videoUrl.id}`);
+          break;
+        case "dailymotion":
+          setVideoUrl(`https://www.dailymotion.com/embed/video/${videoUrl.id}`);
+          break;
+        default:
+          onOpen();
+      }
     } else {
       onOpen();
     }
