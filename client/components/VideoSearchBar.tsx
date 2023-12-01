@@ -124,7 +124,7 @@ export default function VideoSearchInput() {
   const onFocus = (event: React.FocusEvent<Element>) => {
     const value = (event.target as HTMLInputElement).value;
     const videoId = getVideoIdFromUrl(value);
-    if (videoId) {
+    if (videoId.id) {
       (event.target as HTMLInputElement).select();
     }
   };
