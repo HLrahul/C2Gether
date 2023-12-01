@@ -2,26 +2,26 @@ import { Card, CardBody, Checkbox } from "@nextui-org/react";
 
 export default function HeroSection() {
   return (
-    <section className="h-auto w-[70%] m-auto mt-[4rem] mb-[10vh] flex flex-col sm:flex-col md:flex-col lg:flex-row items-center justify-between gap-10">
-      <Card>
-        <CardBody className="flex flex-row items-center justify-center gap-4">
+    <section className="h-auto w-[70%] m-auto grid grid-cols-1 lg:grid-cols-3 grid-rows-3 lg:grid-rows-1 gap-10">
+      <Card className="col-span-1">
+        <CardBody className="flex flex-row items-center justify-start gap-4">
           <Checkbox
             isReadOnly
             defaultSelected
             id="multicast-check"
             color="primary"
           ></Checkbox>
-          <div>
+          <div className="flex flex-col items-start">
             <p className="text-foreground/60">Realtime MultiCast</p>
             <p className="text-foreground">
-              Stream Youtube Videos amongst room members in sync.
+              Stream Youtube Videos amongst members in sync.
             </p>
           </div>
         </CardBody>
       </Card>
 
-      <Card>
-        <CardBody className="flex flex-row items-center justify-center gap-4">
+      <Card className="col-span-1">
+        <CardBody className="flex flex-row items-center justify-start gap-4">
           <Checkbox
             isReadOnly
             defaultSelected
@@ -37,8 +37,8 @@ export default function HeroSection() {
         </CardBody>
       </Card>
 
-      <Card>
-        <CardBody className="flex flex-row items-center justify-center gap-4">
+      <Card className="col-span-1">
+        <CardBody className="flex flex-row items-center justify-start gap-4">
           <Checkbox isReadOnly id="drawing-check" color="primary"></Checkbox>
           <div>
             <p className="text-foreground/60">Realtime Drawing</p>

@@ -6,7 +6,7 @@ export default function NavBar() {
   return (
     <Navbar shouldHideOnScroll className="m-auto">
       <NavbarBrand>
-        <p className="font-bold text-inherit text-primary">CollabStudy</p>
+        <p className="font-bold text-inherit text-primary">C2Gather</p>
       </NavbarBrand>
       <NavbarContent justify="end">
         <ThemeSwitch />
