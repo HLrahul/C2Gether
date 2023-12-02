@@ -7,7 +7,7 @@ import { handleSocketEvents } from "./services/socketEvents";
 const app = express();
 app.use(
   cors({
-    origin: "https://collab-study-client-p455wmiav-hlrahul.vercel.app",
+    origin: "https://collab-study-client-p455wmiav-hlrahul.vercel.app/",
     methods: ["GET", "POST"],
     credentials: true,
   })
