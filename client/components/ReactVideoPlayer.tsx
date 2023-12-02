@@ -45,7 +45,7 @@ export default function ReactVideoPlayer() {
     socket.on("admin-user", setIsAdmin);
     socket.on("get-player-state", () => {
       if (player) {
-        const currentTime = player.getCurrentTime();
+        const currentTime = player.getCurrentTime() + 1;
         socket.emit("send-player-state", {
           roomId,
           currentTime,
@@ -151,13 +151,13 @@ export default function ReactVideoPlayer() {
     if (player) {
       socket.emit("player-pause", {
         roomId,
-        membersCurrentTime: player.getCurrentTime(),
+        membersCurrentTime: player.getCurrentTime() + 1,
       });
     }
     setIsPlaying(false);
   };
   const onSeek = (seek: number) => {
-      socket.emit("player-seek", { roomId, currentTime: seek });
+      socket.emit("player-seek", { roomId, currentTime: seek + 1});
       setTimeout(() => {
         socket.emit("player-play", { roomId });
         setIsPlaying(true);
