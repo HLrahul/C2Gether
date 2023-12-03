@@ -42,7 +42,7 @@ export default function LiveChatInput() {
 
     user &&
       addMessage({
-        name: user.username,
+        name: `You${(user.username)}`,
         message: data.text,
         timeSent: time,
       });

@@ -2,8 +2,8 @@ import { Card, CardBody, Checkbox } from "@nextui-org/react";
 
 export default function HeroSection() {
   return (
-    <section className="h-auto w-[70%] m-auto grid grid-cols-1 lg:grid-cols-3 grid-rows-3 lg:grid-rows-1 gap-10">
-      <Card className="col-span-1">
+    <section className="h-[50%] w-[70%] m-auto grid grid-cols-1 sm:mt-7 sm:mb-4 lg:grid-cols-3 grid-rows-3 lg:grid-rows-1 gap-10">
+      <Card className="col-span-1 sm:w-[50%] lg:w-full m-auto">
         <CardBody className="flex flex-row items-center justify-start gap-4">
           <Checkbox
             isReadOnly
@@ -20,7 +20,7 @@ export default function HeroSection() {
         </CardBody>
       </Card>
 
-      <Card className="col-span-1">
+      <Card className="col-span-1 sm:w-[50%] lg:w-full m-auto">
         <CardBody className="flex flex-row items-center justify-start gap-4">
           <Checkbox
             isReadOnly
@@ -37,7 +37,7 @@ export default function HeroSection() {
         </CardBody>
       </Card>
 
-      <Card className="col-span-1">
+      <Card className="col-span-1 sm:w-[50%] lg:w-full m-auto">
         <CardBody className="flex flex-row items-center justify-start gap-4">
           <Checkbox isReadOnly id="drawing-check" color="primary"></Checkbox>
           <div>

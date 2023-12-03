@@ -14,11 +14,11 @@ export default function Home() {
       <Navbar />
 
       <section className="absolute  min-h-[90vh] w-full flex flex-col justify-between px-5 sm:px-0 md:px-0 lg:px-0">
-        <div className="flex flex-col m-auto min-h-[30vh] sm:h-[30vh] md:h-[25vh] w-full sm:w-[100%] md:w-[70%] justify-center sm:justify-end md:justify-end lg:justify-end items-center gap-4">
+        <div className="h-auto flex flex-col m-auto items-center justify-center gap-4 w-full lg:w-[70%]">
           <h1 className="text-3xl md:text-5xl text-center">
             Spend Quality time with your colleagues and friends.
           </h1>
-          <div className="flex space-x-4  ">
+          <div className="flex space-x-4">
             <CreateRoomButton roomId={roomId} />
             <Divider orientation="vertical" />
             <JoinRoom />

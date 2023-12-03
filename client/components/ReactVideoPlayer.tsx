@@ -11,6 +11,7 @@ import { socket } from "@/lib/socket";
 import { Skeleton } from "@nextui-org/react";
 import { useVideoUrlStore } from "@/store/videoUrlStore";
 import { useAdminStore, useUserStore } from "@/store/userStore";
+import { ArrowUpToLine } from "lucide-react";
 
 const ReactPlayer = dynamic(() => import("react-player"), { ssr: false });
 
@@ -178,7 +179,12 @@ export default function ReactVideoPlayer() {
 
   return (
     <div className="col-span-8 md:col-span-5">
-      <Skeleton isLoaded={isLoaded} className="w-5/5 rounded-lg mb-5">
+      <Skeleton isLoaded className="w-5/5 rounded-lg mb-5">
+        { !isLoaded && 
+        <div className="absolute h-[23vh] sm:h-[45vh] w-full flex flex-col items-center justify-start">
+          <ArrowUpToLine className=""/>
+          <p className="w-[70%] h-[90%] flex items-center justify-center text-center">Paste a youtube video link or start typing to search a video from youtube.</p>
+        </div> }
         <div className="video-responsive">
           <ReactPlayer
             key={videoUrl}
