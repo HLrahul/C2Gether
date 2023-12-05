@@ -119,22 +119,29 @@ export function handleSocketEvents(socket: Socket, io: Server) {
       username,
       message,
       timeSent,
-      timeZone,
     }: {
       roomId: string;
       username: string;
       message: string;
       timeSent: string;
-      timeZone: string;
     }) => {
       socket.broadcast.to(roomId).emit("live-chat-text-from-server", {
         username,
         message,
         timeSent,
-        timeZone,
+        isAction: false,
       });
     }
   );
+
+  socket.on("action-message", ({ roomId, name, message, timeSent } : { roomId: string, name: string, message: string, timeSent: string }) => {
+    socket.broadcast.to(roomId).emit("action-message-from-server", {
+      username: name,
+      message,
+      timeSent,
+      isAction: true,
+    });
+  })
 
   socket.on("leave-room", () => {
     leaveRoom(socket);

@@ -1,5 +1,9 @@
+"use client";
+
 import { nanoid } from "nanoid";
+import { useTheme } from "next-themes";
 import Navbar from "@/components/navbar";
+import { useEffect, useState } from "react";
 import { Divider } from "@nextui-org/react";
 import JoinRoom from "@/components/JoinRoom";
 import BottomBar from "@/components/BottomBar";
@@ -8,26 +12,45 @@ import CreateRoomButton from "@/components/CreateRoom";
 
 export default function Home() {
   const roomId = nanoid();
+  const { theme } = useTheme();
+  const [blobOneStyles, setBlobOneStyles] = useState("");
+  const [blobTwoColor, setBlobTwoColor] = useState("");
+
+  useEffect(() => {
+    setBlobOneStyles(
+      theme === "teal-dark"
+        ? "absolute inset-y-16 inset-x-0 h-[14rem] w-32 rounded-full rotate-90 my-auto mx-[40%] sm:mx-[20%] bg-gradient-to-b from-teal-500 to-primary-500 blur-3xl scale-y-150 opacity-75 animate-blob"
+        : ""
+    );
+    setBlobTwoColor(
+      theme === "teal-dark" ? "bg-gradient-to-b from-white-500 to-white-500" : ""
+    );
+  }, [theme]);
 
   return (
     <>
       <Navbar />
+      <div className={blobOneStyles}></div>
+      <div
+        className={`absolute inset-y-16 inset-x-0 h-[14rem] w-32 rounded-full rotate-90 my-auto mx-[50%] sm:mx-[25%] blur-3xl scale-y-150 opacity-75 animate-blobTwo ${blobTwoColor}`}
+      ></div>
 
-      <section className="absolute  min-h-[90vh] w-full flex flex-col justify-between px-5 sm:px-0 md:px-0 lg:px-0">
-        <div className="h-auto flex flex-col m-auto items-center justify-center gap-4 w-full lg:w-[70%]">
-          <h1 className="text-3xl md:text-5xl text-center">
-            Spend Quality time with your colleagues and friends.
-          </h1>
+      <section className="relative min-h-[90vh] w-full lg:w-[70%] m-auto px-5 lg:px-0 flex flex-col md:flex-row gap-14 md:gap-2">
+        <div className="w-full md:w-[50%] min-h-[20vh] md:h-[80vh] flex flex-col items-center md:items-start mt-[20%] md:mt-0 md:justify-center space-y-4">
+          <p className="text-[1.75rem] sm:text-[2.5rem] md:text-[3rem] text-center md:text-left">
+            Watch videos <span className="text-primary">together</span> with
+            whom you want to.
+          </p>
           <div className="flex space-x-4">
             <CreateRoomButton roomId={roomId} />
-            <Divider orientation="vertical" />
+            <Divider orientation="vertical" className="text-foreground" />
             <JoinRoom />
           </div>
         </div>
 
         <HeroSection />
-        <BottomBar />
       </section>
+        <BottomBar />
     </>
   );
 }

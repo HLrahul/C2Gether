@@ -3,16 +3,10 @@
 import { socket } from "@/lib/socket";
 import { useEffect, useRef } from "react";
 import { MessagesSquare } from "lucide-react";
-import { Transition } from '@headlessui/react';
+import { Transition } from "@headlessui/react";
 import LiveChatInput from "@/components/LiveChatInput";
 import { Message, useChatStore } from "@/store/chatStore";
-import {
-  Card,
-  CardBody,
-  CardFooter,
-  CardHeader,
-  Divider,
-} from "@nextui-org/react";
+import { Card, CardBody, CardFooter, CardHeader } from "@nextui-org/react";
 
 export default function ChatWindow() {
   const messagesEndRef = useRef<null | HTMLDivElement>(null);
@@ -24,12 +18,12 @@ export default function ChatWindow() {
       username,
       message,
       timeSent,
-      timeZone,
+      isAction,
     }: {
       username: string;
       message: string;
       timeSent: string;
-      timeZone: string;
+      isAction: boolean;
     }) => {
       const senderTime = new Date(timeSent);
       const localTime = senderTime.toLocaleTimeString([], {
@@ -38,13 +32,20 @@ export default function ChatWindow() {
         hour12: true,
         timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone,
       });
-      addMessage({ name: username, message, timeSent: localTime });
+      addMessage({
+        name: username,
+        message,
+        timeSent: localTime,
+        isAction: isAction,
+      });
     };
 
     socket.on("live-chat-text-from-server", listener);
+    socket.on("action-message-from-server", listener);
 
     return () => {
       socket.off("live-chat-text-from-server", listener);
+      socket.off("action-message-from-server", listener);
     };
   }, [addMessage]);
 
@@ -59,9 +60,8 @@ export default function ChatWindow() {
       <Card isBlurred className="min-h-full max-h-full mt-2 md:mt-0">
         <CardHeader className="flex gap-2">
           <MessagesSquare size={16} className="text-primary" />
-          <p className="">Live chat</p>
+          <p className="text-gray-500">Live chat</p>
         </CardHeader>
-        <Divider />
         <CardBody className="overflow-y-auto h-[25vh] sm:max-h-[60vh]">
           {messages.map((message, index) => (
             <Transition
@@ -72,12 +72,15 @@ export default function ChatWindow() {
               enterFrom="opacity-0 scale-95"
               enterTo="opacity-100 scale-100"
             >
-              <ChatMessage message={message} />
+              {message.isAction ? (
+                <ActionMessage action={message} />
+              ) : (
+                <ChatMessage message={message} />
+              )}
             </Transition>
           ))}
           <div ref={messagesEndRef} />
         </CardBody>
-        <Divider />
         <CardFooter>
           <LiveChatInput />
         </CardFooter>
@@ -91,9 +94,22 @@ const ChatMessage = ({ message }: { message: Message }) => {
     <div className="flex flex-col mb-3">
       <div className="w-full flex justify-between">
         <p className="text-foreground-400 text-[13px]">{message.name}</p>
-        <p className="text-gray-400 text-[10px] flex items-center">{message.timeSent}</p>
+        <p className="text-gray-400 text-[10px] flex items-center">
+          {message.timeSent}
+        </p>
       </div>
       <p className="text-[14px]">{message.message}</p>
+    </div>
+  );
+};
+
+const ActionMessage = ({ action }: { action: Message }) => {
+  return (
+    <div className="mb-3">
+      <p className="text-[10px] flex items-center text-foreground-400">
+        {action.name} {action.message}
+        <span className="ml-auto">{action.timeSent}</span>
+      </p>
     </div>
   );
 };

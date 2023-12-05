@@ -4,6 +4,7 @@ export interface Message {
     name: string;
     message: string;
     timeSent: string;
+    isAction: boolean;
 }
 
 interface ChatStore {

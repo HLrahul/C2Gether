@@ -11,6 +11,48 @@ module.exports = {
   theme: {
     extend: {
       keyframes: {
+        featureCard: {
+          "0%": {
+            transform: "translate(0px, 0px) scale(1)",
+          },
+          "33%": {
+            transform: "translate(0px, 0px) scale(1.05)",
+          },
+          "66%": {
+            transform: "translate(0px, 0px) scale(0.9)",
+          },
+          "100%": {
+            transform: "translate(0px, 0px) scale(1)",
+          },
+        },
+        blob: {
+          "0%": {
+            transform: "translate(0px, 0px) scale(1)",
+          },
+          "33%": {
+            transform: "translate(30px, 0px) scale(1.3)",
+          },
+          "66%": {
+            transform: "translate(-20px, 0px) scale(0.5)",
+          },
+          "100%": {
+            transform: "translate(0px, 0px) scale(1)",
+          },
+        },
+        blobTwo: {
+          "0%": {
+            transform: "translate(0px, 0px) scale(1)",
+          },
+          "33%": {
+            transform: "translate(-30px, 0px) scale(1.2)",
+          },
+          "66%": {
+            transform: "translate(20px, 0px) scale(0.6)",
+          },
+          "100%": {
+            transform: "translate(0px, 0px) scale(1)",
+          },
+        },
         "accordion-down": {
           from: { height: "0" },
           to: { height: "var(--radix-accordion-content-height)" },
@@ -23,6 +65,9 @@ module.exports = {
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
         "accordion-up": "accordion-up 0.2s ease-out",
+        "blob": "blob 6s infinite",
+        "blobTwo": "blobTwo 6s infinite",
+        "featureCard": "featureCard 7s infinite",
       },
     },
   },

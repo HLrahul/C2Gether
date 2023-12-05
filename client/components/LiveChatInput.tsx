@@ -42,16 +42,16 @@ export default function LiveChatInput() {
 
     user &&
       addMessage({
-        name: `You${(user.username)}`,
+        name: `${user.username} (You)`,
         message: data.text,
         timeSent: time,
+        isAction: false,
       });
     socket.emit("live-chat-text", {
       roomId,
       username: user?.username,
       message: data.text,
       timeSent: new Date().toISOString(),
-      timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone,
     });
     form.reset();
     form.setFocus("text");

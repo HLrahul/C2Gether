@@ -4,7 +4,7 @@ import { Image, Navbar, NavbarBrand, NavbarContent } from "@nextui-org/react";
 
 export default function NavBar() {
   return (
-    <Navbar shouldHideOnScroll className="m-auto">
+    <Navbar shouldHideOnScroll>
       <NavbarBrand className="flex gap-2">
         <Image src="/C2G-text.png" alt="C2Gather" className="h-8 w-auto" />
         <p className="font-bold text-inherit text-primary">
