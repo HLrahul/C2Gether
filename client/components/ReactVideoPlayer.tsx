@@ -9,10 +9,8 @@ import VideoDetails from "./VideoDetails";
 
 import { socket } from "@/lib/socket";
 import { Skeleton } from "@nextui-org/react";
-import { useChatStore } from "@/store/chatStore";
 import { useVideoUrlStore } from "@/store/videoUrlStore";
 import { useAdminStore, useUserStore } from "@/store/userStore";
-import { ArrowUpToLine } from "lucide-react";
 
 const ReactPlayer = dynamic(() => import("react-player"), { ssr: false });
 
@@ -20,20 +18,15 @@ export default function ReactVideoPlayer() {
   const { roomId } = useParams();
   const { user } = useUserStore();
   const { videoUrl } = useVideoUrlStore();
-  const addMessage = useChatStore((state) => state.addMessage);
-  const setIsAdmin = useAdminStore((state) => state.setIsAdmin);
   const setVideoUrl = useVideoUrlStore((state) => state.setVideoUrl);
+  const setIsAdmin = useAdminStore((state) => state.setIsAdmin);
 
   const [player, setPlayer] = useState<any>(null);
   const [isLoaded, setIsLoaded] = useState<boolean>(false);
   const [isPlaying, setIsPlaying] = useState<boolean>(true);
   const [playbackRate, setPlaybackRate] = useState<number>(1);
-  const [expectedTime, setExpectedTime] = useState<number>(0);
   const [playedSeconds, setPlayedSeconds] = useState<number>(0);
-
-  const [playFromServer, setPlayFromServer] = useState<boolean>(false);
-  const [seekFromServer, setSeekFromServer] = useState<boolean>(false);
-  const [pauseFromServer, setPauseFromServer] = useState<boolean>(false);
+  const [seekByServer, setSeekByServer] = useState<boolean>(false);
 
   useEffect(() => {
     if (videoUrl !== "") {
@@ -42,7 +35,7 @@ export default function ReactVideoPlayer() {
   }, [videoUrl]);
 
   useEffect(() => {
-    if (player) {
+    if (player && videoUrl) {
       socket.emit("video-change", { roomId, serverUrl: videoUrl });
     }
   }, [player, roomId, videoUrl]);
@@ -66,35 +59,33 @@ export default function ReactVideoPlayer() {
         setVideoUrl(serverUrl);
       }
       if (player && currentTime) {
+        setSeekByServer(true);
         player.seekTo(currentTime);
       }
     });
     socket.on("video-change-from-server", ({ serverUrl }) => {
-      if (player && serverUrl !== "" && videoUrl !== serverUrl) {
+      if (player && videoUrl !== serverUrl) {
         setVideoUrl(serverUrl);
         player.seekTo(0);
       }
     });
     socket.on("player-play-from-server", () => {
       if (player) {
-        setPlayFromServer(true);
         setIsPlaying(true);
       }
     });
     socket.on("player-pause-from-server", (membersCurrentTime) => {
       if (player && isPlaying) {
-        setPauseFromServer(true);
-        setSeekFromServer(true);
         player.seekTo(membersCurrentTime);
-        setExpectedTime(membersCurrentTime);
         setIsPlaying(false);
       }
     });
-    socket.on("player-seek-from-server", (currentTime: number) => {
+    socket.on("player-seek-from-server", (currentTime) => {
       if (player) {
-        setSeekFromServer(true);
-        setExpectedTime(currentTime);
+        setSeekByServer(true);
         player.seekTo(currentTime);
+        setActualTime(playedSeconds);
+        setIsPlaying(false);
       }
     });
     socket.on("playback-rate-change-from-server", (playbackRate) => {
@@ -117,13 +108,14 @@ export default function ReactVideoPlayer() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [roomId, player, user, setIsAdmin, isPlaying, setVideoUrl, videoUrl]);
 
+  const [actualTime, setActualTime] = useState<number>(0);
   useEffect(() => {
     let interval: NodeJS.Timeout | null = null;
 
     if (player && isPlaying) {
-      setExpectedTime(playedSeconds);
+      setActualTime(playedSeconds);
       interval = setInterval(() => {
-        setExpectedTime((prevTime) => prevTime + 1 * playbackRate);
+        setActualTime((prevTime) => prevTime + 1 * playbackRate);
       }, 1000);
     } else if (!isPlaying && interval) {
       clearInterval(interval);
@@ -137,93 +129,53 @@ export default function ReactVideoPlayer() {
 
   useEffect(() => {
     if (player && isPlaying) {
-      const timeDiff = Math.ceil(Math.abs(playedSeconds - expectedTime));
+      const timeDiff = Math.ceil(Math.abs(playedSeconds - actualTime));
       if (timeDiff > 2) {
-        socket.emit("player-pause", {
-          roomId,
-          membersCurrentTime: playedSeconds,
-        });
-        setExpectedTime(playedSeconds);
+        socket.emit("player-seek", { roomId, currentTime: playedSeconds });
+        setActualTime(playedSeconds);
       }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [player, playedSeconds, isPlaying, expectedTime]);
-
-  function SendActionMessage(action: string) {
-    const time = new Date().toLocaleTimeString([], {
-      hour: "2-digit",
-      minute: "2-digit",
-      hour12: true,
-    });
-
-    user &&
-      addMessage({
-        name: `${user.username} (You)`,
-        message: action,
-        timeSent: time,
-        isAction: true,
-      });
-    user &&
-      socket.emit("action-message", {
-        roomId: roomId,
-        name: user.username,
-        message: action,
-        timeSent: new Date().toISOString(),
-      });
-  }
+  }, [player, playedSeconds, isPlaying, actualTime]);
 
   const onReady = (player: any) => {
     setPlayer(player);
   };
   const onPlay = () => {
-    if (player && !isPlaying) {
+    if (player) {
       socket.emit("player-play", { roomId });
-      console.log("player-play");
-      SendActionMessage("started playing.");
       if (!isPlaying) setIsPlaying(true);
     }
   };
   const onPause = () => {
-    if (player && isPlaying) {
+    if (player) {
       socket.emit("player-pause", {
         roomId,
         membersCurrentTime: player.getCurrentTime(),
       });
-      console.log("player-pause");
-      SendActionMessage("paused the video.");
     }
     setIsPlaying(false);
   };
   const onSeek = (seek: number) => {
-    socket.emit("player-seek", { roomId, seek });
+    if (seekByServer) setSeekByServer(false);
+    else {
+      socket.emit("player-seek", { roomId, currentTime: seek });
+    }
   };
   const onPlaybackRateChange = (playbackRate: number) => {
     socket.emit("playback-rate-change", { roomId, playbackRate });
-    SendActionMessage(`changed playbackrate to ${playbackRate}`);
   };
   const onEnded = () => {
     if (player) {
-      setExpectedTime(0);
       player.seekTo(0);
-      setTimeout(() => {
-        setIsPlaying(true);
-      }, 1000);
+      setIsPlaying(true);
     }
   };
 
   return (
     <div className="col-span-8 md:col-span-5">
-      <Skeleton isLoaded className="w-5/5 rounded-lg mb-5">
-        {!isLoaded && (
-          <div className="absolute h-full w-full bg-foreground-800 flex flex-col items-center justify-start">
-            <ArrowUpToLine className="" />
-            <p className="w-[70%] h-[90%] flex items-center justify-center text-center">
-              Paste a youtube video link or start typing to search a video from
-              youtube.
-            </p>
-          </div>
-        )}
-        <div className="video-responsive">
+      <Skeleton isLoaded={isLoaded} className="w-5/5 rounded-lg mb-5">
+        <div className="z-89 video-responsive">
           <ReactPlayer
             key={videoUrl}
             url={videoUrl}

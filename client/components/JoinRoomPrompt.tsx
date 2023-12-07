@@ -54,6 +54,7 @@ export default function JoinRoomPrompt({ roomId }: { roomId: string }) {
       setMembers(members);
       setShowPrompt(false);
       router.replace(`/${roomId}`);
+      setIsJoinLoading(false);
       socket.emit("client-ready", roomId);
     };
 

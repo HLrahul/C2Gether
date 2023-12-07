@@ -33,7 +33,7 @@ export default function InviteMembersButton() {
         });
     } else {
       navigator.clipboard.writeText(currentUrl);
-      setButtonText("Copied!");
+      setButtonText("Link Copied!");
       setTimeout(() => setButtonText("Invite members"), 1000);
     }
   };

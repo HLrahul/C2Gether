@@ -7,7 +7,7 @@ export interface User {
 
 interface UserState {
   user: User | null;
-  setUser: (user: User) => void;
+  setUser: (user: User | null) => void;
 }
 
 interface PromptState {
@@ -22,7 +22,7 @@ interface AdminState {
 
 export const useUserStore = create<UserState>((set) => ({
   user: null,
-  setUser: (user) => set({ user }),
+  setUser: (user: User | null) => set({ user }),
 }));
 export const usePromptStore = create<PromptState>((set) => ({
   showPrompt: false,

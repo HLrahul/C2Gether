@@ -5,6 +5,7 @@ import { useRouter, useParams } from "next/navigation";
 import { usePromptStore, useUserStore } from "@/store/userStore";
 
 import ChatWindow from "@/components/ChatWindow";
+// import VideoPlayer from "@/components/VideoPlayer";
 import JoinRoomPrompt from "@/components/JoinRoomPrompt";
 import VideoSearchBar from "@/components/VideoSearchBar";
 import DisconnectedNote from "@/components/DisconnectedNote";
