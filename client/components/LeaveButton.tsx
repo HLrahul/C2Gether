@@ -1,12 +1,13 @@
 "use client";
 
 import { useState } from "react";
-import { socket } from "@/lib/socket";
 import { Button } from "@nextui-org/react";
 import { useRouter } from "next/navigation";
-import { usePromptStore } from "@/store/userStore";
-import { useVideoUrlStore } from "@/store/videoUrlStore";
+
+import { socket } from "@/lib/socket";
 import { useChatStore } from "@/store/chatStore";
+import { useVideoUrlStore } from "@/store/videoUrlStore";
+import { useUserStore, usePromptStore } from "@/store/userStore";
 
 export default function LeaveButton() {
   const router = useRouter();
@@ -14,7 +15,7 @@ export default function LeaveButton() {
   const { setVideoUrl } = useVideoUrlStore();
   const { setShowPrompt } = usePromptStore();
   const [isLoading, setIsLoading] = useState(false);
-
+  const setUser = useUserStore((state) => state.setUser);
 
   return (
     <Button
@@ -28,6 +29,7 @@ export default function LeaveButton() {
         setTimeout(() => {
           router.replace("/");
           setShowPrompt(false);
+          setUser(null);
           resetMessage();
           setVideoUrl("");
         }, 600);
