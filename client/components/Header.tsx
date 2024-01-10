@@ -14,7 +14,7 @@ export default function Header() {
   return (
     <Navbar shouldHideOnScroll>
       <NavbarBrand>
-        <p className="font-bold text-primary">CollabStudy</p>
+        <p className="font-bold text-primary">C2Gather</p>
       </NavbarBrand>
       <NavbarContent justify="end">
         <ThemeSwitch />

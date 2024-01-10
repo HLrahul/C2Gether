@@ -77,9 +77,9 @@ export default function VideoPlayer() {
     socket.on("player-pause-from-server", (membersCurrentTime) => {
       if (player && isPlaying) {
         actionByUser.current = false;
-        player.seekTo(membersCurrentTime);
-        setExpectedTime(membersCurrentTime);
-        setPlayedSeconds(membersCurrentTime);
+        player.seekTo(membersCurrentTime + 0.5);
+        setExpectedTime(membersCurrentTime + 0.5);
+        setPlayedSeconds(membersCurrentTime + 0.5);
         setIsPlaying(false);
       }
     });
