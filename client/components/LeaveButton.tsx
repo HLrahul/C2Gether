@@ -28,10 +28,10 @@ export default function LeaveButton() {
         socket.emit("leave-room");
         setTimeout(() => {
           router.replace("/");
-          setShowPrompt(false);
           setUser(null);
           resetMessage();
           setVideoUrl("");
+          setShowPrompt(false);
         }, 600);
       }}
     >

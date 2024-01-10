@@ -24,6 +24,7 @@ export default function VideoPlayer() {
 
   const actionByUser = useRef<boolean>(true);
   const [player, setPlayer] = useState<any>(null);
+  const interval = useRef<NodeJS.Timeout | null>(null);
   const [isLoaded, setIsLoaded] = useState<boolean>(false);
   const [isPlaying, setIsPlaying] = useState<boolean>(true);
   const [playbackRate, setPlaybackRate] = useState<number>(1);
@@ -99,23 +100,22 @@ export default function VideoPlayer() {
       socket.off("player-state-from-server");
       socket.off("player-pause-from-server");
       socket.off("player-play-from-server");
+      socket.off("playback-rate-change-from-server");
     };
   }, [isPlaying, player, roomId, setVideoUrl, videoUrl]);
 
   useEffect(() => {
-    let interval: NodeJS.Timeout | null = null;
-
     if (player && isPlaying) {
       setExpectedTime(playedSeconds);
-      interval = setInterval(() => {
-        setExpectedTime((prevTime) => prevTime + (1 * playbackRate));
+      interval.current = setInterval(() => {
+        setExpectedTime((prevTime) => prevTime + 1 * playbackRate);
       }, 1000);
-    } else if (!isPlaying && interval) {
-      clearInterval(interval);
+    } else if (!isPlaying && interval.current) {
+      clearInterval(interval.current);
     }
 
     return () => {
-      if (interval) clearInterval(interval);
+      if (interval.current) clearInterval(interval.current);
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [player, isPlaying, playbackRate]);
@@ -133,7 +133,6 @@ export default function VideoPlayer() {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [player, playedSeconds, isPlaying, expectedTime]);
-
 
   function SendActionMessage(action: string) {
     const time = new Date().toLocaleTimeString([], {

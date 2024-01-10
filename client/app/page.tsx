@@ -11,10 +11,10 @@ import HeroSection from "@/components/HeroSection";
 import CreateRoomButton from "@/components/CreateRoom";
 
 export default function Home() {
-  const roomId = nanoid();
   const { theme } = useTheme();
-  const [blobOneStyles, setBlobOneStyles] = useState("");
-  const [blobTwoColor, setBlobTwoColor] = useState("");
+  const [ blobTwoColor, setBlobTwoColor ] = useState("");
+  const [ blobOneStyles, setBlobOneStyles ] = useState("");
+  const [ roomId, setRoomId ] = useState<string>(nanoid());
 
   useEffect(() => {
     setBlobOneStyles(

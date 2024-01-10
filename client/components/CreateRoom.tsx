@@ -39,11 +39,9 @@ type createRoomForm = z.infer<typeof createRoomFormSchema>;
 export default function CreateRoomButton({ roomId }: CreateRoomFormProps) {
   const router = useRouter();
   const { toast } = useToast();
-  const { user } = useUserStore();
   const setUser = useUserStore((state) => state.setUser);
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
   const [isLoading, setIsLoading] = useState<boolean>(false);
-  const [serverRoomId, setServerRoomId] = useState<string>(roomId);
   const setMembers = useMembersStore((state) => state.setMembers);
 
   const form = useForm<createRoomForm>({
@@ -57,13 +55,8 @@ export default function CreateRoomButton({ roomId }: CreateRoomFormProps) {
   const onSubmit = ({ username, roomId }: createRoomForm) => {
     setIsLoading(true);
     socket.emit("create-room", { username, roomId });
+    console.log("roomId sent to the socket server" + " " + roomId);
   };
-
-  useEffect(() => {
-    if (user) {
-      router.replace(`/${serverRoomId}`);
-    }
-  }, [user, serverRoomId, router]);
 
   useEffect(() => {
     const handleErrorMessage = ({ message }: { message: string }) => {
@@ -75,9 +68,10 @@ export default function CreateRoomButton({ roomId }: CreateRoomFormProps) {
     };
 
     socket.on("room-joined", ({ user, roomId, members }: RoomJoinedData) => {
-      setServerRoomId(roomId);
+    console.log("roomId got from the socket server" + " " + roomId);
       setMembers(members);
       setUser(user);
+      router.replace(`/${roomId}`);
     });
 
     socket.on("room-not-found", handleErrorMessage);
