@@ -1,7 +1,7 @@
 "use client";
 
 import { socket } from "@/lib/socket";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, forwardRef } from "react";
 import { MessagesSquare } from "lucide-react";
 import { Transition } from "@headlessui/react";
 import LiveChatInput from "@/components/LiveChatInput";
@@ -9,7 +9,7 @@ import { Message, useChatStore } from "@/store/chatStore";
 import { Card, CardBody, CardFooter, CardHeader } from "@nextui-org/react";
 
 export default function ChatWindow() {
-  const messagesEndRef = useRef<null | HTMLDivElement>(null);
+   const messagesEndRef = useRef<null | HTMLDivElement>(null);
   const { messages } = useChatStore();
   const addMessage = useChatStore((state) => state.addMessage);
 
@@ -38,6 +38,8 @@ export default function ChatWindow() {
         timeSent: localTime,
         isAction: isAction,
       });
+
+      messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
     };
 
     socket.on("live-chat-text-from-server", listener);
@@ -49,12 +51,6 @@ export default function ChatWindow() {
     };
   }, [addMessage]);
 
-  const scrollToBottom = () => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
-  };
-
-  useEffect(scrollToBottom, [messages]);
-
   return (
     <div className="col-span-8 md:col-span-3 max-h-full">
       <Card isBlurred className="min-h-full max-h-full mt-2 md:mt-0">
@@ -62,7 +58,9 @@ export default function ChatWindow() {
           <MessagesSquare size={16} className="text-primary" />
           <p className="text-gray-500">Live chat</p>
         </CardHeader>
-        <CardBody className="overflow-y-auto h-[25vh] sm:max-h-[60vh]">
+        <CardBody
+          className="overflow-y-auto h-[25vh] sm:max-h-[60vh]"
+        >
           {messages.map((message, index) => (
             <Transition
               key={index}
@@ -79,7 +77,7 @@ export default function ChatWindow() {
               )}
             </Transition>
           ))}
-          <div ref={messagesEndRef} />
+           <div ref={messagesEndRef} />
         </CardBody>
         <CardFooter>
           <LiveChatInput />
