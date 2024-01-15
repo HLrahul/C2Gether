@@ -13,9 +13,9 @@ export default function LeaveButton() {
   const router = useRouter();
   const { resetMessage } = useChatStore();
   const { setVideoUrl } = useVideoUrlStore();
-  const { setShowPrompt } = usePromptStore();
   const [isLoading, setIsLoading] = useState(false);
   const setUser = useUserStore((state) => state.setUser);
+  const setShowPrompt = usePromptStore((state) => state.setShowPrompt);
 
   return (
     <Button

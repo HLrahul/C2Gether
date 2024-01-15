@@ -2,8 +2,10 @@
 
 import * as z from "zod";
 import { useForm } from "react-hook-form";
+import { useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
+
 import {
   Button,
   Input,
@@ -25,7 +27,6 @@ import {
 import { socket } from "@/lib/socket";
 import { RoomJoinedData } from "@/types";
 import { useToast } from "./ui/useToast";
-import { useRouter } from "next/navigation";
 import { useUserStore } from "@/store/userStore";
 import { useMembersStore } from "@/store/membersStore";
 import { createRoomFormSchema } from "@/lib/validations/createRoomSchema";
@@ -55,7 +56,6 @@ export default function CreateRoomButton({ roomId }: CreateRoomFormProps) {
   const onSubmit = ({ username, roomId }: createRoomForm) => {
     setIsLoading(true);
     socket.emit("create-room", { username, roomId });
-    console.log("roomId sent to the socket server" + " " + roomId);
   };
 
   useEffect(() => {
@@ -68,7 +68,6 @@ export default function CreateRoomButton({ roomId }: CreateRoomFormProps) {
     };
 
     socket.on("room-joined", ({ user, roomId, members }: RoomJoinedData) => {
-    console.log("roomId got from the socket server" + " " + roomId);
       setMembers(members);
       setUser(user);
       router.replace(`/${roomId}`);

@@ -1,7 +1,7 @@
 "use client";
 
 import { socket } from "@/lib/socket";
-import { useEffect, useRef, forwardRef } from "react";
+import { useEffect, useRef } from "react";
 import { MessagesSquare } from "lucide-react";
 import { Transition } from "@headlessui/react";
 import LiveChatInput from "@/components/LiveChatInput";

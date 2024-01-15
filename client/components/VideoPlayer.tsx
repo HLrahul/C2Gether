@@ -45,6 +45,8 @@ export default function VideoPlayer() {
     socket.on("video-change-from-server", ({ serverUrl }) => {
       if (player && videoUrl !== serverUrl) {
         setVideoUrl(serverUrl);
+        setPlayedSeconds(0);
+        setExpectedTime(0);
         player.seekTo(0);
       }
     });
