@@ -4,7 +4,6 @@ import { Video, MessagesSquare, AudioLines, Brush } from "lucide-react";
 const cardData = [
   {
     Icon: Video,
-    className: "animate-featureCard",
     title: "Synced video player",
     description: (
       <p className="text-gray-500">
@@ -16,11 +15,10 @@ const cardData = [
   },
   {
     Icon: MessagesSquare,
-    className: "animate-featureCard animation-delay-2000",
     title: "Live chat",
     description: (
       <p className="text-gray-500">
-        Share your thoughts and reactions with your buddies in
+        Share your thoughts, reaction with your buddies in
         <span className="text-foreground"> real time chat.</span>
       </p>
     ),
@@ -28,7 +26,6 @@ const cardData = [
   },
   {
     Icon: AudioLines,
-    className: "animate-featureCard animation-delay-1000",
     title: "Voice channels",
     description: (
       <p className="text-gray-500">
@@ -41,7 +38,6 @@ const cardData = [
   },
   {
     Icon: Brush,
-    className: "animate-featureCard animation-delay-2500",
     title: "Canvas",
     description: (
       <p className="text-gray-500">
@@ -56,42 +52,35 @@ const cardData = [
 
 interface CardData {
   Icon: React.ComponentType;
-  className: string;
   title: string;
   description: JSX.Element;
   upcoming: boolean;
 }
 
-const CardComponent = ({
-  Icon,
-  className,
-  title,
-  description,
-  upcoming,
-}: CardData) => (
+const CardComponent = ({ Icon, title, description, upcoming }: CardData) => (
   <Card
     isFooterBlurred
-    radius="lg"
-    className={`${className} border-none col-span-1 row-span-1 bg-transparent min-h-[6rem] w-auto m-auto`}
+    className="border-none bg-transparent w-[100%]"
+    style={{ width: "auto" }}
   >
-    <CardHeader className="flex items-center gap-3">
+    <CardHeader className="flex items-center gap-3 w-auto">
       <div className="text-primary-300">
         <Icon />
       </div>
-      <p className="text-[0.8rem]">{title}</p>
+      <p className="text-[0.8rem] w-full">{title}</p>
       {upcoming && (
         <Chip size="sm" className="ml-auto bg-primary rounded-lg">
           upcoming
         </Chip>
       )}
     </CardHeader>
-    <CardBody>{description}</CardBody>
+    <CardBody className="text-sm">{description}</CardBody>
   </Card>
 );
 
 export default function HeroSection() {
   return (
-    <section className="w-[100%] md:w-[50%] m-auto grid grid-cols-1 md:grid-cols-2 grid-rows-4 md:grid-rows-2 gap-5 lg:mt-[8rem]">
+    <section className="w-full flex flex-wrap gap-3">
       {cardData.map((data, index) => (
         <CardComponent key={index} {...data} />
       ))}
