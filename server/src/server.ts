@@ -3,6 +3,8 @@ import http from "http";
 import express from "express";
 import { Server } from "socket.io";
 
+import { keepAlive } from "@/scripts/keepAlive";
+
 import { handleSocketEvents } from "./services/socketEvents";
 
 const app = express();
@@ -29,3 +31,5 @@ const PORT = process.env.PORT || 3001;
 server.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });
+
+keepAlive();
