@@ -3,7 +3,7 @@ import http from "http";
 import express from "express";
 import { Server } from "socket.io";
 
-import { keepAlive } from "@/scripts/keepAlive";
+import { keepAlive } from "./scripts/keepAlive";
 
 import { handleSocketEvents } from "./services/socketEvents";
 
