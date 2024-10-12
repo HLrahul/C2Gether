@@ -1,0 +1,26 @@
+{
+  "semi": true,
+  "tabWidth": 2,
+  "endOfLine": "lf",
+  "printWidth": 80,
+  "singleQuote": true,
+  "trailingComma": "all",
+  "bracketSpacing": true,
+  "arrowParens": "always",
+  "jsxBracketSameLine": false,
+  "importOrder": [
+    "^@nextui-org/(.*)$",
+    "^@@radix-ui/(.*)$",
+    "^@tanstack/(.*)$",
+    "^@/components/(.*)$",
+    "^@/api/(.*)$",
+    "^@/hooks/(.*)$",
+    "^@/stores/(.*)$",
+    "^@/types/(.*)$",
+    "^@/utils/(.*)$",
+    "^[./]"
+  ],
+  "importOrderSeparation": true,
+  "importOrderSortSpecifiers": true,
+  "plugins": ["@trivago/prettier-plugin-sort-imports"]
+}
