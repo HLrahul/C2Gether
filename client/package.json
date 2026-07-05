@@ -62,6 +62,9 @@
     "zustand": "^4.4.7"
   },
   "devDependencies": {
-    "@types/node": "20.10.3"
+    "@types/node": "^24.0.0"
+  },
+  "engines": {
+    "node": ">=24.0.0"
   }
 }
