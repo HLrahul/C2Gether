@@ -1,23 +1,25 @@
-"use client"
+'use client';
 
-import * as z from "zod";
-import { useForm } from "react-hook-form";
-import { TbLogin2 } from "react-icons/tb";
-import React, { useEffect, useState } from "react";
-import { zodResolver } from "@hookform/resolvers/zod";
+import { socket } from '@/lib/socket';
+import { joinRoomFormSchema } from '@/lib/validations/joinRoomSchema';
+import { zodResolver } from '@hookform/resolvers/zod';
+import React, { useEffect, useState } from 'react';
+import { useForm } from 'react-hook-form';
+import { TbLogin2 } from 'react-icons/tb';
+import * as z from 'zod';
+
 import {
-  Modal,
-  ModalContent,
-  ModalHeader,
-  ModalBody,
   Button,
-  useDisclosure,
   Input,
+  Modal,
+  ModalBody,
+  ModalContent,
   ModalFooter,
-} from "@nextui-org/react";
-import { socket } from "@/lib/socket";
-import { joinRoomFormSchema } from "@/lib/validations/joinRoomSchema";
-import { Form, FormControl, FormField, FormItem } from "@/components/ui/form";
+  ModalHeader,
+  useDisclosure,
+} from '@nextui-org/react';
+
+import { Form, FormControl, FormField, FormItem } from '@/components/ui/form';
 
 type joinRoomForm = z.infer<typeof joinRoomFormSchema>;
 
@@ -25,17 +27,17 @@ export default function JoinRoom() {
   const [isLoading, setIsLoading] = useState(false);
   const form = useForm<joinRoomForm>({
     resolver: zodResolver(joinRoomFormSchema),
-    defaultValues: { username: "", roomId: "" },
+    defaultValues: { username: '', roomId: '' },
   });
 
-  function onSubmit({ username, roomId }: joinRoomForm) {
+  function onSubmit({ username, roomId, password }: joinRoomForm) {
     setIsLoading(true);
-    socket.emit("join-room", { username, roomId });
+    socket.emit('join-room', { username, roomId, password });
   }
 
   useEffect(() => {
-    socket.on("room-not-found", () => setIsLoading(false));
-    socket.on("invalid-data", () => setIsLoading(false));
+    socket.on('room-not-found', () => setIsLoading(false));
+    socket.on('invalid-data', () => setIsLoading(false));
   });
 
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
@@ -96,6 +98,24 @@ export default function JoinRoom() {
                           label="Room ID"
                           placeholder="Enter a Room ID"
                           variant="bordered"
+                          {...field}
+                        />
+                      </FormControl>
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  name="password"
+                  control={form.control}
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormControl id="joinRoom-password">
+                        <Input
+                          id="joinRoom-password-input"
+                          label="Password (if applicable)"
+                          placeholder="Enter Room Password"
+                          variant="bordered"
+                          type="password"
                           {...field}
                         />
                       </FormControl>

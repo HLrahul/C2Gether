@@ -1,12 +1,15 @@
-"use client";
+'use client';
 
-import styles from "@/styles/input-styles.module.css";
+import { searchKeywordSchema } from '@/lib/validations/searchKeywordSchema';
+import { useVideoUrlStore } from '@/store/videoUrlStore';
+import { useVideoStore } from '@/store/videosStore';
+import styles from '@/styles/input-styles.module.css';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { SearchIcon } from 'lucide-react';
+import { useEffect, useState } from 'react';
+import { useForm } from 'react-hook-form';
+import * as z from 'zod';
 
-import * as z from "zod";
-import { useForm } from "react-hook-form";
-import { useEffect, useState } from "react";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { searchKeywordSchema } from "@/lib/validations/searchKeywordSchema";
 import {
   Button,
   Divider,
@@ -17,27 +20,28 @@ import {
   ModalFooter,
   ModalHeader,
   useDisclosure,
-} from "@nextui-org/react";
+} from '@nextui-org/react';
+
+import { useQueryClient } from '@tanstack/react-query';
+
 import {
   Form,
   FormControl,
   FormField,
   FormItem,
   FormMessage,
-} from "@/components/ui/form";
-import { VideoCard } from "./VideoCard";
-import { LoadingSpinner } from "./icons";
-import { SearchIcon } from "lucide-react";
-import { useVideoStore } from "@/store/videosStore";
-import { useQueryClient } from "@tanstack/react-query";
-import { useFetchVideos } from "@/hooks/useFetchVideos";
-import { useVideoUrlStore } from "@/store/videoUrlStore";
+} from '@/components/ui/form';
+
+import { useFetchVideos } from '@/hooks/useFetchVideos';
+
+import { VideoCard } from './VideoCard';
+import { LoadingSpinner } from './icons';
 
 type searchKeyword = z.infer<typeof searchKeywordSchema>;
 
 export default function VideoSearchInput() {
   const { isOpen, onOpen, onClose } = useDisclosure();
-  const [searchKeyword, setSearchKeyword] = useState<string>("");
+  const [searchKeyword, setSearchKeyword] = useState<string>('');
   const [isSearchOperation, setIsSearchOperation] = useState<boolean>(false);
   const { fetchedVideos, setFetchedVideos } = useVideoStore((state) => state);
   const { isLoading, error, fetchNextPage, isFetching, hasNextPage, refetch } =
@@ -53,7 +57,7 @@ export default function VideoSearchInput() {
   });
 
   const { watch } = form;
-  const keyword = watch("keyword");
+  const keyword = watch('keyword');
   useEffect(() => {
     setSearchKeyword(keyword);
   }, [keyword]);
@@ -61,7 +65,7 @@ export default function VideoSearchInput() {
   const getVideoIdFromUrl = (url: string) => {
     const patterns = [
       {
-        platform: "youtube",
+        platform: 'youtube',
         pattern:
           /(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=|\&list=)([^#\&\?]*).*/,
       },
@@ -81,17 +85,17 @@ export default function VideoSearchInput() {
         return {
           platform: patterns[i].platform,
           id: matches[2],
-          hash: matches[3] ? matches[3].substring(1) : "",
+          hash: matches[3] ? matches[3].substring(1) : '',
         };
       }
     }
 
-    return { platform: "unknown", id: "", hash: "" };
+    return { platform: 'unknown', id: '', hash: '' };
   };
 
   const handleSearch = form.handleSubmit(() => {
     setIsSearchOperation(true);
-    queryClient.removeQueries({ queryKey: ["videos"] });
+    queryClient.removeQueries({ queryKey: ['videos'] });
     setFetchedVideos([]);
     refetch();
   });
@@ -99,18 +103,18 @@ export default function VideoSearchInput() {
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
     setSearchKeyword(value);
-    form.setValue("keyword", value);
+    form.setValue('keyword', value);
 
     const videoUrl = getVideoIdFromUrl(e.target.value);
-    if (videoUrl.platform !== "unknown") {
+    if (videoUrl.platform !== 'unknown') {
       switch (videoUrl.platform) {
-        case "youtube":
+        case 'youtube':
           setVideoUrl(`https://www.youtube.com/embed/${videoUrl.id}`);
           break;
-        case "vimeo":
+        case 'vimeo':
           setVideoUrl(`https://player.vimeo.com/video/${videoUrl.id}`);
           break;
-        case "dailymotion":
+        case 'dailymotion':
           setVideoUrl(`https://www.dailymotion.com/embed/video/${videoUrl.id}`);
           break;
         default:
@@ -130,8 +134,8 @@ export default function VideoSearchInput() {
   };
 
   return (
-    <div className="col-span-8">
-      <div>
+    <div className="w-full">
+      <div className="bg-white/10 backdrop-blur-xl border border-white/20 rounded-full shadow-lg p-1">
         <Input
           size="sm"
           className={`${styles.inputWrapper} text-primary`}

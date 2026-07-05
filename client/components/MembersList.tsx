@@ -1,25 +1,26 @@
-"use client";
+'use client';
 
-import { useEffect } from "react";
-import { socket } from "@/lib/socket";
-import { Notification } from "@/types";
-import { Chip } from "@nextui-org/react";
-import { useToast } from "./ui/useToast";
-import { ScrollArea } from "./ui/scrollArea";
-import { useMembersStore } from "@/store/membersStore";
+import { socket } from '@/lib/socket';
+import { useMembersStore } from '@/store/membersStore';
+import { Notification } from '@/types';
+import { useEffect } from 'react';
+
+import { Chip } from '@nextui-org/react';
+
+import { ScrollArea } from './ui/scrollArea';
+import { toast } from './ui/useToast';
 
 export default function MembersList() {
-  const { toast } = useToast();
   const [members, setMembers] = useMembersStore((state) => [
     state.members,
     state.setMembers,
   ]);
 
   useEffect(() => {
-    socket.on("update-members", (members) => {
+    socket.on('update-members', (members) => {
       setMembers(members);
     });
-    socket.on("send-notification", ({ title, message }: Notification) => {
+    socket.on('send-notification', ({ title, message }: Notification) => {
       toast({
         title,
         description: message,
@@ -27,10 +28,10 @@ export default function MembersList() {
     });
 
     return () => {
-      socket.off("update-members");
-      socket.off("send-notification");
+      socket.off('update-members');
+      socket.off('send-notification');
     };
-  }, [toast, setMembers]);
+  }, [setMembers]);
 
   return (
     <div className="my-6 select-none">
@@ -41,7 +42,7 @@ export default function MembersList() {
           {members.map(({ id, username }, index) => (
             <li className="flex gap-2 items-center" key={id}>
               <p>{username}</p>
-              {(index === 0) && (
+              {index === 0 && (
                 <Chip size="sm" color="primary" className="text-[0.7rem]">
                   Admin
                 </Chip>

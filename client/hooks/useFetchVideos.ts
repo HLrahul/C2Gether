@@ -1,43 +1,64 @@
-"use client";
+'use client';
 
-import axios from "axios";
-import { Video } from "@/types";
-import { useEffect } from "react";
-import { useVideoStore } from "@/store/videosStore";
-import { useInfiniteQuery } from "@tanstack/react-query";
+import { useVideoStore } from '@/store/videosStore';
+import { Video } from '@/types';
+import axios from 'axios';
+import { useEffect } from 'react';
+
+import { useInfiniteQuery } from '@tanstack/react-query';
 
 export const useFetchVideos = (
   searchKeyword: string,
-  isSearchOperation: boolean
+  isSearchOperation: boolean,
 ) => {
   const { setFetchedVideos, appendFetchedVideos } = useVideoStore();
 
   // Function to fetch videos and playlists
   const fetchVideosandPlaylists = async (pageToken: string) => {
     const { data } = await axios.get(
-      `https://www.googleapis.com/youtube/v3/search?part=snippet&type=video&maxResults=20&pageToken=${pageToken}&q=${searchKeyword}&key=${process.env.NEXT_PUBLIC_YOUTUBE_API_KEY}`
+      `https://www.googleapis.com/youtube/v3/search?part=snippet&type=video&maxResults=20&pageToken=${pageToken}&q=${searchKeyword}&key=${process.env.NEXT_PUBLIC_YOUTUBE_API_KEY}`,
     );
-    const videoIds = data.items.map((item: any) => item.id.videoId).join(",");
-    const channelIds = data.items
-      .map((item: any) => item.snippet.channelId)
-      .join(",");
+    const videoIdsArray = data.items
+      .map((item: any) => item.id?.videoId)
+      .filter(Boolean);
+    const videoIds = videoIdsArray.join(',');
+    const channelIdsArray = Array.from(
+      new Set(
+        data.items.map((item: any) => item.snippet?.channelId).filter(Boolean),
+      ),
+    );
+    const channelIds = channelIdsArray.join(',');
 
-    const [videoResponse, channelResponse] = await Promise.all([
-      axios.get(
-        `https://www.googleapis.com/youtube/v3/videos?part=contentDetails&id=${videoIds}&key=${process.env.NEXT_PUBLIC_YOUTUBE_API_KEY}`
-      ),
-      axios.get(
-        `https://www.googleapis.com/youtube/v3/channels?part=snippet&id=${channelIds}&key=${process.env.NEXT_PUBLIC_YOUTUBE_API_KEY}`
-      ),
-    ]);
+    const requests = [];
+    if (videoIds) {
+      requests.push(
+        axios.get(
+          `https://www.googleapis.com/youtube/v3/videos?part=contentDetails&id=${videoIds}&key=${process.env.NEXT_PUBLIC_YOUTUBE_API_KEY}`,
+        ),
+      );
+    } else {
+      requests.push(Promise.resolve({ data: { items: [] } }));
+    }
+
+    if (channelIds) {
+      requests.push(
+        axios.get(
+          `https://www.googleapis.com/youtube/v3/channels?part=snippet&id=${channelIds}&key=${process.env.NEXT_PUBLIC_YOUTUBE_API_KEY}`,
+        ),
+      );
+    } else {
+      requests.push(Promise.resolve({ data: { items: [] } }));
+    }
+
+    const [videoResponse, channelResponse] = await Promise.all(requests);
 
     const videosWithDetailsAndLogo = data.items.map((item: any) => {
       if (item.id.videoId) {
         const video = videoResponse.data.items.find(
-          (video: any) => video.id === item.id.videoId
+          (video: any) => video.id === item.id.videoId,
         );
         const channel = channelResponse.data.items.find(
-          (channel: any) => channel.id === item.snippet.channelId
+          (channel: any) => channel.id === item.snippet.channelId,
         );
 
         return {
@@ -47,14 +68,14 @@ export const useFetchVideos = (
         };
       } else if (item.id.playlistId) {
         const channel = channelResponse.data.items.find(
-          (channel: any) => channel.id === item.snippet.channelId
+          (channel: any) => channel.id === item.snippet.channelId,
         );
 
         return {
           ...item,
           channelLogo: channel.snippet.thumbnails.default.url,
         };
-      }   
+      }
     });
 
     return { ...data, items: videosWithDetailsAndLogo };
@@ -70,10 +91,10 @@ export const useFetchVideos = (
     isFetchingNextPage,
     refetch,
   } = useInfiniteQuery({
-    queryKey: ["videos"],
-    queryFn: ({ pageParam = "" }) => fetchVideosandPlaylists(pageParam),
+    queryKey: ['videos'],
+    queryFn: ({ pageParam = '' }) => fetchVideosandPlaylists(pageParam),
     getNextPageParam: (lastPage) => lastPage.nextPageToken,
-    initialPageParam: "",
+    initialPageParam: '',
     enabled: false,
     retry: 0,
   });
@@ -99,7 +120,7 @@ export const useFetchVideos = (
               liveBroadcastContent: item.snippet.liveBroadcastContent,
               publishTime: item.snippet.publishTime,
             },
-            duration: item.duration || "",
+            duration: item.duration || '',
             channelLogo: item.channelLogo,
           };
         });

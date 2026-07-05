@@ -1,15 +1,17 @@
-"use client";
+'use client';
 
-import { socket } from "@/lib/socket";
-import { useEffect, useRef } from "react";
-import { MessagesSquare } from "lucide-react";
-import { Transition } from "@headlessui/react";
-import LiveChatInput from "@/components/LiveChatInput";
-import { Message, useChatStore } from "@/store/chatStore";
-import { Card, CardBody, CardFooter, CardHeader } from "@nextui-org/react";
+import { socket } from '@/lib/socket';
+import { Message, useChatStore } from '@/store/chatStore';
+import { Transition } from '@headlessui/react';
+import { MessagesSquare } from 'lucide-react';
+import { useEffect, useRef } from 'react';
+
+import { Card, CardBody, CardFooter, CardHeader } from '@nextui-org/react';
+
+import LiveChatInput from '@/components/LiveChatInput';
 
 export default function ChatWindow() {
-   const messagesEndRef = useRef<null | HTMLDivElement>(null);
+  const messagesEndRef = useRef<null | HTMLDivElement>(null);
   const { messages } = useChatStore();
   const addMessage = useChatStore((state) => state.addMessage);
 
@@ -27,8 +29,8 @@ export default function ChatWindow() {
     }) => {
       const senderTime = new Date(timeSent);
       const localTime = senderTime.toLocaleTimeString([], {
-        hour: "2-digit",
-        minute: "2-digit",
+        hour: '2-digit',
+        minute: '2-digit',
         hour12: true,
         timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone,
       });
@@ -39,28 +41,25 @@ export default function ChatWindow() {
         isAction: isAction,
       });
 
-      messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+      messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
     };
 
-    socket.on("live-chat-text-from-server", listener);
-    socket.on("action-message-from-server", listener);
+    socket.on('live-chat-text-from-server', listener);
+    socket.on('action-message-from-server', listener);
 
     return () => {
-      socket.off("live-chat-text-from-server", listener);
-      socket.off("action-message-from-server", listener);
+      socket.off('live-chat-text-from-server', listener);
+      socket.off('action-message-from-server', listener);
     };
   }, [addMessage]);
 
   return (
-    <div className="col-span-8 md:col-span-3 max-h-full">
-      <Card isBlurred className="min-h-full max-h-full mt-2 md:mt-0">
-        <CardHeader className="flex gap-2">
-          <MessagesSquare size={16} className="text-primary" />
-          <p className="text-gray-500">Live chat</p>
-        </CardHeader>
-        <CardBody
-          className="overflow-y-auto h-[25vh] sm:max-h-[60vh]"
-        >
+    <div className="h-full w-full">
+      <Card
+        isBlurred
+        className="h-full border border-white/5 bg-white/5 backdrop-blur-md backdrop-saturate-150"
+      >
+        <CardBody className="overflow-y-auto h-[25vh] sm:max-h-[60vh]">
           {messages.map((message, index) => (
             <Transition
               key={index}
@@ -77,7 +76,7 @@ export default function ChatWindow() {
               )}
             </Transition>
           ))}
-           <div ref={messagesEndRef} />
+          <div ref={messagesEndRef} />
         </CardBody>
         <CardFooter>
           <LiveChatInput />

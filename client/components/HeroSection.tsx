@@ -1,13 +1,14 @@
-import { Card, CardBody, CardHeader, Chip } from "@nextui-org/react";
-import { Video, MessagesSquare, AudioLines, Brush } from "lucide-react";
+import { AudioLines, Brush, MessagesSquare, Video } from 'lucide-react';
+
+import { Card, CardBody, CardHeader, Chip } from '@nextui-org/react';
 
 const cardData = [
   {
     Icon: Video,
-    title: "Synced video player",
+    title: 'Synced video player',
     description: (
       <p className="text-gray-500">
-        Stream videos with your friends and{" "}
+        Stream videos with your friends and{' '}
         <span className="text-foreground">stay in sync with every action.</span>
       </p>
     ),
@@ -15,7 +16,7 @@ const cardData = [
   },
   {
     Icon: MessagesSquare,
-    title: "Live chat",
+    title: 'Live chat',
     description: (
       <p className="text-gray-500">
         Share your thoughts, reaction with your buddies in
@@ -26,7 +27,7 @@ const cardData = [
   },
   {
     Icon: AudioLines,
-    title: "Voice channels",
+    title: 'Voice channels',
     description: (
       <p className="text-gray-500">
         Talk to your friends with
@@ -38,12 +39,12 @@ const cardData = [
   },
   {
     Icon: Brush,
-    title: "Canvas",
+    title: 'Canvas',
     description: (
       <p className="text-gray-500">
-        Talk to your friends with
-        <span className="text-foreground"> audio chat </span>while watching
-        videos in sync.
+        Collaborate visually with a
+        <span className="text-foreground"> shared whiteboard </span>while
+        watching videos in sync.
       </p>
     ),
     upcoming: true,
@@ -60,8 +61,8 @@ interface CardData {
 const CardComponent = ({ Icon, title, description, upcoming }: CardData) => (
   <Card
     isFooterBlurred
-    className="border-none bg-transparent w-[100%]"
-    style={{ width: "auto" }}
+    className="border border-white/5 bg-white/5 backdrop-blur-md backdrop-saturate-150 hover:bg-white/10 transition-all w-[100%] shadow-lg hover:shadow-primary/20 hover:-translate-y-1"
+    style={{ width: 'auto' }}
   >
     <CardHeader className="flex items-center gap-3 w-auto">
       <div className="text-primary-300">
