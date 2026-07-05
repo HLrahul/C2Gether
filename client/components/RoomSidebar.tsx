@@ -18,7 +18,7 @@ export default function RoomSidebar() {
         <Tabs
           aria-label="Sidebar Tabs"
           selectedKey={selected}
-          onSelectionChange={setSelected}
+          onSelectionChange={(key) => setSelected(key as string | number)}
           variant="light"
           classNames={{
             tabList:
