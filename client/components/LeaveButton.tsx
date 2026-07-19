@@ -1,13 +1,13 @@
-"use client";
+'use client';
 
-import { useState } from "react";
-import { Button } from "@nextui-org/react";
-import { useRouter } from "next/navigation";
+import { socket } from '@/lib/socket';
+import { useChatStore } from '@/store/chatStore';
+import { usePromptStore, useUserStore } from '@/store/userStore';
+import { useVideoUrlStore } from '@/store/videoUrlStore';
+import { useRouter } from 'next/navigation';
+import { useState } from 'react';
 
-import { socket } from "@/lib/socket";
-import { useChatStore } from "@/store/chatStore";
-import { useVideoUrlStore } from "@/store/videoUrlStore";
-import { useUserStore, usePromptStore } from "@/store/userStore";
+import { Button } from '@nextui-org/react';
 
 export default function LeaveButton() {
   const router = useRouter();
@@ -19,18 +19,18 @@ export default function LeaveButton() {
 
   return (
     <Button
-      variant="solid"
+      variant="light"
       color="danger"
-      className="absolute bottom-0 w-full"
+      className="w-full rounded-none h-14 bg-transparent hover:bg-danger/20 transition-colors font-medium text-danger"
       isLoading={isLoading}
       onClick={() => {
         setIsLoading(true);
-        socket.emit("leave-room");
+        socket.emit('leave-room');
         setTimeout(() => {
-          router.replace("/");
+          router.replace('/');
           setUser(null);
           resetMessage();
-          setVideoUrl("");
+          setVideoUrl('');
           setShowPrompt(false);
         }, 600);
       }}

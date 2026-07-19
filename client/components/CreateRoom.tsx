@@ -101,6 +101,9 @@ export default function CreateRoomButton({ roomId }: CreateRoomFormProps) {
         isOpen={isOpen}
         onOpenChange={onOpenChange}
         placement="center"
+        classNames={{
+          closeButton: 'absolute right-4 top-4 hover:bg-white/5',
+        }}
       >
         <ModalContent>
           <ModalHeader className="flex flex-col gap-1">

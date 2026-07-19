@@ -58,6 +58,9 @@ export default function JoinRoom() {
         isOpen={isOpen}
         onOpenChange={onOpenChange}
         placement="center"
+        classNames={{
+          closeButton: 'absolute right-4 top-4 hover:bg-white/5',
+        }}
       >
         <ModalContent>
           <ModalHeader>Join Room</ModalHeader>

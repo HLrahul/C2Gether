@@ -1,11 +1,12 @@
-import "@/styles/globals.css";
+import { fontSans } from '@/config/fonts';
+import { siteConfig } from '@/config/site';
+import '@/styles/globals.css';
+import clsx from 'clsx';
+import { Metadata } from 'next';
 
-import clsx from "clsx";
-import { Metadata } from "next";
-import { Providers } from "./providers";
-import { fontSans } from "@/config/fonts";
-import { siteConfig } from "@/config/site";
-import { Toaster } from "@/components/ui/toaster";
+import { Toaster } from '@/components/ui/toaster';
+
+import { Providers } from './providers';
 
 export const metadata: Metadata = {
   title: {
@@ -14,7 +15,7 @@ export const metadata: Metadata = {
   },
   description: siteConfig.description,
   icons: {
-    icon: "/C2G.png",
+    icon: '/logo.svg',
   },
 };
 
@@ -28,15 +29,15 @@ export default function RootLayout({
       <head />
       <body
         className={clsx(
-          "min-h-screen bg-background font-sans antialiased",
-          fontSans.variable
+          'min-h-screen bg-background font-sans antialiased',
+          fontSans.variable,
         )}
       >
         <Providers
           themeProps={{
-            attribute: "class",
-            defaultTheme: "teal-dark",
-            themes: ["light", "dark", "teal-light", "teal-dark"],
+            attribute: 'class',
+            defaultTheme: 'teal-dark',
+            themes: ['light', 'dark', 'teal-light', 'teal-dark'],
           }}
         >
           <div className="relative flex flex-col h-screen">

@@ -226,9 +226,9 @@ export default function VideoPlayer() {
 
   return (
     <div className="w-full h-full relative">
-      <Skeleton isLoaded className="w-full h-full rounded-2xl mb-5">
+      <div className="w-full h-full relative">
         {!isLoaded && (
-          <div className="absolute inset-0 bg-black/60 backdrop-blur-sm flex flex-col items-center justify-center z-10 transition-all">
+          <div className="absolute inset-0 bg-black/60 backdrop-blur-sm flex flex-col items-center justify-center z-10 transition-all rounded-2xl mb-5">
             <div className="animate-pulse bg-primary/20 p-6 rounded-full mb-4 shadow-[0_0_30px_-5px_rgba(20,184,166,0.6)]">
               <ArrowUpToLine size={48} className="text-primary" />
             </div>
@@ -241,11 +241,11 @@ export default function VideoPlayer() {
             </p>
           </div>
         )}
-        <div className="video-responsive h-full">
+        <div className="w-full h-full absolute inset-0 z-0">
           <ReactPlayer
             key={videoUrl}
             url={videoUrl}
-            className="react-player"
+            style={{ position: 'absolute', top: 0, left: 0 }}
             height="100%"
             width="100%"
             controls={true}
@@ -263,9 +263,14 @@ export default function VideoPlayer() {
             playbackRate={playbackRate}
             onPlaybackRateChange={onPlaybackRateChange}
             onEnded={onEnded}
+            config={{
+              youtube: {
+                playerVars: { controls: 1, modestbranding: 1 },
+              },
+            }}
           />
         </div>
-      </Skeleton>
+      </div>
 
       <VideoDetails isVideoSet={isLoaded} />
     </div>

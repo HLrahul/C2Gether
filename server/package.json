@@ -1,5 +1,5 @@
 {
-  "name": "c2gather-server",
+  "name": "c2gether-server",
   "version": "1.0.0",
   "description": "socket server and backend logics",
   "main": "index.js",

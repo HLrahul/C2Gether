@@ -1,6 +1,6 @@
 export type SiteConfig = typeof siteConfig;
 
 export const siteConfig = {
-  name: "C2Gather",
-  description: "Collaborative platform to spend time together",
+  name: 'C2Gether',
+  description: 'Collaborative platform to spend time together',
 };

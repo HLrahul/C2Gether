@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 
-import { Card, CardBody, Tab, Tabs } from '@nextui-org/react';
+import { Card, CardBody, CardFooter, Tab, Tabs } from '@nextui-org/react';
 
 import ChatWindow from './ChatWindow';
 import InviteMembersButton from './InviteMemmbersButton';
@@ -13,19 +13,21 @@ export default function RoomSidebar() {
   const [selected, setSelected] = useState<string | number>('chat');
 
   return (
-    <div className="col-span-8 md:col-span-2 flex flex-col h-full max-h-full">
+    <div className="flex flex-col h-full max-h-full w-full min-w-[300px]">
       <div className="flex w-full flex-col h-full">
         <Tabs
           aria-label="Sidebar Tabs"
           selectedKey={selected}
           onSelectionChange={(key) => setSelected(key as string | number)}
-          variant="light"
+          variant="solid"
           classNames={{
             tabList:
-              'w-full gap-2 relative rounded-md p-1 border-b border-divider',
-            cursor: 'w-full bg-primary/20',
-            tab: 'max-w-fit px-4 h-10',
-            tabContent: 'group-data-[selected=true]:text-primary',
+              'w-full gap-2 relative rounded-2xl p-1 bg-black/5 dark:bg-white/5 border border-black/5 dark:border-white/5 shadow-inner',
+            cursor:
+              'w-full bg-white dark:bg-white/10 rounded-xl shadow-sm border border-black/5 dark:border-white/10',
+            tab: 'flex-1 px-4 h-10',
+            tabContent:
+              'group-data-[selected=true]:text-primary font-medium text-gray-500 transition-colors',
           }}
         >
           <Tab key="chat" title="Chat" />
@@ -43,15 +45,17 @@ export default function RoomSidebar() {
             <div className="absolute inset-0">
               <Card
                 isBlurred
-                className="h-full border border-white/5 bg-white/5 backdrop-blur-md backdrop-saturate-150"
+                className="h-full border border-white/5 bg-white/5 backdrop-blur-md backdrop-saturate-150 flex flex-col"
               >
-                <CardBody className="flex flex-col h-full items-center p-4">
+                <CardBody className="flex flex-col flex-1 items-center p-4 overflow-y-auto">
                   <InviteMembersButton />
                   <div className="my-4 flex-grow w-full">
                     <MembersList />
                   </div>
-                  <LeaveButton />
                 </CardBody>
+                <CardFooter className="p-0">
+                  <LeaveButton />
+                </CardFooter>
               </Card>
             </div>
           )}

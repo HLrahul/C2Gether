@@ -1,0 +1,15 @@
+<svg width="128" height="128" viewBox="0 0 128 128" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Left Circle -->
+  <g transform="translate(24, 32)">
+    <circle cx="32" cy="32" r="32" fill="#00F0FF" fill-opacity="0.9"/>
+    <path fill-rule="evenodd" clip-rule="evenodd" d="M42.22 30.66A2 2 0 0039.11 29l-12 8A2 2 0 0028.22 41l12-8a2 2 0 001.89-2.34z" fill="black" opacity="0"/>
+    <!-- actual play icon -->
+    <path fill-rule="evenodd" clip-rule="evenodd" d="M28.445 24.336A2 2 0 0025.333 26v12a2 2 0 003.111 1.664l9-6a2 2 0 000-3.328l-9-6z" fill="black"/>
+  </g>
+  
+  <!-- Right Circle -->
+  <g transform="translate(48, 32)">
+    <circle cx="32" cy="32" r="32" fill="#7000FF" fill-opacity="0.9"/>
+    <path fill-rule="evenodd" clip-rule="evenodd" d="M28.445 24.336A2 2 0 0025.333 26v12a2 2 0 003.111 1.664l9-6a2 2 0 000-3.328l-9-6z" fill="white"/>
+  </g>
+</svg>

@@ -134,16 +134,27 @@ export default function VideoSearchInput() {
   };
 
   return (
-    <div className="w-full">
-      <div className="bg-white/10 backdrop-blur-xl border border-white/20 rounded-full shadow-lg p-1">
+    <div className="w-full relative">
+      <div className="relative bg-white/20 dark:bg-black/20 backdrop-blur-lg border border-black/5 dark:border-white/5 rounded-full shadow-sm p-1 flex items-center transition-all duration-300 hover:bg-white/30 dark:hover:bg-black/30">
         <Input
           size="sm"
-          className={`${styles.inputWrapper} text-primary`}
+          classNames={{
+            base: 'w-full',
+            mainWrapper: 'h-full w-full',
+            inputWrapper:
+              'h-9 bg-transparent hover:bg-transparent data-[hover=true]:bg-transparent group-data-[focus=true]:bg-transparent border-none shadow-none text-gray-900 dark:text-white px-3',
+            input:
+              'text-sm font-medium placeholder:text-gray-500 dark:placeholder:text-gray-400',
+          }}
           value={searchKeyword}
           onChange={handleInputChange}
           onFocus={onFocus}
-          endContent={<SearchIcon size={16} className="text-foreground" />}
-          placeholder="Paste the link of the Video or type to search"
+          endContent={
+            <div className="p-1.5 bg-black/5 dark:bg-white/5 rounded-full hover:bg-primary/20 dark:hover:bg-primary/20 transition-colors cursor-pointer text-primary shadow-sm active:scale-95">
+              <SearchIcon size={16} />
+            </div>
+          }
+          placeholder="Paste video link or search..."
         />
 
         <Modal
@@ -169,15 +180,23 @@ export default function VideoSearchInput() {
                       <FormItem id="keyword" className="w-full">
                         <FormControl>
                           <Input
-                            size="sm"
-                            className={`${styles.inputWrapper} text-primary`}
+                            size="md"
+                            classNames={{
+                              inputWrapper:
+                                'h-12 bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 text-gray-900 dark:text-white hover:bg-black/10 dark:hover:bg-white/10 group-data-[focus=true]:border-primary transition-colors',
+                              input:
+                                'text-[16px] placeholder:text-gray-500 dark:placeholder:text-gray-400',
+                            }}
                             id="youtube-video-search-keyword"
                             autoFocus
                             startContent={
-                              <SearchIcon size={16} className="text-primary" />
+                              <SearchIcon
+                                size={18}
+                                className="text-primary mr-2"
+                              />
                             }
-                            placeholder="Search for videos"
-                            variant="bordered"
+                            placeholder="Search for videos on YouTube..."
+                            variant="flat"
                             {...field}
                           />
                         </FormControl>

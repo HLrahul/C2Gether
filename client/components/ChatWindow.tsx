@@ -3,10 +3,9 @@
 import { socket } from '@/lib/socket';
 import { Message, useChatStore } from '@/store/chatStore';
 import { Transition } from '@headlessui/react';
-import { MessagesSquare } from 'lucide-react';
 import { useEffect, useRef } from 'react';
 
-import { Card, CardBody, CardFooter, CardHeader } from '@nextui-org/react';
+import { Card, CardBody, CardFooter } from '@nextui-org/react';
 
 import LiveChatInput from '@/components/LiveChatInput';
 
@@ -57,9 +56,9 @@ export default function ChatWindow() {
     <div className="h-full w-full">
       <Card
         isBlurred
-        className="h-full border border-white/5 bg-white/5 backdrop-blur-md backdrop-saturate-150"
+        className="h-full border border-white/5 bg-white/5 backdrop-blur-md backdrop-saturate-150 flex flex-col"
       >
-        <CardBody className="overflow-y-auto h-[25vh] sm:max-h-[60vh]">
+        <CardBody className="flex-1 overflow-y-auto p-4">
           {messages.map((message, index) => (
             <Transition
               key={index}
@@ -78,7 +77,7 @@ export default function ChatWindow() {
           ))}
           <div ref={messagesEndRef} />
         </CardBody>
-        <CardFooter>
+        <CardFooter className="p-0">
           <LiveChatInput />
         </CardFooter>
       </Card>
